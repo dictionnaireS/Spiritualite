@@ -1,0 +1,4 @@
+﻿User-agent: *
+Allow: /
+
+Sitemap: https://dictionnaires.github.io/Spiritualite/sitemap.xml
