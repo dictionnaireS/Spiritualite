@@ -36,7 +36,7 @@
       "description": "Dictionnaire de spiritualité ascétique et mystique. Doctrine et histoire.",
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "https://huggingface.co/spaces/GildasR/DS?q={search_term_string}",
+        "target": "https://gildasr-ds.hf.space?q={search_term_string}",
         "query-input": "required name=search_term_string"
       }
     }
@@ -101,6 +101,9 @@
             padding: 0.8em 1em;
             border-bottom: 1px solid #f0f0f0;
             transition: background-color 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .tome-item:hover {
@@ -117,17 +120,38 @@
             text-decoration: underline;
         }
 
-        .tome-item.unavailable {
-            opacity: 0.6;
+        /* Styles pour les tomes restreints */
+        .status-badge {
+            font-size: 0.75em;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background-color: #eee;
+            color: #777;
+            margin-left: 10px;
+            font-style: italic;
+            border: 1px solid #ddd;
         }
 
-        .tome-item.unavailable a {
-            color: #888;
-            cursor: default;
+        .status-badge.free {
+            background-color: #e8f4fd;
+            color: #2c3e50;
+            border-color: #d0e7f9;
         }
 
-        .tome-item.unavailable a:hover {
-            text-decoration: none;
+        .request-link {
+            font-size: 0.85em !important;
+            color: #2c3e50 !important;
+            background-color: #fff;
+            padding: 5px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .request-link:hover {
+            background-color: #1f2d3a !important;
+            color: #fdfdf8 !important;
+            text-decoration: none !important;
         }
 
         .footer-text {
@@ -198,8 +222,8 @@
     <div class="intro-text">
         <p>Vous pouvez trouver ci-dessous des liens vers les différents tomes du Dictionnaire de Spiritualité. Les
             premiers tomes (1 à 2,2) sont disponibles en libre accès. Pour les tomes suivants, qui ne sont pas encore
-            libres de droits, vous pouvez utiliser <a href="https://huggingface.co/spaces/GildasR/DS"
-                target="_blank">notre outil de recherche en ligne</a> pour obtenir des extraits pertinents.</p>
+            libres de droits, vous pouvez utiliser <a href="https://gildasr-ds.hf.space" target="_blank">notre outil de
+                recherche en ligne</a> pour obtenir des extraits pertinents.</p>
         <p>Découvrez également notre site dédié au <a href="https://dictionnaires.github.io/theologie/">Dictionnaire de
                 Théologie Catholique</a> pour une étude complémentaire de la doctrine et de l'histoire.</p>
     </div>
@@ -208,92 +232,98 @@
 
     <div class="tome-list">
         <div class="tome-item">
-            <a href="DS1_corrige-1 (2).html"><strong>Tome 1 :</strong> Aa-Byzance</a>
+            <span><strong>Tome 1 :</strong> Aa-Byzance <span class="status-badge free">Accès libre</span></span>
+            <a href="DS1_corrige-1 (2).html">Consulter</a>
         </div>
 
         <div class="tome-item">
-            <a href="DS2-1_corrige.html"><strong>Tome 2,1 :</strong> Cabasilas-Communion fréquente</a>
+            <span><strong>Tome 2,1 :</strong> Cabasilas-Communion fréquente <span class="status-badge free">Accès
+                    libre</span></span>
+            <a href="DS2-1_corrige.html">Consulter</a>
         </div>
 
         <div class="tome-item">
-            <a href="DS2-2_corrige.html"><strong>Tome 2,2 :</strong> Communion fréquente (fin) - Cyrille de
-                Scythopolis</a>
+            <span><strong>Tome 2,2 :</strong> Communion fréquente (fin) - Cyrille de Scythopolis <span
+                    class="status-badge free">Accès libre</span></span>
+            <a href="DS2-2_corrige.html">Consulter</a>
         </div>
 
-        <div class="tome-item unavailable">
-            <a href="contact.html"><strong>Tome 3 :</strong> Dabert - Duvergier de Hauranne</a>
+        <div class="tome-item">
+            <span><strong>Tome 3 :</strong> Dabert - Duvergier de Hauranne <span
+                    class="status-badge">Protégé</span></span>
         </div>
 
-        <div class="tome-item unavailable">
-            <a href="contact.html"><strong>Tome 4,1 :</strong> Eadmer - Escobar, Paris</a>
+        <div class="tome-item">
+            <span><strong>Tome 4,1 :</strong> Eadmer - Escobar, Paris <span class="status-badge">Protégé</span></span>
         </div>
 
-        <div class="tome-item unavailable">
-            <a href="contact.html"><strong>Tome 4,2 :</strong> Espagne – Ezquerra</a>
+        <div class="tome-item">
+            <span><strong>Tome 4,2 :</strong> Espagne – Ezquerra <span class="status-badge">Protégé</span></span>
         </div>
 
-        <div class="tome-item unavailable">
-            <a href="contact.html"><strong>Tome 5 :</strong> Faber – Fyot</a>
+        <div class="tome-item">
+            <span><strong>Tome 5 :</strong> Faber – Fyot <span class="status-badge">Protégé</span></span>
         </div>
 
-        <div class="tome-item unavailable">
-            <a href="contact.html"><strong>Tome 6 :</strong> Gabriel – Guzman</a>
+        <div class="tome-item">
+            <span><strong>Tome 6 :</strong> Gabriel – Guzman <span class="status-badge">Protégé</span></span>
         </div>
 
-        <div class="tome-item unavailable">
-            <a href="contact.html"><strong>Tome 7,1 :</strong> Haakman – Hypocrisie</a>
+        <div class="tome-item">
+            <span><strong>Tome 7,1 :</strong> Haakman – Hypocrisie <span class="status-badge">Protégé</span></span>
         </div>
 
-        <div class="tome-item unavailable">
-            <a href="contact.html"><strong>Tome 7,2 :</strong> Ibañez – Izquierdo</a>
+        <div class="tome-item">
+            <span><strong>Tome 7,2 :</strong> Ibañez – Izquierdo <span class="status-badge">Protégé</span></span>
         </div>
 
-        <div class="tome-item unavailable">
-            <a href="contact.html"><strong>Tome 8 :</strong> Jacob – Kyspenning</a>
+        <div class="tome-item">
+            <span><strong>Tome 8 :</strong> Jacob – Kyspenning <span class="status-badge">Protégé</span></span>
         </div>
 
-        <div class="tome-item unavailable">
-            <a href="contact.html"><strong>Tome 9 :</strong> Labadie – Lyonnet</a>
+        <div class="tome-item">
+            <span><strong>Tome 9 :</strong> Labadie – Lyonnet <span class="status-badge">Protégé</span></span>
         </div>
 
-        <div class="tome-item unavailable">
-            <a href="contact.html"><strong>Tome 10 :</strong> Mabille – Mythe</a>
+        <div class="tome-item">
+            <span><strong>Tome 10 :</strong> Mabille – Mythe <span class="status-badge">Protégé</span></span>
         </div>
 
-        <div class="tome-item unavailable">
-            <a href="contact.html"><strong>Tome 11 :</strong> Nabinal – Ozanam</a>
+        <div class="tome-item">
+            <span><strong>Tome 11 :</strong> Nabinal – Ozanam <span class="status-badge">Protégé</span></span>
         </div>
 
-        <div class="tome-item unavailable">
-            <a href="contact.html"><strong>Tome 12,1 :</strong> Pacaud – Photius</a>
+        <div class="tome-item">
+            <span><strong>Tome 12,1 :</strong> Pacaud – Photius <span class="status-badge">Protégé</span></span>
         </div>
 
-        <div class="tome-item unavailable">
-            <a href="contact.html"><strong>Tome 12,2 :</strong> Piatti – Quodvultdeus</a>
+        <div class="tome-item">
+            <span><strong>Tome 12,2 :</strong> Piatti – Quodvultdeus <span class="status-badge">Protégé</span></span>
         </div>
 
-        <div class="tome-item unavailable">
-            <a href="contact.html"><strong>Tome 13 :</strong> Raban Maur – Ryelandt</a>
+        <div class="tome-item">
+            <span><strong>Tome 13 :</strong> Raban Maur – Ryelandt <span class="status-badge">Protégé</span></span>
         </div>
 
-        <div class="tome-item unavailable">
-            <a href="contact.html"><strong>Tome 14 :</strong> Sabbatini – System</a>
+        <div class="tome-item">
+            <span><strong>Tome 14 :</strong> Sabbatini – System <span class="status-badge">Protégé</span></span>
         </div>
 
-        <div class="tome-item unavailable">
-            <a href="contact.html"><strong>Tome 15 :</strong> Taborin – Tyskiewicz</a>
+        <div class="tome-item">
+            <span><strong>Tome 15 :</strong> Taborin – Tyskiewicz <span class="status-badge">Protégé</span></span>
         </div>
 
-        <div class="tome-item unavailable">
-            <a href="contact.html"><strong>Tome 16 :</strong> Ubald d'Alençon – Zypaeus</a>
+        <div class="tome-item">
+            <span><strong>Tome 16 :</strong> Ubald d'Alençon – Zypaeus <span class="status-badge">Protégé</span></span>
         </div>
+
     </div>
 
     <div class="footer-text">
         <p>Pour effectuer une recherche en ligne à partir de certains critères et obtenir des extraits des tomes qui ne
             sont pas encore libres de droit, vous pouvez utiliser notre outil de recherche :</p>
-        <p><a href="https://huggingface.co/spaces/GildasR/DS" target="_blank"><strong>DS - a Hugging Face Space by
-                    GildasR</strong></a></p>
+        <p><a href="https://gildasr-ds.hf.space" target="_blank"><strong>DS - Dictionnaire de Spiritualité</strong></a>
+        </p>
     </div>
 
 </body>
