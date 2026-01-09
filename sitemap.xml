@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://dictionnaires.github.io/Spiritualite/</loc>
-    <lastmod>2026-01-05</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://dictionnaires.github.io/Spiritualite/index.html</loc>
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://dictionnaires.github.io/Spiritualite/DS1_corrige-1 (2).html</loc>
+  </url>
+  <url>
+    <loc>https://dictionnaires.github.io/Spiritualite/DS2-1_corrige.html</loc>
+  </url>
+  <url>
+    <loc>https://dictionnaires.github.io/Spiritualite/DS2-2_corrige.html</loc>
+  </url>
+  <url>
     <loc>https://dictionnaires.github.io/Spiritualite/contact.html</loc>
-    <lastmod>2026-01-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
   </url>
 </urlset>
