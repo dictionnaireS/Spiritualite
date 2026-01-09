@@ -476,7 +476,7 @@
         }
 
         // --- Moteur de Recherche JS ---
-        async def_extractTextFromDocx(arrayBuffer) {
+        async function extractTextFromDocx(arrayBuffer) {
             const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
             return result.value;
         }
@@ -635,7 +635,6 @@
             pdfMake.createPdf(docDefinition).download(`Resultats_DSAM_${Date.now()}.pdf`);
         }
     </script>
-
 </body>
 
 </html>
