@@ -448,7 +448,7 @@
     <script>
         // CONFIGURATION
         const HF_API_URL = "https://gildasr-cle.hf.space/ask_secure";
-        const MODEL_NAME = "google/gemini-flash-1.5";
+        const MODEL_NAME = "google/gemini-pro-1.1";
 
         let currentPassages = [];
         let isStopped = false;
@@ -576,13 +576,22 @@
                     if (isStopped) break;
                     if (currentPassages.length >= 8) break;
 
-                    const prompt = `Extrait ce qui concerne "${theme}" et "${mots}" dans ce texte. Copie EXACTEMENT les passages (10-20 lignes minimum). Format JSON strict:
-{"passages":[{"texte":"copie exacte...","titre":"court titre"}]}
+                    const prompt = `CONSIGNE STRICTE : Tu dois répondre UNIQUEMENT en JSON valide, SANS AUCUN texte avant ou après, SANS balises markdown.
 
-Si rien ne correspond, retourne: {"passages":[]}
+Tu es un extracteur de passages. Dans le texte ci-dessous, trouve tous les passages qui concernent "${theme}" et "${mots}".
 
-TEXTE:
-${chunk.text.substring(0, 3500)}`;
+RÈGLES IMPÉRATIVES :
+1. Copie EXACTEMENT le texte source (10-20 lignes minimum par passage)
+2. Format JSON STRICT (pas de \`\`\`json, juste le JSON pur)
+3. Si rien ne correspond : {"passages":[]}
+
+FORMAT ATTENDU :
+{"passages":[{"texte":"copie mot pour mot du texte...","titre":"titre court descriptif"}]}
+
+TEXTE SOURCE :
+${chunk.text.substring(0, 3500)}
+
+RÉPONDS MAINTENANT EN JSON PUR :`;
 
                     let passageAjouteParIA = false;
 
@@ -600,13 +609,19 @@ ${chunk.text.substring(0, 3500)}`;
                             const data = await hfResponse.json();
                             let content = data.response || "";
                             
-                            console.log("Réponse IA:", content.substring(0, 200));
+                            console.log("Réponse IA brute:", content.substring(0, 300));
+                            
+                            // Nettoyage agressif des balises markdown
+                            content = content.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+                            
+                            console.log("Réponse IA nettoyée:", content.substring(0, 300));
                             
                             // Extraction JSON robuste
                             let jsonMatch = content.match(/\{[\s\S]*"passages"[\s\S]*\}/);
                             if (jsonMatch) {
                                 try {
                                     const parsed = JSON.parse(jsonMatch[0]);
+                                    console.log("JSON parsé avec succès:", parsed);
                                     if (parsed.passages && Array.isArray(parsed.passages) && parsed.passages.length > 0) {
                                         parsed.passages.forEach(p => {
                                             if (p.texte && p.texte.length > 150) {
