@@ -449,6 +449,7 @@
     <script>
         // CONFIGURATION
         const HF_API_URL = "https://gildasr-cle.hf.space/ask_secure";
+        const MODEL_NAME = "google/gemini-pro-1.1"; // Changez ici pour : "google/gemini-flash-1.5" (rapide) ou "anthropic/claude-3-opus" etc.
 
         let currentPassages = [];
         let isStopped = false;
@@ -538,45 +539,73 @@
                     return chunks;
                 }
 
-                // 3. Scoring Avancé (Densité + Vocabulaire)
+                // 3. Scoring Avancé (Densité + Vocabulaire Spirituel Multi-niveaux)
                 displayLoading("Analyse de pertinence...");
                 let scores = [];
-                const keywordsRaw = (theme + " " + mots).toLowerCase().split(/[\s,]+/);
-                const searchTerms = keywordsRaw.filter(k => k.length > 3);
 
-                const spiritualWords = ["âme", "dieu", "grâce", "prière", "mystique", "contemplation", "esprit", "saint", "coeur", "volonté", "foi", "charité", "union", "divin", "christ", "amour"];
+                // Préparation des termes
+                const themeTerms = theme.toLowerCase().split(/[\s,]+/).filter(k => k.length > 3);
+                const keywordTerms = mots.toLowerCase().split(/[\s,]+/).filter(k => k.length > 3);
+
+                // Vocabulaire Spirituel Tiered
+                const tier1 = ["oraison", "contemplation", "extase", "mystique", "union divine", "ascèse"];
+                const tier2 = ["âme", "grâce", "prière", "esprit", "saint", "coeur", "charité", "foi", "contemplatif"];
+                const tier3 = ["thérèse", "jean de la croix", "augustin", "bernard", "ignace", "françois de sales"];
 
                 chunks.forEach((chunk, index) => {
                     if (isStopped) return;
                     let score = 0;
                     const lowerChunk = chunk.toLowerCase();
 
-                    let foundIndices = [];
-                    searchTerms.forEach(term => {
-                        let idx = lowerChunk.indexOf(term);
-                        while (idx !== -1) {
-                            score += 10;
-                            foundIndices.push(idx);
-                            idx = lowerChunk.indexOf(term, idx + 1);
-                        }
-                    });
+                    // --- A. Thématique (+15 pts) ---
+                    themeTerms.forEach(t => { if (lowerChunk.includes(t)) score += 15; });
 
-                    if (foundIndices.length >= 2) {
-                        foundIndices.sort((a, b) => a - b);
-                        const range = foundIndices[foundIndices.length - 1] - foundIndices[0];
-                        if (range < 500) score += 20;
+                    // --- B. Mots-clés (+10 pts) ---
+                    keywordTerms.forEach(k => { if (lowerChunk.includes(k)) score += 10; });
+
+                    // --- C. Vocabulaire Spirituel Tiered ---
+                    let tier1Count = 0;
+                    tier1.forEach(w => { if (lowerChunk.includes(w)) { score += 5; tier1Count++; } });
+                    tier2.forEach(w => { if (lowerChunk.includes(w)) score += 2; });
+                    tier3.forEach(w => { if (lowerChunk.includes(w)) score += 3; });
+
+                    // --- D. Pénalités ---
+                    // 1. Références excessives (cf, ibid)
+                    const refs = (lowerChunk.match(/cf\.|voir tome|ibid/g) || []).length;
+                    if (refs > 3) { score -= 15; console.log(`Chunk ${index}: Pénalité Références (-15)`); }
+
+                    // 2. Listes numérotées excessives
+                    const lists = (lowerChunk.match(/\d+\.\s/g) || []).length;
+                    if (lists > 5) { score -= 15; console.log(`Chunk ${index}: Pénalité listes (-15)`); }
+
+                    // 3. Taille insuffisante
+                    if (chunk.length < 800) { score -= 20; }
+
+                    // --- E. Bonus ---
+                    // 1. Citations (Guillemets)
+                    if (lowerChunk.includes('"') || lowerChunk.includes('«')) { score += 20; }
+
+                    // 2. Marqueurs d'argumentation
+                    const markers = ["c'est pourquoi", "il faut comprendre", "en effet", "par conséquent", "notons que"];
+                    markers.forEach(m => { if (lowerChunk.includes(m)) score += 20; });
+
+                    // 3. Titre / Majuscules au début
+                    if (/^[A-ZÀ-Z]{2,}/.test(chunk.trim())) { score += 20; }
+
+                    // --- F. Ratio Tier 1 (pour filtrage final) ---
+                    const tier1Ratio = (tier1Count / chunk.split(/\s+/).length) * 100;
+
+                    if (score > 10) {
+                        console.log(`Chunk ${index} Score: ${score} (Tier1: ${tier1Ratio.toFixed(2)}%)`);
+                        scores.push({ id: index, score: score, text: chunk, tier1Ratio: tier1Ratio });
                     }
-
-                    spiritualWords.forEach(w => { if (lowerChunk.includes(w)) score += 1; });
-
-                    if (score > 10) scores.push({ id: index, score: score, text: chunk });
                 });
 
                 scores.sort((a, b) => b.score - a.score);
-                const topChunks = scores.slice(0, 3);
+                const topChunks = scores.slice(0, 10);
 
                 if (topChunks.length === 0) {
-                    document.getElementById('results-content').innerHTML = "❌ Aucun extrait pertinent trouvé.";
+                    document.getElementById('results-content').innerHTML = "❌ Aucun extrait ne semble correspondre à vos critères spirituels.";
                     btn.disabled = false;
                     return;
                 }
@@ -619,7 +648,10 @@ ${chunk.text}`;
                         const hfResponse = await fetch(HF_API_URL, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ prompt: prompt })
+                            body: JSON.stringify({
+                                prompt: prompt,
+                                model: MODEL_NAME // On envoie le modèle configuré en haut
+                            })
                         });
 
                         const data = await hfResponse.json();
@@ -632,9 +664,13 @@ ${chunk.text}`;
                                 parsed.passages.forEach(p => {
                                     currentPassages.push(p);
                                     countFound++;
+                                    // Affichage TRONQUÉ sur l'écran (350 caractères + ...)
+                                    const apercu = p.texte.length > 350 ? p.texte.substring(0, 350) + "..." : p.texte;
                                     htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #d4af37; padding:15px; margin-bottom:15px;">
                                         <h5 style="color:#1c2541; margin-bottom:5px;">${p.titre || 'Extrait'}</h5>
-                                        <p style="font-style:italic; font-size:0.9rem;">"${p.texte}"</p></div>`;
+                                        <p style="font-style:italic; font-size:0.9rem; color:#555;">"${apercu}"</p>
+                                        <div style="font-size:0.7rem; color:#888; text-align:right;">(Extrait complet dans le PDF)</div>
+                                    </div>`;
                                 });
                             }
                         }
@@ -649,7 +685,16 @@ ${chunk.text}`;
                     if (validationResult && validationResult.validations) {
                         const passes = validationResult.validations.filter(v => {
                             let p = currentPassages[v.id];
-                            return v.pertinent && v.score >= 65 && p.texte.length > 400;
+                            // On cherche l'objet de score correspondant pour le ratio Tier 1 et Bonus
+                            const originalChunkScore = scores.find(s => s.id === topChunks[v.id]?.id); // Find original score for tier1Ratio
+                            const hasQuotes = p.texte.includes('"') || p.texte.includes('«');
+
+                            // CRITÈRES DE QUALITÉ SÉVÈRES :
+                            // 1. Score de validation IA >= 70
+                            // 2. Longueur > 800 caractères
+                            // 3. Profondeur IA >= 60
+                            // 4. Ratio Tier 1 > 0.3% OU présence de Citations
+                            return v.pertinent && v.score >= 70 && p.texte.length > 800 && (v.profondeur || 0) >= 60 && ((originalChunkScore?.tier1Ratio || 0) > 0.3 || hasQuotes);
                         });
 
                         const validatedIds = new Set(passes.map(v => v.id));
@@ -661,9 +706,12 @@ ${chunk.text}`;
 
                         htmlResults = "";
                         currentPassages.forEach(p => {
+                            const apercu = p.texte.length > 400 ? p.texte.substring(0, 400) + "..." : p.texte;
                             htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #d4af37; padding:15px; margin-bottom:15px;">
                                         <h5 style="color:#1c2541; margin-bottom:5px;">${p.titre || 'Extrait'}</h5>
-                                        <p style="font-style:italic; font-size:0.9rem; text-align:justify;">"${p.texte}"</p></div>`;
+                                        <p style="font-style:italic; font-size:0.9rem; text-align:justify;">"${apercu}"</p>
+                                        <div style="font-size:0.75rem; color:#27ae60; font-weight:bold;">✓ Validé pour le PDF</div>
+                                        </div>`;
                         });
 
                         if (currentPassages.length >= 1) {
@@ -678,10 +726,15 @@ ${chunk.text}`;
                             document.getElementById('pdf-placeholder').style.display = 'none';
                             document.getElementById('pdf-ready').style.display = 'block';
                         } else {
-                            document.getElementById('results-content').innerHTML = "❌ Aucun extrait assez consistant (>400 caractères) trouvé.";
+                            document.getElementById('results-content').innerHTML = `
+                                <div class="card" style="border-left:4px solid #f39c12; background:#fff;">
+                                    <p>⚠️ <b>Critères trop restrictifs.</b></p>
+                                    <p style="font-size:0.85rem;">L'IA a trouvé des passages mais ils n'ont pas atteint le seuil de profondeur ou de longueur requis (800 car.). Essayez des mots-clés plus généraux.</p>
+                                </div>`;
                         }
                     } else {
-                        document.getElementById('results-content').innerHTML = `<h4>✅ ${countFound} passages bruts (Non validés)</h4>${htmlResults}`;
+                        // Fallback si validation échoue
+                        document.getElementById('results-content').innerHTML = `<h4>✅ ${countFound} passages bruts (Validation indisponible)</h4>${htmlResults}`;
                         document.getElementById('pdf-placeholder').style.display = 'none';
                         document.getElementById('pdf-ready').style.display = 'block';
                     }
@@ -706,12 +759,17 @@ ${passageText}
 
 CONSIGNE :
 Pour CHAQUE passage, évalue s'il traite VRAIMENT et EXPLICITEMENT le sujet demandé.
-Score 0-100 (100 = parfaitement pertinent, 0 = hors-sujet).
+EXCLUSIONS : notes de bas de page, simples dates, définitions de moins de 3 phrases, énumérations sans explication.
+CHERCHE : idées développées avec une véritable argumentation spirituelle ou théologique.
+
+SCORE : 0-100 (100 = parfaitement pertinent, 0 = hors-sujet).
+PROFONDEUR : 0-100 (capacité du texte à expliquer le "pourquoi" et le "comment", pas juste citer).
+
 RÉPONDS UNIQUEMENT EN JSON :
 {
 "validations": [
-{"id": 0, "pertinent": true, "score": 85, "raison": "..."},
-{"id": 1, "pertinent": false, "score": 40, "raison": "..."}
+{"id": 0, "pertinent": true, "score": 85, "profondeur": 75, "raison": "..."},
+{"id": 1, "pertinent": false, "score": 40, "profondeur": 20, "raison": "..."}
 ],
 "confiance_globale": 78
 }`;
@@ -719,7 +777,10 @@ RÉPONDS UNIQUEMENT EN JSON :
             try {
                 const response = await fetch(HF_API_URL, {
                     method: "POST", headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ prompt: prompt })
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        model: MODEL_NAME
+                    })
                 });
                 const data = await response.json();
                 const jsonMatch = data.response.match(/\{[\s\S]*\}/);
