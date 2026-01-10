@@ -514,20 +514,67 @@
                 const rawText = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
                 const fullText = rawText.value;
 
-                // Découpage en chunks approximatifs
-                const chunks = fullText.match(/[\s\S]{1,5000}/g) || [];
+                // Découpage intelligent (respecte les paragraphes)
+                const chunks = decoupageIntelligent(fullText);
 
-                // 3. Recherche Vectorielle (Match Mots-clés Simple)
-                displayLoading("Analyse des pertinence...");
+                // Fonction de découpage intelligent (incluse ici)
+                function decoupageIntelligent(text) {
+                    const cleanText = text.replace(/\r\n/g, "\n");
+                    const paragraphs = cleanText.split(/\n\s*\n/);
+                    let chunks = [];
+                    let current = "";
+                    const TARGET = 4000;
+
+                    for (let p of paragraphs) {
+                        p = p.trim();
+                        if (!p) continue;
+                        if (current.length + p.length > TARGET + 1000) {
+                            chunks.push(current);
+                            current = p; // Pas d'overlap complexe pour rester simple et rapide
+                        } else {
+                            current += (current ? "\n\n" : "") + p;
+                        }
+                    }
+                    if (current) chunks.push(current);
+                    return chunks;
+                }
+
+                // 3. Scoring Avancé (Densité + Vocabulaire)
+                displayLoading("Analyse de pertinence...");
                 let scores = [];
-                const keywords = (theme + " " + mots).toLowerCase().split(/[\s,]+/);
+                // On nettoie les mots clés
+                const keywordsRaw = (theme + " " + mots).toLowerCase().split(/[\s,]+/);
+                const searchTerms = keywordsRaw.filter(k => k.length > 3);
+
+                const spiritualWords = ["âme", "dieu", "grâce", "prière", "mystique", "contemplation", "esprit", "saint", "coeur", "volonté", "foi", "charité", "union", "divin", "christ", "amour"];
 
                 chunks.forEach((chunk, index) => {
                     if (isStopped) return;
                     let score = 0;
                     const lowerChunk = chunk.toLowerCase();
-                    keywords.forEach(k => { if (k.length > 3 && lowerChunk.includes(k)) score++; });
-                    if (score > 0) scores.push({ id: index, score: score, text: chunk });
+
+                    // A. Occurrence
+                    let foundIndices = [];
+                    searchTerms.forEach(term => {
+                        let idx = lowerChunk.indexOf(term);
+                        while (idx !== -1) {
+                            score += 10;
+                            foundIndices.push(idx);
+                            idx = lowerChunk.indexOf(term, idx + 1);
+                        }
+                    });
+
+                    // B. Densité
+                    if (foundIndices.length >= 2) {
+                        foundIndices.sort((a, b) => a - b);
+                        const range = foundIndices[foundIndices.length - 1] - foundIndices[0];
+                        if (range < 500) score += 20;
+                    }
+
+                    // C. Vocabulaire
+                    spiritualWords.forEach(w => { if (lowerChunk.includes(w)) score += 1; });
+
+                    if (score > 10) scores.push({ id: index, score: score, text: chunk });
                 });
 
                 scores.sort((a, b) => b.score - a.score);
@@ -547,7 +594,15 @@
                 for (const chunk of topChunks) {
                     if (isStopped) break;
 
-                    const prompt = `Analyse ce texte et extrais un passage pertinent sur: ${theme}, ${mots}. Format JSON: {passages:[{texte:'...', titre:'...', contexte:'...'}]}. Texte: ${chunk.text.substring(0, 3000)}`;
+                    const prompt = `CONTEXTE: Tu es un expert théologien.
+TACHE: Analyse le texte ci-dessous pour trouver des passages PARFAITEMENT PERTINENTS sur le thème : "${theme}" et les mots-clés : "${mots}".
+RÈGLES :
+1. D'abord, évalue si le texte parle VRAIMENT du sujet. Si c'est hors-sujet ou trop vague -> Renvoie { "passages": [] }
+2. Si pertinent, extrais le passage exact (sans le modifier). 
+3. Ajoute un titre court et le contexte.
+FORMAT JSON STRICT : { "passages": [{ "texte": "...", "titre": "...", "contexte": "..." }] }
+TEXTE A ANALYSER :
+${chunk.text}`;
 
                     try {
                         const hfResponse = await fetch(HF_API_URL, {
@@ -576,10 +631,48 @@
                     } catch (e) { console.error(e); }
                 }
 
+                // 5. Validation et Filtrage IA
                 if (countFound > 0) {
-                    document.getElementById('results-content').innerHTML = `<h4>✅ ${countFound} passages trouvés</h4>${htmlResults}`;
-                    document.getElementById('pdf-placeholder').style.display = 'none';
-                    document.getElementById('pdf-ready').style.display = 'block';
+                    displayLoading(`Audit de qualité sur ${countFound} passages...`);
+                    const validationResult = await validerPassages(currentPassages, theme, mots);
+
+                    if (validationResult && validationResult.validations) {
+                        // Filtrage strict
+                        const passes = validationResult.validations.filter(v => v.pertinent && v.score >= 65);
+                        const validatedIds = new Set(passes.map(v => v.id));
+
+                        currentPassages = currentPassages.filter((_, idx) => validatedIds.has(idx));
+
+                        // Recalcul du HTML
+                        htmlResults = "";
+                        currentPassages.forEach(p => {
+                            htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #d4af37; padding:15px; margin-bottom:15px;">
+                                        <h5 style="color:#1c2541; margin-bottom:5px;">${p.titre || 'Extrait'}</h5>
+                                        <p style="font-style:italic; font-size:0.9rem;">"${p.texte}"</p></div>`;
+                        });
+
+                        if (currentPassages.length > 0) {
+                            const conf = validationResult.confiance_globale || 80;
+                            let badgeColor = conf > 80 ? '#27ae60' : (conf > 60 ? '#f39c12' : '#c0392b');
+
+                            document.getElementById('results-content').innerHTML = `
+                                <div style="margin-bottom:15px; padding:8px; background:${badgeColor}20; border-radius:8px; color:${badgeColor}; font-weight:bold; font-size:0.8rem; text-align:center;">
+                                    🔍 Confiance IA : ${conf}/100
+                                </div>
+                                <h4>✅ ${currentPassages.length} passages validés</h4>
+                                ${htmlResults}`;
+                            document.getElementById('pdf-placeholder').style.display = 'none';
+                            document.getElementById('pdf-ready').style.display = 'block';
+                        } else {
+                            document.getElementById('results-content').innerHTML = "❌ Passages trouvés mais jugés hors-sujet après validation.";
+                        }
+                    } else {
+                        // Fallback si validation échoue
+                        document.getElementById('results-content').innerHTML = `<h4>✅ ${countFound} passages trouvés (Non validés)</h4>${htmlResults}`;
+                        document.getElementById('pdf-placeholder').style.display = 'none';
+                        document.getElementById('pdf-ready').style.display = 'block';
+                    }
+
                 } else {
                     document.getElementById('results-content').innerHTML = "❌ L'IA n'a pas trouvé de citations exactes.";
                 }
@@ -588,6 +681,42 @@
                 document.getElementById('results-content').innerHTML = `❌ Erreur: ${err.message}`;
             } finally {
                 btn.disabled = false;
+            }
+        }
+
+        async function validerPassages(passages, theme, mots) {
+            if (!passages || passages.length === 0) return null;
+
+            // On limite la taille pour ne pas exploser le token limit
+            const passageText = passages.map((p, i) => `[${i}] Titre: ${p.titre}\nExtrait: "${p.texte.substring(0, 150)}..."`).join("\n\n");
+
+            const prompt = `Tu as extrait ${passages.length} passages pour la recherche : "${theme}" + "${mots}".
+PASSAGES :
+${passageText}
+
+CONSIGNE :
+Pour CHAQUE passage, évalue s'il traite VRAIMENT et EXPLICITEMENT le sujet demandé.
+Score 0-100 (100 = parfaitement pertinent, 0 = hors-sujet).
+RÉPONDS UNIQUEMENT EN JSON :
+{
+"validations": [
+{"id": 0, "pertinent": true, "score": 85, "raison": "..."},
+{"id": 1, "pertinent": false, "score": 40, "raison": "..."}
+],
+"confiance_globale": 78
+}`;
+
+            try {
+                const response = await fetch(HF_API_URL, {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+                const data = await response.json();
+                const jsonMatch = data.response.match(/\{[\s\S]*\}/);
+                return jsonMatch ? JSON.parse(jsonMatch[0]) : null;
+            } catch (e) {
+                console.error("Erreur Validation:", e);
+                return null;
             }
         }
 
