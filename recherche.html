@@ -259,7 +259,8 @@
                 </div>
 
                 <div class="btn-row">
-                    <button id="search-btn" class="btn btn-primary" onclick="startSearch()">CHARGEMENT...</button>
+                    <button id="search-btn" class="btn btn-primary" disabled onclick="startSearch()">⚠️ 2 CRITÈRES
+                        REQUIS</button>
                     <button class="btn btn-stop" onclick="isStopped=true"><span>🛑</span> ARRÊTER</button>
                 </div>
             </div>
@@ -472,30 +473,70 @@
             pdfMake.createPdf(docDef).download('Extraits_DSAM.pdf');
         }
 
-        // Initialisation APRÈS chargement du DOM
-        document.addEventListener('DOMContentLoaded', function () {
-            const status = document.getElementById('system-status');
+        // === INITIALISATION SIMPLIFIÉE ===
+        function checkAndInit() {
+            console.log("Tentative d'initialisation...");
+
+            const btn = document.getElementById('search-btn');
             const themeInput = document.getElementById('theme-input');
             const motsInput = document.getElementById('mots-cles-input');
+            const status = document.getElementById('system-status');
+
+            if (!btn || !themeInput || !motsInput) {
+                console.log("Éléments pas encore prêts, nouvelle tentative dans 50ms");
+                setTimeout(checkAndInit, 50);
+                return;
+            }
+
+            console.log("✓ Tous les éléments trouvés !");
 
             if (status) {
-                status.innerHTML = "● Système Prêt (v4)";
+                status.innerHTML = "● Système Actif";
                 status.style.color = "#27ae60";
             }
 
-            // Validation initiale
+            // Fonction de validation
+            window.validateForm = function () {
+                const theme = themeInput.value.trim();
+                const mots = motsInput.value.trim();
+
+                const combined = theme + " " + mots.replace(/,/g, " ");
+                const words = combined.match(/[a-zA-ZÀ-ÖØ-öø-ÿ]{2,}/g) || [];
+                const uniqueWords = words.filter((item, pos) => words.indexOf(item) === pos);
+
+                console.log("Validation:", uniqueWords.length, "mots uniques");
+
+                if (uniqueWords.length >= 2) {
+                    btn.disabled = false;
+                    btn.innerHTML = '🚀 LANCER LA RECHERCHE';
+                    btn.style.opacity = "1";
+                    btn.style.background = "linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #1c2541 100%)";
+                } else {
+                    btn.disabled = true;
+                    btn.innerHTML = '⚠️ 2 CRITÈRES REQUIS';
+                    btn.style.opacity = "0.6";
+                    btn.style.background = "#dfe4ea";
+                }
+            };
+
+            // Première validation
             validateForm();
 
-            // Écouteurs d'événements
-            if (themeInput) {
-                themeInput.addEventListener('input', validateForm);
-                themeInput.addEventListener('keyup', validateForm);
-            }
-            if (motsInput) {
-                motsInput.addEventListener('input', validateForm);
-                motsInput.addEventListener('keyup', validateForm);
-            }
-        });
+            // Écouteurs
+            themeInput.addEventListener('input', validateForm);
+            motsInput.addEventListener('input', validateForm);
+            themeInput.addEventListener('keyup', validateForm);
+            motsInput.addEventListener('keyup', validateForm);
+
+            console.log("✓ Système initialisé avec succès");
+        }
+
+        // Lancement
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', checkAndInit);
+        } else {
+            checkAndInit();
+        }
     </script>
 </body>
 
