@@ -648,8 +648,15 @@ ${chunk.text}`;
 
                 // 5. Validation et Filtrage IA
                 if (countFound > 0) {
-                    displayLoading(`Audit de qualité sur ${countFound} passages...`);
-                    const validationResult = await validerPassages(currentPassages, theme, mots);
+    // VALIDATION DÉSACTIVÉE TEMPORAIREMENT POUR TEST
+    if (currentPassages.length > 5) {
+        currentPassages = currentPassages.slice(0, 5);
+    }
+    
+    document.getElementById('results-content').innerHTML = `<h4>✅ ${currentPassages.length} extraits trouvés</h4>${htmlResults}`;
+    document.getElementById('pdf-placeholder').style.display = 'none';
+    document.getElementById('pdf-ready').style.display = 'block';
+}
 
                     if (validationResult && validationResult.validations) {
                         const passes = validationResult.validations.filter(v => {
