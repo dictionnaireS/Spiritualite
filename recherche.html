@@ -11,13 +11,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600&display=swap"
-        rel="stylesheet">
-
     <style>
         :root {
             --primary-dark: #1c2541;
@@ -25,64 +18,36 @@
             --accent-gold: #d4af37;
             --bg-parchment: #f9f9f6;
             --text-dark: #2b2b2b;
-            --text-light: #f5e6b3;
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
         }
 
         body {
             font-family: 'Lora', serif;
             background-color: var(--bg-parchment);
-            background-image: radial-gradient(#d4af3710 1px, transparent 1px);
-            background-size: 20px 20px;
             color: var(--text-dark);
-            line-height: 1.4;
-            font-size: 0.9rem;
+            line-height: 1.5;
         }
 
         header {
             background: var(--primary-gradient);
-            color: var(--text-light);
+            color: white;
             text-align: center;
-            padding: 30px 20px;
+            padding: 30px;
             border-bottom: 3px solid var(--accent-gold);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        header h1 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.4rem;
-            font-weight: 700;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 20px auto;
-            padding: 0 15px;
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 20px;
-        }
-
-        @media (max-width: 900px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
+            padding: 0 20px;
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
+            background: white;
             border-radius: 12px;
-            padding: 20px;
+            padding: 25px;
             box-shadow: var(--shadow);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .form-group {
@@ -90,70 +55,30 @@
         }
 
         label {
-            display: inline-block;
+            display: block;
             margin-bottom: 8px;
-            font-family: 'Lora', serif;
-            font-weight: 600;
+            font-weight: bold;
             color: #5c67f2;
-            font-size: 1rem;
-            background: #e8ebff;
-            padding: 4px 12px;
-            border-radius: 8px;
         }
 
         input[type="text"],
         select {
             width: 100%;
-            padding: 10px 14px;
-            border: 1px solid #eaedf0;
+            padding: 12px;
+            border: 1px solid #ddd;
             border-radius: 8px;
-            font-family: 'Lora', serif;
-        }
-
-        .radio-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .radio-item {
-            flex: 1;
-            min-width: 100px;
-            position: relative;
-        }
-
-        .radio-item input {
-            position: absolute;
-            opacity: 0;
-        }
-
-        .radio-label {
-            display: block;
-            padding: 8px 5px;
-            background: #fff;
-            border: 1.5px solid #eaedf0;
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-
-        .radio-item input:checked+.radio-label {
-            border-color: #5c67f2;
-            background: #5c67f2;
-            color: #ffffff;
+            font-size: 1rem;
         }
 
         .btn {
-            padding: 12px 20px;
+            padding: 15px;
             border: none;
-            border-radius: 10px;
-            font-weight: 700;
+            border-radius: 8px;
+            font-weight: bold;
             cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
             width: 100%;
+            text-transform: uppercase;
+            transition: 0.3s;
         }
 
         .btn-primary {
@@ -165,21 +90,31 @@
             background: #dfe4ea;
             color: #a4b0be;
             cursor: not-allowed;
-            opacity: 0.6;
         }
 
-        .search-loader {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(52, 152, 219, 0.1);
-            border-left-color: #3498db;
+        .result-item {
+            border-left: 4px solid var(--accent-gold);
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #fff;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+            margin: 10px auto;
         }
 
         @keyframes spin {
-            to {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
                 transform: rotate(360deg);
             }
         }
@@ -189,70 +124,47 @@
 <body>
 
     <header>
-        <p>Outil de recherche d'extraits du</p>
-        <h1>Dictionnaire de Spiritualité Ascétique et Mystique</h1>
+        <h1>Dictionnaire de Spiritualité</h1>
+        <p>Recherche d'extraits théologiques</p>
     </header>
 
     <div class="container">
-        <aside>
-            <div class="card" style="border-left: 5px solid #27ae60;">
-                <h3 style="font-size: 1rem;">🔗 Système Prêt</h3>
-                <p style="font-size: 0.75rem;">Connecté via Hugging Face.</p>
+        <div class="card">
+            <div class="form-group">
+                <label>Choix du Tome</label>
+                <select id="tome-select">
+                    <option value="Tome_1.docx">Tome I (A-B)</option>
+                    <option value="Tome_2_1.docx">Tome II.1 (C-D)</option>
+                </select>
             </div>
-        </aside>
 
-        <main>
-            <div class="card">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                 <div class="form-group">
-                    <label>Tome du dictionnaire</label>
-                    <select id="tome-select">
-                        <option value="Tome_1.docx">Tome I - Exemple (Local)</option>
-                        <option value="Tome_2_1.docx">Tome II.1 - C à D (Local)</option>
-                    </select>
+                    <label>Thématique</label>
+                    <input type="text" id="theme-input" placeholder="Ex: Oraison" onkeyup="validateForm()">
                 </div>
-
-                <label>Profil de recherche</label>
-                <div class="radio-group">
-                    <div class="radio-item"><input type="radio" name="profil" id="p-eq" value="equilibre" checked><label
-                            for="p-eq" class="radio-label">⚖️ Équilibré</label></div>
-                    <div class="radio-item"><input type="radio" name="profil" id="p-sp"
-                            value="spiritualite_vivante"><label for="p-sp" class="radio-label">🕊️ Spiritualité</label>
-                    </div>
-                    <div class="radio-item"><input type="radio" name="profil" id="p-ac" value="academique"><label
-                            for="p-ac" class="radio-label">📚 Académique</label></div>
-                    <div class="radio-item"><input type="radio" name="profil" id="p-hi" value="historique"><label
-                            for="p-hi" class="radio-label">📖 Historique</label></div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="form-group">
-                        <label>Thématique</label>
-                        <input type="text" id="theme-input" placeholder="Ex: Oraison" oninput="validateForm()">
-                    </div>
-                    <div class="form-group">
-                        <label>Mots-clés</label>
-                        <input type="text" id="mots-cles-input" placeholder="Ex: union, grâce" oninput="validateForm()">
-                    </div>
-                </div>
-
-                <button id="search-btn" class="btn btn-primary" disabled onclick="startSearch()">⚠️ 2 CRITÈRES
-                    REQUIS</button>
-            </div>
-
-            <div id="results-area" class="card" style="min-height: 200px;">
-                <h3>📊 RÉSULTATS</h3>
-                <div id="results-content" style="margin-top: 15px;">En attente de saisie...</div>
-                <div id="pdf-ready" style="display:none; margin-top: 20px;">
-                    <button class="btn btn-primary" onclick="downloadPDF()">📥 TÉLÉCHARGER LE PDF COMPLET</button>
+                <div class="form-group">
+                    <label>Mots-clés</label>
+                    <input type="text" id="mots-cles-input" placeholder="Ex: Jean de la Croix" onkeyup="validateForm()">
                 </div>
             </div>
-        </main>
+
+            <button id="search-btn" class="btn btn-primary" disabled onclick="startSearch()">⚠️ 2 CRITÈRES
+                REQUIS</button>
+        </div>
+
+        <div id="results-area" class="card">
+            <h3>📊 RÉSULTATS</h3>
+            <div id="results-content">En attente de saisie...</div>
+            <div id="pdf-btn-area" style="display:none; margin-top:20px;">
+                <button class="btn btn-primary" onclick="downloadPDF()">📥 TÉLÉCHARGER LE PDF</button>
+            </div>
+        </div>
     </div>
 
     <script>
         const HF_API_URL = "https://gildasr-cle.hf.space/ask_secure";
         const MODEL_NAME = "google/gemini-pro-1.5";
-
         let currentPassages = [];
 
         function validateForm() {
@@ -260,146 +172,90 @@
             const mots = document.getElementById('mots-cles-input').value.trim();
             const btn = document.getElementById('search-btn');
 
-            const allTerms = (theme + " " + mots.replace(/,/g, " ")).split(/\s+/).filter(s => s.length >= 2);
-            const uniqueTerms = [...new Set(allTerms)];
+            const combined = theme + " " + mots.replace(/,/g, " ");
+            const words = combined.match(/[a-zA-ZÀ-ÖØ-öø-ÿ]{2,}/g) || [];
 
-            if (uniqueTerms.length >= 2) {
+            if (words.length >= 2) {
                 btn.disabled = false;
                 btn.innerHTML = '🚀 LANCER LA RECHERCHE';
-                btn.style.opacity = "1";
             } else {
                 btn.disabled = true;
                 btn.innerHTML = '⚠️ 2 CRITÈRES REQUIS';
-                btn.style.opacity = "0.6";
             }
-        }
-
-        function displayLoading(msg) {
-            document.getElementById('results-content').innerHTML = `<div class="search-loader"></div><p style="text-align: center;">${msg}</p>`;
         }
 
         async function startSearch() {
             const btn = document.getElementById('search-btn');
-            const tomeFile = document.getElementById('tome-select').value;
+            const tome = document.getElementById('tome-select').value;
             const theme = document.getElementById('theme-input').value;
             const mots = document.getElementById('mots-cles-input').value;
 
             btn.disabled = true;
+            document.getElementById('results-content').innerHTML = '<div class="loader"></div><p style="text-align:center">Analyse du dictionnaire en cours...</p>';
             currentPassages = [];
-            document.getElementById('pdf-ready').style.display = 'none';
+            document.getElementById('pdf-btn-area').style.display = 'none';
 
             try {
-                displayLoading("Lecture du dictionnaire...");
-                const response = await fetch(tomeFile);
+                const response = await fetch(tome);
                 const arrayBuffer = await response.arrayBuffer();
-                const rawText = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
-                const fullText = rawText.value;
+                const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+                const text = result.value;
 
-                const chunks = fullText.split(/\n\s*\n/).reduce((acc, p) => {
-                    let last = acc[acc.length - 1];
-                    if (!last || last.length > 4000) acc.push(p);
-                    else acc[acc.length - 1] += "\n\n" + p;
-                    return acc;
-                }, []);
+                const chunks = text.split(/\n\s*\n/).filter(c => c.length > 200);
+                const themeLow = theme.toLowerCase();
 
-                displayLoading("Analyse théologique...");
-                const tier1 = ["oraison", "contemplation", "extase", "mystique", "union divine"];
-                const themeTerms = theme.toLowerCase().split(/\s+/).filter(t => t.length > 3);
+                let scored = chunks.map(c => {
+                    let s = 0;
+                    if (c.toLowerCase().includes(themeLow)) s += 50;
+                    if (c.includes('"')) s += 10;
+                    return { text: c, score: s };
+                }).sort((a, b) => b.score - a.score).slice(0, 10);
 
-                let scoredChunks = chunks.map((text, idx) => {
-                    let score = 0;
-                    const low = text.toLowerCase();
-                    themeTerms.forEach(t => { if (low.includes(t)) score += 15; });
-                    tier1.forEach(w => { if (low.includes(w)) score += 10; });
-                    if (text.includes('"')) score += 20;
-                    return { text, score };
-                }).filter(c => c.score > 20).sort((a, b) => b.score - a.score).slice(0, 8);
-
-                if (scoredChunks.length === 0) {
-                    document.getElementById('results-content').innerHTML = "❌ Aucun passage spirituel majeur trouvé.";
-                    btn.disabled = false;
-                    return;
-                }
-
-                displayLoading("Extraction des perles spirituelles...");
-                let htmlResults = "";
-                const profil = document.querySelector('input[name="profil"]:checked').value;
-
-                for (let chunk of scoredChunks) {
-                    const prompt = `Assistant archiviste. RECOPIE MOT POUR MOT des passages sur "${theme}" et "${mots}". 
-                    Profil: ${profil}. 
-                    RÈGLES: Copie exacte. Longueur > 10 lignes. Pas de notes de bas de page. 
-                    FORMAT JSON: {"passages": [{"titre": "...", "texte": "...", "contexte": "..."}]}`;
+                let htmlOut = "";
+                for (let item of scored) {
+                    const prompt = `Extraire un passage précis et long sur "${theme}" et "${mots}" depuis le texte suivant. Recopie le texte fidèlement. Réponds en JSON : {"titre": "...", "texte": "...", "contexte": "..."}`;
 
                     try {
-                        const res = await fetch(HF_API_URL, {
+                        const hfRes = await fetch(HF_API_URL, {
                             method: "POST", headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ prompt: prompt + "\nSOURCE:\n" + chunk.text, model: MODEL_NAME })
+                            body: JSON.stringify({ prompt: prompt + "\n\nTEXTE:\n" + item.text, model: MODEL_NAME })
                         });
-                        const data = await res.json();
-                        const jsonMatch = data.response.match(/\{.*\}/s);
-                        if (jsonMatch) {
-                            const parsed = JSON.parse(jsonMatch[0]);
-                            (parsed.passages || []).forEach(p => {
-                                currentPassages.push(p);
-                                htmlResults += `<div style="border-left:3px solid #d4af37; padding:10px; margin-bottom:10px; background:#fff;">
-                                    <b>${p.titre}</b><br><small>${p.texte.substring(0, 200)}...</small>
-                                </div>`;
-                                document.getElementById('results-content').innerHTML = htmlResults;
-                            });
+                        const data = await hfRes.json();
+                        const match = data.response.match(/\{.*\}/s);
+                        if (match) {
+                            const p = JSON.parse(match[0]);
+                            currentPassages.push(p);
+                            htmlOut += `<div class="result-item"><b>${p.titre}</b><br><small>${p.texte.substring(0, 200)}...</small></div>`;
+                            document.getElementById('results-content').innerHTML = htmlOut;
                         }
                     } catch (e) { }
                 }
 
                 if (currentPassages.length > 0) {
-                    currentPassages = currentPassages.filter(p => p.texte.length > 400);
-
-                    if (currentPassages.length > 5) currentPassages = currentPassages.slice(0, 5);
-
-                    if (currentPassages.length > 0) {
-                        document.getElementById('results-content').innerHTML = `<h4>✨ ${currentPassages.length} extraits validés</h4>` +
-                            currentPassages.map(p => `
-                            <div class="card" style="background:white; border-left:4px solid #27ae60;">
-                                <b>${p.titre}</b><p style="font-size:0.85rem; font-style:italic;">"${p.texte.substring(0, 300)}..."</p>
-                                <span style="font-size:0.7rem; color:#27ae60;">✓ Complet dans le PDF</span>
-                            </div>
-                        `).join('');
-                        document.getElementById('pdf-ready').style.display = 'block';
-                    } else {
-                        document.getElementById('results-content').innerHTML = "⚠️ Critères de profondeur non atteints. Essayez d'autres mots.";
-                    }
+                    document.getElementById('pdf-btn-area').style.display = 'block';
                 } else {
-                    document.getElementById('results-content').innerHTML = "❌ L'IA n'a pas trouvé de passages assez consistants.";
+                    document.getElementById('results-content').innerHTML = "❌ Aucun extrait trouvé.";
                 }
 
             } catch (err) {
-                document.getElementById('results-content').innerHTML = "❌ Erreur système.";
+                document.getElementById('results-content').innerHTML = "❌ Erreur : assurez-vous de lancer le fichier via un serveur (ou GitHub Pages).";
             } finally {
                 btn.disabled = false;
-                validateForm();
             }
         }
 
         function downloadPDF() {
             const docDef = {
-                pageSize: 'A4',
                 content: [
-                    { text: 'RÉSULTATS DE RECHERCHE - DSAM', style: 'header' },
+                    { text: 'Extraits du Dictionnaire de Spiritualité', fontSize: 18, bold: true, margin: [0, 0, 0, 20] },
                     ...currentPassages.map(p => [
-                        { text: p.titre, style: 'title', margin: [0, 20, 0, 5] },
-                        { text: p.contexte, italic: true, fontSize: 9, margin: [0, 0, 0, 10] },
-                        { text: p.texte, alignment: 'justify', fontSize: 11 }
+                        { text: p.titre, fontSize: 14, bold: true, margin: [0, 15, 0, 5] },
+                        { text: p.texte, alignment: 'justify' }
                     ])
-                ],
-                styles: {
-                    header: { fontSize: 18, bold: true, alignment: 'center', margin: [0, 0, 0, 20] },
-                    title: { fontSize: 14, bold: true, color: '#1c2541' }
-                }
+                ]
             };
-            pdfMake.createPdf(docDef).download('Extraits_Spiritualite.pdf');
+            pdfMake.createPdf(docDef).download('Extraits_DSAM.pdf');
         }
-
-        window.addEventListener('load', validateForm);
     </script>
 </body>
 
