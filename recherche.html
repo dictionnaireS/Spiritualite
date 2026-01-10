@@ -559,7 +559,7 @@
                 });
 
                 scores.sort((a, b) => b.score - a.score);
-                const topChunks = scores.slice(0, 15);
+                const topChunks = scores.slice(0, 10); // Réduit de 15 à 10 car on veut moins de passages mais plus longs
 
                 if (topChunks.length === 0) {
                     document.getElementById('results-content').innerHTML = "❌ Aucun extrait trouvé. Essayez d'autres mots-clés.";
@@ -574,22 +574,26 @@
 
                 for (const chunk of topChunks) {
                     if (isStopped) break;
-                    if (currentPassages.length >= 8) break;
+                    if (currentPassages.length >= 5) break; // Limite à 5 passages longs au lieu de 8 courts
 
                     const prompt = `CONSIGNE STRICTE : Tu dois répondre UNIQUEMENT en JSON valide, SANS AUCUN texte avant ou après, SANS balises markdown.
 
 Tu es un extracteur de passages. Dans le texte ci-dessous, trouve tous les passages qui concernent "${theme}" et "${mots}".
 
 RÈGLES IMPÉRATIVES :
-1. Copie EXACTEMENT le texte source (10-20 lignes minimum par passage)
-2. Format JSON STRICT (pas de \`\`\`json, juste le JSON pur)
-3. Si rien ne correspond : {"passages":[]}
+1. Copie EXACTEMENT le texte source - MINIMUM 30 lignes par passage (environ 1500-2000 caractères)
+2. Ne coupe JAMAIS au milieu d'une phrase - termine toujours la phrase complète
+3. Ne coupe JAMAIS au milieu d'un mot
+4. Ajoute un "contexte" d'UNE phrase expliquant de quoi parle l'extrait
+5. Format JSON STRICT (pas de \`\`\`json, juste le JSON pur)
+6. Maximum 3 passages (mais longs et complets)
+7. Si rien ne correspond : {"passages":[]}
 
 FORMAT ATTENDU :
-{"passages":[{"texte":"copie mot pour mot du texte...","titre":"titre court descriptif"}]}
+{"passages":[{"texte":"copie mot pour mot, LONGUE, phrases complètes...","titre":"titre court","contexte":"Une phrase de contexte"}]}
 
 TEXTE SOURCE :
-${chunk.text.substring(0, 3500)}
+${chunk.text.substring(0, 4500)}
 
 RÉPONDS MAINTENANT EN JSON PUR :`;
 
@@ -624,14 +628,15 @@ RÉPONDS MAINTENANT EN JSON PUR :`;
                                     console.log("JSON parsé avec succès:", parsed);
                                     if (parsed.passages && Array.isArray(parsed.passages) && parsed.passages.length > 0) {
                                         parsed.passages.forEach(p => {
-                                            if (p.texte && p.texte.length > 150) {
+                                            if (p.texte && p.texte.length > 800) { // Minimum 800 caractères au lieu de 150
                                                 currentPassages.push(p);
                                                 passageAjouteParIA = true;
-                                                const apercu = p.texte.length > 350 ? p.texte.substring(0, 350) + "..." : p.texte;
+                                                const apercu = p.texte.length > 400 ? p.texte.substring(0, 400) + "..." : p.texte;
                                                 htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #d4af37; padding:15px; margin-bottom:15px;">
                                                     <h5 style="color:#1c2541; margin-bottom:5px;">${p.titre || 'Extrait'}</h5>
+                                                    ${p.contexte ? `<p style="font-size:0.85rem; color:#8B0000; font-style:italic; margin-bottom:8px;"><strong>Contexte:</strong> ${p.contexte}</p>` : ''}
                                                     <p style="font-style:italic; font-size:0.9rem; color:#555;">"${apercu}"</p>
-                                                    <div style="font-size:0.7rem; color:#888; text-align:right;">(Texte complet dans le PDF)</div>
+                                                    <div style="font-size:0.7rem; color:#888; text-align:right;">(${p.texte.length} caractères - Texte complet dans le PDF)</div>
                                                 </div>`;
                                             }
                                         });
@@ -647,19 +652,26 @@ RÉPONDS MAINTENANT EN JSON PUR :`;
                     }
 
                     // FALLBACK SYSTEMATIQUE : Si l'IA n'a rien donné, on prend le chunk brut
-                    if (!passageAjouteParIA && chunk.text.length > 400 && currentPassages.length < 8) {
-                        const excerpt = chunk.text.substring(0, 1200);
+                    if (!passageAjouteParIA && chunk.text.length > 1000 && currentPassages.length < 5) { // Augmenté de 400 à 1000
+                        // Trouver la fin de phrase la plus proche
+                        let excerpt = chunk.text.substring(0, 2000); // Augmenté de 1200 à 2000
+                        let lastPeriod = excerpt.lastIndexOf('.');
+                        if (lastPeriod > 1500) { // Si on trouve un point après 1500 caractères
+                            excerpt = excerpt.substring(0, lastPeriod + 1);
+                        }
+                        
                         currentPassages.push({
                             texte: excerpt,
                             titre: `Extrait sur ${theme}`,
-                            contexte: "Passage identifié par recherche textuelle"
+                            contexte: `Passage identifié par recherche textuelle (score: ${chunk.score})`
                         });
                         
-                        const apercu = excerpt.length > 350 ? excerpt.substring(0, 350) + "..." : excerpt;
+                        const apercu = excerpt.length > 400 ? excerpt.substring(0, 400) + "..." : excerpt;
                         htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #f39c12; padding:15px; margin-bottom:15px;">
                             <h5 style="color:#1c2541; margin-bottom:5px;">Extrait sur ${theme}</h5>
+                            <p style="font-size:0.85rem; color:#8B0000; font-style:italic; margin-bottom:8px;"><strong>Contexte:</strong> Passage identifié par recherche textuelle (score: ${chunk.score})</p>
                             <p style="font-style:italic; font-size:0.9rem; color:#555;">"${apercu}"</p>
-                            <div style="font-size:0.7rem; color:#f39c12;">⚠ Extrait direct (IA indisponible)</div>
+                            <div style="font-size:0.7rem; color:#f39c12;">⚠ Extrait direct (${excerpt.length} caractères)</div>
                         </div>`;
                     }
 
@@ -669,22 +681,29 @@ RÉPONDS MAINTENANT EN JSON PUR :`;
                     }
                 }
 
-                // GARANTIE FINALE : Si vraiment rien n'a été trouvé, forcer les 5 meilleurs chunks
+                // GARANTIE FINALE : Si vraiment rien n'a été trouvé, forcer les 3 meilleurs chunks
                 if (currentPassages.length === 0 && topChunks.length > 0) {
                     console.log("Mode garantie: ajout forcé des meilleurs chunks");
-                    topChunks.slice(0, 5).forEach((chunk, i) => {
-                        const excerpt = chunk.text.substring(0, 1500);
+                    topChunks.slice(0, 3).forEach((chunk, i) => { // Réduit de 5 à 3
+                        // Trouver la fin de phrase
+                        let excerpt = chunk.text.substring(0, 2500);
+                        let lastPeriod = excerpt.lastIndexOf('.');
+                        if (lastPeriod > 2000) {
+                            excerpt = excerpt.substring(0, lastPeriod + 1);
+                        }
+                        
                         currentPassages.push({
                             texte: excerpt,
                             titre: `Passage pertinent ${i + 1}`,
-                            contexte: `Score de pertinence: ${chunk.score}`
+                            contexte: `Extrait identifié par analyse textuelle (score de pertinence: ${chunk.score})`
                         });
                         
-                        const apercu = excerpt.length > 350 ? excerpt.substring(0, 350) + "..." : excerpt;
+                        const apercu = excerpt.length > 400 ? excerpt.substring(0, 400) + "..." : excerpt;
                         htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #3498db; padding:15px; margin-bottom:15px;">
                             <h5 style="color:#1c2541; margin-bottom:5px;">Passage pertinent ${i + 1}</h5>
+                            <p style="font-size:0.85rem; color:#8B0000; font-style:italic; margin-bottom:8px;"><strong>Contexte:</strong> Extrait identifié par analyse textuelle (score: ${chunk.score})</p>
                             <p style="font-style:italic; font-size:0.9rem; color:#555;">"${apercu}"</p>
-                            <div style="font-size:0.7rem; color:#3498db;">ℹ️ Extrait par analyse textuelle (Score: ${chunk.score})</div>
+                            <div style="font-size:0.7rem; color:#3498db;">ℹ️ Extrait par analyse textuelle (${excerpt.length} caractères)</div>
                         </div>`;
                     });
                 }
