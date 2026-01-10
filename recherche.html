@@ -642,38 +642,54 @@ ${chunk.text}`;
                     const validationResult = await validerPassages(currentPassages, theme, mots);
 
                     if (validationResult && validationResult.validations) {
-                        // Filtrage strict
-                        const passes = validationResult.validations.filter(v => v.pertinent && v.score >= 65);
-                        const validatedIds = new Set(passes.map(v => v.id));
+                        // A. Filtrage Strict sur la QUALITÉ et la LONGUEUR
+                        const passes = validationResult.validations.filter(v => {
+                            // On récupère le passage correspondant
+                            let p = currentPassages[v.id];
 
+                            // CRITÈRES DE QUALITÉ :
+                            // 1. L'IA de validation a dit "Pertinent"
+                            // 2. Score de confiance > 65
+                            // 3. Longueur > 300 caractères (Adieu les phrases orphelines !)
+                            return v.pertinent && v.score >= 65 && p.texte.length > 300;
+                        });
+
+                        // Récupération des IDs validés
+                        const validatedIds = new Set(passes.map(v => v.id));
                         currentPassages = currentPassages.filter((_, idx) => validatedIds.has(idx));
+
+                        // B. Limitation du NOMBRE (3 à 5)
+                        // On garde les 5 premiers max pour ne pas noyer l'utilisateur
+                        if (currentPassages.length > 5) {
+                            currentPassages = currentPassages.slice(0, 5);
+                        }
 
                         // Recalcul du HTML
                         htmlResults = "";
                         currentPassages.forEach(p => {
                             htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #d4af37; padding:15px; margin-bottom:15px;">
                                         <h5 style="color:#1c2541; margin-bottom:5px;">${p.titre || 'Extrait'}</h5>
-                                        <p style="font-style:italic; font-size:0.9rem;">"${p.texte}"</p></div>`;
+                                        <p style="font-style:italic; font-size:0.9rem; text-align:justify;">"${p.texte}"</p></div>`;
                         });
 
-                        if (currentPassages.length > 0) {
+                        // C. Affichage Final sous condition
+                        if (currentPassages.length >= 1) {
                             const conf = validationResult.confiance_globale || 80;
                             let badgeColor = conf > 80 ? '#27ae60' : (conf > 60 ? '#f39c12' : '#c0392b');
 
                             document.getElementById('results-content').innerHTML = `
                                 <div style="margin-bottom:15px; padding:8px; background:${badgeColor}20; border-radius:8px; color:${badgeColor}; font-weight:bold; font-size:0.8rem; text-align:center;">
-                                    🔍 Confiance IA : ${conf}/100
+                                    🔍 Sélection IA : ${currentPassages.length} extraits majeurs (Confiance : ${conf}/100)
                                 </div>
-                                <h4>✅ ${currentPassages.length} passages validés</h4>
                                 ${htmlResults}`;
                             document.getElementById('pdf-placeholder').style.display = 'none';
                             document.getElementById('pdf-ready').style.display = 'block';
                         } else {
-                            document.getElementById('results-content').innerHTML = "❌ Passages trouvés mais jugés hors-sujet après validation.";
+                            document.getElementById('results-content').innerHTML = "❌ Aucun extrait assez consistant (>300 caractères) trouvé.";
                         }
                     } else {
                         // Fallback si validation échoue
-                        document.getElementById('results-content').innerHTML = `<h4>✅ ${countFound} passages trouvés (Non validés)</h4>${htmlResults}`;
+                        document.getElementById('results-content').innerHTML = `<h4>✅ ${countFound} passages bruts (Non validés)</h4>${htmlResults}`;
                         document.getElementById('pdf-placeholder').style.display = 'none';
                         document.getElementById('pdf-ready').style.display = 'block';
                     }
