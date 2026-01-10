@@ -517,7 +517,6 @@
                 // Découpage intelligent (respecte les paragraphes)
                 const chunks = decoupageIntelligent(fullText);
 
-                // Fonction de découpage intelligent (incluse ici)
                 function decoupageIntelligent(text) {
                     const cleanText = text.replace(/\r\n/g, "\n");
                     const paragraphs = cleanText.split(/\n\s*\n/);
@@ -530,7 +529,7 @@
                         if (!p) continue;
                         if (current.length + p.length > TARGET + 1000) {
                             chunks.push(current);
-                            current = p; // Pas d'overlap complexe pour rester simple et rapide
+                            current = p;
                         } else {
                             current += (current ? "\n\n" : "") + p;
                         }
@@ -542,7 +541,6 @@
                 // 3. Scoring Avancé (Densité + Vocabulaire)
                 displayLoading("Analyse de pertinence...");
                 let scores = [];
-                // On nettoie les mots clés
                 const keywordsRaw = (theme + " " + mots).toLowerCase().split(/[\s,]+/);
                 const searchTerms = keywordsRaw.filter(k => k.length > 3);
 
@@ -553,7 +551,6 @@
                     let score = 0;
                     const lowerChunk = chunk.toLowerCase();
 
-                    // A. Occurrence
                     let foundIndices = [];
                     searchTerms.forEach(term => {
                         let idx = lowerChunk.indexOf(term);
@@ -564,14 +561,12 @@
                         }
                     });
 
-                    // B. Densité
                     if (foundIndices.length >= 2) {
                         foundIndices.sort((a, b) => a - b);
                         const range = foundIndices[foundIndices.length - 1] - foundIndices[0];
                         if (range < 500) score += 20;
                     }
 
-                    // C. Vocabulaire
                     spiritualWords.forEach(w => { if (lowerChunk.includes(w)) score += 1; });
 
                     if (score > 10) scores.push({ id: index, score: score, text: chunk });
@@ -591,22 +586,19 @@
                 let htmlResults = "";
                 let countFound = 0;
 
+                // Définition des instructions selon le profil
+                const profilDescriptions = {
+                    "equilibre": "Cherche un équilibre entre la doctrine théologique et l'application pratique/spirituelle.",
+                    "spiritualite_vivante": "PRIORITÉ ABSOLUE : Sélectionne uniquement les passages qui nourrissent l'âme, parlent d'expérience mystique, de prière et de vie intérieure. Ignore le jargon purement historique ou administratif.",
+                    "academique": "PRIORITÉ ABSOLUE : Cherche la précision dogmatique, les grandes définitions théologiques et les structures de pensée complexes.",
+                    "historique": "PRIORITÉ ABSOLUE : Focalise-toi sur l'histoire, les dates, l'évolution des concepts à travers les siècles et les auteurs."
+                };
+                const profilInstruction = profilDescriptions[document.querySelector('input[name="profil"]:checked').value] || profilDescriptions["equilibre"];
+
                 for (const chunk of topChunks) {
                     if (isStopped) break;
 
-                    // Définition des instructions selon le profil
-                    const profilDescriptions = {
-                        "equilibre": "Cherche un équilibre entre la doctrine théologique et l'application pratique/spirituelle.",
-                        "spiritualite_vivante": "PRIORITÉ ABSOLUE : Sélectionne uniquement les passages qui nourrissent l'âme, parlent d'expérience mystique, de prière et de vie intérieure. Ignore le jargon purement historique ou administratif.",
-                        "academique": "PRIORITÉ ABSOLUE : Cherche la précision dogmatique, les grandes définitions théologiques et les structures de pensée complexes.",
-                        "historique": "PRIORITÉ ABSOLUE : Focalise-toi sur l'histoire, les dates, l'évolution des concepts à travers les siècles et les auteurs."
-                    };
-                    const profilInstruction = profilDescriptions[document.querySelector('input[name="profil"]:checked').value] || profilDescriptions["equilibre"];
-
-                    for (const chunk of topChunks) {
-                        if (isStopped) break;
-
-                        const prompt = `CONTEXTE: Tu es un assistant archiviste de haute précision.
+                    const prompt = `CONTEXTE: Tu es un assistant archiviste de haute précision.
 TACHE: Dans le texte fourni ci-dessous, TROUVE et RECOPIE des passages sur : "${theme}" et "${mots}".
 
 ORIENTATION DE RECHERCHE (TRES IMPORTANT) :
@@ -623,109 +615,92 @@ FORMAT JSON STRICT : { "passages": [{ "texte": "...", "titre": "...", "contexte"
 TEXTE SOURCE :
 ${chunk.text}`;
 
-                        try {
-                            const hfResponse = await fetch(HF_API_URL, {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({ prompt: prompt })
-                            });
+                    try {
+                        const hfResponse = await fetch(HF_API_URL, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ prompt: prompt })
+                        });
 
-                            const data = await hfResponse.json();
-                            const content = data.response;
+                        const data = await hfResponse.json();
+                        const content = data.response;
 
-                            // Extraction du JSON dans la réponse
-                            const jsonMatch = content.match(/\{.*\}/s);
-                            if (jsonMatch) {
-                                const parsed = JSON.parse(jsonMatch[0]);
-                                if (parsed.passages) {
-                                    parsed.passages.forEach(p => {
-                                        currentPassages.push(p);
-                                        countFound++;
-                                        htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #d4af37; padding:15px; margin-bottom:15px;">
+                        const jsonMatch = content.match(/\{.*\}/s);
+                        if (jsonMatch) {
+                            const parsed = JSON.parse(jsonMatch[0]);
+                            if (parsed.passages) {
+                                parsed.passages.forEach(p => {
+                                    currentPassages.push(p);
+                                    countFound++;
+                                    htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #d4af37; padding:15px; margin-bottom:15px;">
                                         <h5 style="color:#1c2541; margin-bottom:5px;">${p.titre || 'Extrait'}</h5>
                                         <p style="font-style:italic; font-size:0.9rem;">"${p.texte}"</p></div>`;
-                                    });
-                                }
+                                });
                             }
-                        } catch (e) { console.error(e); }
-                    }
+                        }
+                    } catch (e) { console.error(e); }
+                }
 
-                    // 5. Validation et Filtrage IA
-                    if (countFound > 0) {
-                        displayLoading(`Audit de qualité sur ${countFound} passages...`);
-                        const validationResult = await validerPassages(currentPassages, theme, mots);
+                // 5. Validation et Filtrage IA
+                if (countFound > 0) {
+                    displayLoading(`Audit de qualité sur ${countFound} passages...`);
+                    const validationResult = await validerPassages(currentPassages, theme, mots);
 
-                        if (validationResult && validationResult.validations) {
-                            // A. Filtrage Strict sur la QUALITÉ et la LONGUEUR
-                            const passes = validationResult.validations.filter(v => {
-                                // On récupère le passage correspondant
-                                let p = currentPassages[v.id];
+                    if (validationResult && validationResult.validations) {
+                        const passes = validationResult.validations.filter(v => {
+                            let p = currentPassages[v.id];
+                            return v.pertinent && v.score >= 65 && p.texte.length > 400;
+                        });
 
-                                // CRITÈRES DE QUALITÉ :
-                                // 1. L'IA de validation a dit "Pertinent"
-                                // 2. Score de confiance > 65
-                                // 3. Longueur > 300 caractères (Adieu les phrases orphelines !)
-                                return v.pertinent && v.score >= 65 && p.texte.length > 300;
-                            });
+                        const validatedIds = new Set(passes.map(v => v.id));
+                        currentPassages = currentPassages.filter((_, idx) => validatedIds.has(idx));
 
-                            // Récupération des IDs validés
-                            const validatedIds = new Set(passes.map(v => v.id));
-                            currentPassages = currentPassages.filter((_, idx) => validatedIds.has(idx));
+                        if (currentPassages.length > 5) {
+                            currentPassages = currentPassages.slice(0, 5);
+                        }
 
-                            // B. Limitation du NOMBRE (3 à 5)
-                            // On garde les 5 premiers max pour ne pas noyer l'utilisateur
-                            if (currentPassages.length > 5) {
-                                currentPassages = currentPassages.slice(0, 5);
-                            }
-
-                            // Recalcul du HTML
-                            htmlResults = "";
-                            currentPassages.forEach(p => {
-                                htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #d4af37; padding:15px; margin-bottom:15px;">
+                        htmlResults = "";
+                        currentPassages.forEach(p => {
+                            htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #d4af37; padding:15px; margin-bottom:15px;">
                                         <h5 style="color:#1c2541; margin-bottom:5px;">${p.titre || 'Extrait'}</h5>
                                         <p style="font-style:italic; font-size:0.9rem; text-align:justify;">"${p.texte}"</p></div>`;
-                            });
+                        });
 
-                            // C. Affichage Final sous condition
-                            if (currentPassages.length >= 1) {
-                                const conf = validationResult.confiance_globale || 80;
-                                let badgeColor = conf > 80 ? '#27ae60' : (conf > 60 ? '#f39c12' : '#c0392b');
+                        if (currentPassages.length >= 1) {
+                            const conf = validationResult.confiance_globale || 80;
+                            let badgeColor = conf > 80 ? '#27ae60' : (conf > 60 ? '#f39c12' : '#c0392b');
 
-                                document.getElementById('results-content').innerHTML = `
+                            document.getElementById('results-content').innerHTML = `
                                 <div style="margin-bottom:15px; padding:8px; background:${badgeColor}20; border-radius:8px; color:${badgeColor}; font-weight:bold; font-size:0.8rem; text-align:center;">
                                     🔍 Sélection IA : ${currentPassages.length} extraits majeurs (Confiance : ${conf}/100)
                                 </div>
                                 ${htmlResults}`;
-                                document.getElementById('pdf-placeholder').style.display = 'none';
-                                document.getElementById('pdf-ready').style.display = 'block';
-                            } else {
-                                document.getElementById('results-content').innerHTML = "❌ Aucun extrait assez consistant (>300 caractères) trouvé.";
-                            }
-                        } else {
-                            // Fallback si validation échoue
-                            document.getElementById('results-content').innerHTML = `<h4>✅ ${countFound} passages bruts (Non validés)</h4>${htmlResults}`;
                             document.getElementById('pdf-placeholder').style.display = 'none';
                             document.getElementById('pdf-ready').style.display = 'block';
+                        } else {
+                            document.getElementById('results-content').innerHTML = "❌ Aucun extrait assez consistant (>400 caractères) trouvé.";
                         }
-
                     } else {
-                        document.getElementById('results-content').innerHTML = "❌ L'IA n'a pas trouvé de citations exactes.";
+                        document.getElementById('results-content').innerHTML = `<h4>✅ ${countFound} passages bruts (Non validés)</h4>${htmlResults}`;
+                        document.getElementById('pdf-placeholder').style.display = 'none';
+                        document.getElementById('pdf-ready').style.display = 'block';
                     }
-
-                } catch (err) {
-                    document.getElementById('results-content').innerHTML = `❌ Erreur: ${err.message}`;
-                } finally {
-                    btn.disabled = false;
+                } else {
+                    document.getElementById('results-content').innerHTML = "❌ L'IA n'a pas trouvé de citations exactes.";
                 }
+
+            } catch (err) {
+                document.getElementById('results-content').innerHTML = `❌ Erreur: ${err.message}`;
+            } finally {
+                btn.disabled = false;
             }
+        }
 
         async function validerPassages(passages, theme, mots) {
-                if (!passages || passages.length === 0) return null;
+            if (!passages || passages.length === 0) return null;
+            const passageText = passages.map((p, i) => `[${i}] Titre: ${p.titre}\nExtrait: "${p.texte.substring(0, 150)}..."`).join("\n\n");
 
-                // On limite la taille pour ne pas exploser le token limit
-                const passageText = passages.map((p, i) => `[${i}] Titre: ${p.titre}\nExtrait: "${p.texte.substring(0, 150)}..."`).join("\n\n");
-
-                const prompt = `Tu as extrait ${passages.length} passages pour la recherche : "${theme}" + "${mots}".
+            const prompt = `Tu as extrait ${passages.length} passages pour la recherche : "${theme}" + "${mots}".
 PASSAGES :
 ${passageText}
 
@@ -741,123 +716,84 @@ RÉPONDS UNIQUEMENT EN JSON :
 "confiance_globale": 78
 }`;
 
-                try {
-                    const response = await fetch(HF_API_URL, {
-                        method: "POST", headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ prompt: prompt })
-                    });
-                    const data = await response.json();
-                    const jsonMatch = data.response.match(/\{[\s\S]*\}/);
-                    return jsonMatch ? JSON.parse(jsonMatch[0]) : null;
-                } catch (e) {
-                    console.error("Erreur Validation:", e);
-                    return null;
+            try {
+                const response = await fetch(HF_API_URL, {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+                const data = await response.json();
+                const jsonMatch = data.response.match(/\{[\s\S]*\}/);
+                return jsonMatch ? JSON.parse(jsonMatch[0]) : null;
+            } catch (e) {
+                console.error("Erreur Validation:", e);
+                return null;
+            }
+        }
+
+        // --- Générateur PDF PREMIUM (Client-Side) ---
+        function downloadPDF() {
+            if (currentPassages.length === 0) return;
+
+            const dateGen = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            const docDefinition = {
+                pageSize: 'A4',
+                pageMargins: [60, 100, 60, 80],
+                background: function (currentPage) {
+                    return { canvas: [{ type: 'rect', x: 0, y: 0, w: 595.28, h: 841.89, color: '#FDF8F0' }] };
+                },
+                header: function (currentPage, pageCount) {
+                    if (currentPage === 1) return null;
+                    return {
+                        columns: [{ text: 'Extraits du Dictionnaire de Spiritualité Ascétique et Mystique', alignment: 'center', color: '#555555', fontSize: 10, italics: true, margin: [0, 40, 0, 0] }],
+                        canvas: [{ type: 'line', x1: 60, y1: 55, x2: 535, y2: 55, lineWidth: 0.5, lineColor: '#CCCCCC' }]
+                    };
+                },
+                content: [
+                    { text: '\n\n\n' },
+                    { text: 'EXTRAITS DU DICTIONNAIRE DE SPIRITUALITÉ', style: 'grandTitre' },
+                    { text: 'ASCÉTIQUE ET MYSTIQUE', style: 'grandTitre' },
+                    { text: '\n' },
+                    { canvas: [{ type: 'line', x1: 150, y1: 5, x2: 445, y2: 5, lineWidth: 1.5, lineColor: '#2c3e50' }] },
+                    { text: '\n\n' },
+                    { text: 'Critères de recherche :', style: 'sousTitre' },
+                    {
+                        text: [
+                            { text: 'Volume : ', bold: true }, document.getElementById('tome-select').options[document.getElementById('tome-select').selectedIndex].text, '\n',
+                            { text: 'Profil : ', bold: true }, document.querySelector('input[name="profil"]:checked').nextElementSibling.innerText, '\n',
+                            { text: 'Thématique : ', bold: true }, document.getElementById('theme-input').value, '\n',
+                            { text: 'Mots-clés : ', bold: true }, document.getElementById('mots-cles-input').value
+                        ],
+                        style: 'normal', alignment: 'center', margin: [0, 0, 0, 20]
+                    },
+                    { text: `Généré le ${dateGen}`, style: 'normal', color: '#888', alignment: 'center', fontSize: 9 },
+                    { text: '', pageBreak: 'after' },
+                    ...currentPassages.map((p, i) => {
+                        return [
+                            { text: `Extrait ${i + 1} : ${p.titre || 'Sans titre'}`, style: 'titreSection' },
+                            p.contexte ? [{ text: 'CONTEXTE', style: 'labelContexte' }, { text: p.contexte, style: 'contexte' }] : [],
+                            { canvas: [{ type: 'line', x1: 0, y1: 5, x2: 100, y2: 5, lineWidth: 0.5, lineColor: '#CCCCCC' }], margin: [0, 5, 0, 10] },
+                            { text: p.texte, style: 'texteExtrait' },
+                            { text: '\n\n', margin: [0, 20] }
+                        ];
+                    }).flat()
+                ],
+                styles: {
+                    grandTitre: { fontSize: 20, bold: true, alignment: 'center', color: '#1c2541', margin: [0, 5] },
+                    sousTitre: { fontSize: 14, bold: true, alignment: 'center', color: '#2c3e50', margin: [0, 10] },
+                    titreSection: { fontSize: 14, bold: true, color: '#1c2541', margin: [0, 10, 0, 5] },
+                    texteExtrait: { fontSize: 11, alignment: 'justify', lineHeight: 1.5, color: '#333333' },
+                    contexte: { fontSize: 10, italics: true, color: '#555555', margin: [20, 0, 20, 10], alignment: 'justify' },
+                    labelContexte: { fontSize: 8, bold: true, color: '#8B0000', margin: [0, 5, 0, 2] },
+                    normal: { fontSize: 11, color: '#333' }
+                },
+                footer: function (currentPage, pageCount) {
+                    return { columns: [{ text: `— ${currentPage} —`, alignment: 'center', color: '#555555', fontSize: 10 }], margin: [0, 20] };
                 }
-            }
+            };
 
-            // --- Générateur PDF PREMIUM (Client-Side) ---
-            function downloadPDF() {
-                if (currentPassages.length === 0) return;
-
-                const dateGen = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-
-                const docDefinition = {
-                    pageSize: 'A4',
-                    pageMargins: [60, 100, 60, 80], // Marges [g, h, d, b]
-
-                    // Fond Beige
-                    background: function (currentPage) {
-                        return {
-                            canvas: [{ type: 'rect', x: 0, y: 0, w: 595.28, h: 841.89, color: '#FDF8F0' }]
-                        };
-                    },
-
-                    // En-tête avec ligne fine
-                    header: function (currentPage, pageCount) {
-                        if (currentPage === 1) return null; // Pas d'en-tête page 1
-                        return {
-                            columns: [
-                                {
-                                    text: 'Extraits du Dictionnaire de Spiritualité Ascétique et Mystique',
-                                    alignment: 'center', color: '#555555', fontSize: 10, italics: true,
-                                    margin: [0, 40, 0, 0]
-                                }
-                            ],
-                            // Ligne de l'en-tête
-                            canvas: [{ type: 'line', x1: 60, y1: 55, x2: 535, y2: 55, lineWidth: 0.5, lineColor: '#CCCCCC' }]
-                        };
-                    },
-
-                    content: [
-                        // PAGE DE TITRE
-                        { text: '\n\n\n' },
-                        { text: 'EXTRAITS DU DICTIONNAIRE DE SPIRITUALITÉ', style: 'grandTitre' },
-                        { text: 'ASCÉTIQUE ET MYSTIQUE', style: 'grandTitre' },
-                        { text: '\n' },
-                        { canvas: [{ type: 'line', x1: 150, y1: 5, x2: 445, y2: 5, lineWidth: 1.5, lineColor: '#2c3e50' }] },
-                        { text: '\n\n' },
-
-                        { text: 'Critères de recherche :', style: 'sousTitre' },
-                        {
-                            text: [
-                                { text: 'Thématique : ', bold: true }, document.getElementById('theme-input').value, '\n',
-                                { text: 'Mots-clés : ', bold: true }, document.getElementById('mots-cles-input').value
-                            ],
-                            style: 'normal', alignment: 'center', margin: [0, 0, 0, 20]
-                        },
-
-                        { text: `Généré le ${dateGen}`, style: 'normal', color: '#888', alignment: 'center', fontSize: 9 },
-                        { text: '', pageBreak: 'after' }, // Saut de page
-
-                        // CONTENU DES EXTRAITS
-                        ...currentPassages.map((p, i) => {
-                            return [
-                                // Titre Extrait
-                                { text: `Extrait ${i + 1} : ${p.titre || 'Sans titre'}`, style: 'titreSection' },
-
-                                // Contexte (si présent)
-                                p.contexte ? [
-                                    { text: 'CONTEXTE', style: 'labelContexte' },
-                                    { text: p.contexte, style: 'contexte' }
-                                ] : [],
-
-                                // Ligne séparation fine gauche
-                                { canvas: [{ type: 'line', x1: 0, y1: 5, x2: 100, y2: 5, lineWidth: 0.5, lineColor: '#CCCCCC' }], margin: [0, 5, 0, 10] },
-
-                                // Texte Principal (Justifié)
-                                { text: p.texte, style: 'texteExtrait' },
-
-                                // Espace
-                                { text: '\n\n', margin: [0, 20] }
-                            ];
-                        }).flat()
-
-                    ],
-
-                    // Styles
-                    styles: {
-                        grandTitre: { fontSize: 20, bold: true, alignment: 'center', color: '#1c2541', margin: [0, 5] },
-                        sousTitre: { fontSize: 14, bold: true, alignment: 'center', color: '#2c3e50', margin: [0, 10] },
-                        titreSection: { fontSize: 14, bold: true, color: '#1c2541', margin: [0, 10, 0, 5] },
-                        texteExtrait: { fontSize: 11, alignment: 'justify', lineHeight: 1.5, color: '#333333' },
-                        contexte: { fontSize: 10, italics: true, color: '#555555', margin: [20, 0, 20, 10], alignment: 'justify' },
-                        labelContexte: { fontSize: 8, bold: true, color: '#8B0000', margin: [0, 5, 0, 2] },
-                        normal: { fontSize: 11, color: '#333' }
-                    },
-
-                    // Pied de page
-                    footer: function (currentPage, pageCount) {
-                        return {
-                            columns: [
-                                { text: `— ${currentPage} —`, alignment: 'center', color: '#555555', fontSize: 10 }
-                            ],
-                            margin: [0, 20]
-                        };
-                    }
-                };
-
-                pdfMake.createPdf(docDefinition).download(`Resultats_DSAM_${Date.now()}.pdf`);
-            }
+            pdfMake.createPdf(docDefinition).download(`Resultats_DSAM_${Date.now()}.pdf`);
+        }
     </script>
 </body>
 
