@@ -472,24 +472,30 @@
             pdfMake.createPdf(docDef).download('Extraits_DSAM.pdf');
         }
 
-        // Initialisation immédiate
-        function initSystem() {
+        // Initialisation APRÈS chargement du DOM
+        document.addEventListener('DOMContentLoaded', function () {
             const status = document.getElementById('system-status');
+            const themeInput = document.getElementById('theme-input');
+            const motsInput = document.getElementById('mots-cles-input');
+
             if (status) {
-                status.innerHTML = "● Système Prêt (v3)";
+                status.innerHTML = "● Système Prêt (v4)";
                 status.style.color = "#27ae60";
             }
+
+            // Validation initiale
             validateForm();
-        }
 
-        // On lance immédiatement
-        initSystem();
-
-        // On ajoute les écouteurs sur les inputs
-        document.getElementById('theme-input').addEventListener('input', validateForm);
-        document.getElementById('mots-cles-input').addEventListener('input', validateForm);
-        document.getElementById('theme-input').addEventListener('keyup', validateForm);
-        document.getElementById('mots-cles-input').addEventListener('keyup', validateForm);
+            // Écouteurs d'événements
+            if (themeInput) {
+                themeInput.addEventListener('input', validateForm);
+                themeInput.addEventListener('keyup', validateForm);
+            }
+            if (motsInput) {
+                motsInput.addEventListener('input', validateForm);
+                motsInput.addEventListener('keyup', validateForm);
+            }
+        });
     </script>
 </body>
 
