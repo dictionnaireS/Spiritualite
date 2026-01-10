@@ -259,8 +259,7 @@
                 </div>
 
                 <div class="btn-row">
-                    <button id="search-btn" class="btn btn-primary" disabled onclick="startSearch()">⚠️ 2 CRITÈRES
-                        REQUIS</button>
+                    <button id="search-btn" class="btn btn-primary" onclick="startSearch()">CHARGEMENT...</button>
                     <button class="btn btn-stop" onclick="isStopped=true"><span>🛑</span> ARRÊTER</button>
                 </div>
             </div>
@@ -298,22 +297,30 @@
         let isStopped = false;
 
         function validateForm() {
-            const theme = document.getElementById('theme-input').value.trim();
-            const mots = document.getElementById('mots-cles-input').value.trim();
-            const btn = document.getElementById('search-btn');
+            try {
+                const theme = document.getElementById('theme-input').value.trim();
+                const mots = document.getElementById('mots-cles-input').value.trim();
+                const btn = document.getElementById('search-btn');
 
-            const allTerms = (theme + " " + mots.replace(/,/g, " ")).split(/\s+/).filter(s => s.length >= 2);
-            const uniqueTerms = [...new Set(allTerms)];
+                // On récupère tous les mots de 2+ lettres
+                const combined = theme + " " + mots.replace(/,/g, " ");
+                const words = combined.match(/[a-zA-ZÀ-ÖØ-öø-ÿ]{2,}/g) || [];
 
-            if (uniqueTerms.length >= 2) {
-                btn.disabled = false;
-                btn.innerHTML = '🚀 LANCER LA RECHERCHE';
-                btn.style.opacity = "1";
-            } else {
-                btn.disabled = true;
-                btn.innerHTML = '⚠️ 2 CRITÈRES REQUIS';
-                btn.style.opacity = "0.6";
-            }
+                // On enlève juste les doublons pour la vérification
+                const uniqueWords = words.filter((item, pos) => words.indexOf(item) == pos);
+
+                if (uniqueWords.length >= 2) {
+                    btn.disabled = false;
+                    btn.innerHTML = '🚀 LANCER LA RECHERCHE';
+                    btn.style.opacity = "1";
+                    btn.style.background = "linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #1c2541 100%)";
+                } else {
+                    btn.disabled = true;
+                    btn.innerHTML = '⚠️ 2 CRITÈRES REQUIS';
+                    btn.style.opacity = "0.6";
+                    btn.style.background = "#dfe4ea";
+                }
+            } catch (e) { console.error("Validation Error:", e); }
         }
 
         function displayLoading(msg) {
@@ -465,7 +472,13 @@
             pdfMake.createPdf(docDef).download('Extraits_DSAM.pdf');
         }
 
-        window.addEventListener('load', validateForm);
+        // Initialisation forcée au chargement
+        window.onload = function () {
+            validateForm();
+            // On ajoute les écouteurs d'événements par sécurité
+            document.getElementById('theme-input').addEventListener('keyup', validateForm);
+            document.getElementById('mots-cles-input').addEventListener('keyup', validateForm);
+        };
     </script>
 </body>
 
