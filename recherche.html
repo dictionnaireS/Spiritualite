@@ -686,8 +686,11 @@ ${chunk.text}`;
                             document.getElementById('pdf-placeholder').style.display = 'none';
                             document.getElementById('pdf-ready').style.display = 'block';
                         } else {
-                            document.getElementById('results-content').innerHTML = "❌ Aucun extrait assez consistant (>400 caractères) trouvé.";
-                        }
+    // Si la validation est trop stricte, montrer quand même les résultats bruts
+    document.getElementById('results-content').innerHTML = `<h4>✅ ${countFound} passages trouvés (validation assouplie)</h4>${htmlResults}`;
+    document.getElementById('pdf-placeholder').style.display = 'none';
+    document.getElementById('pdf-ready').style.display = 'block';
+}
                     } else {
                         document.getElementById('results-content').innerHTML = `<h4>✅ ${countFound} passages bruts (Non validés)</h4>${htmlResults}`;
                         document.getElementById('pdf-placeholder').style.display = 'none';
