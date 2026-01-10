@@ -26,10 +26,7 @@
             --bg-parchment: #f9f9f6;
             --text-dark: #2b2b2b;
             --text-light: #f5e6b3;
-            --info-blue: rgba(232, 244, 248, 0.7);
-            --border-blue: #3498db;
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
         * {
@@ -55,7 +52,6 @@
             padding: 30px 20px;
             border-bottom: 3px solid var(--accent-gold);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            position: relative;
         }
 
         header h1 {
@@ -149,13 +145,6 @@
             color: #ffffff;
         }
 
-        .btn-row {
-            display: grid;
-            grid-template-columns: 3fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
         .btn {
             padding: 12px 20px;
             border: none;
@@ -164,10 +153,7 @@
             cursor: pointer;
             transition: 0.3s;
             text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            width: 100%;
         }
 
         .btn-primary {
@@ -182,26 +168,19 @@
             opacity: 0.6;
         }
 
-        .btn-stop {
-            background: #fff;
-            color: #2b2b2b;
-            border: 1px solid #dfe4ea;
+        .search-loader {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(52, 152, 219, 0.1);
+            border-left-color: #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
         }
 
-        .btn-stop span {
-            color: #ff4757;
-        }
-
-        .results-section {
-            display: grid;
-            grid-template-columns: 1fr 280px;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        @media (max-width: 900px) {
-            .results-section {
-                grid-template-columns: 1fr;
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
             }
         }
     </style>
@@ -217,10 +196,8 @@
     <div class="container">
         <aside>
             <div class="card" style="border-left: 5px solid #27ae60;">
-                <h3 style="font-size: 1rem;">🔗 Connexion Sécurisée</h3>
+                <h3 style="font-size: 1rem;">🔗 Système Prêt</h3>
                 <p style="font-size: 0.75rem;">Connecté via Hugging Face.</p>
-                <div id="system-status" style="color:#e67e22; font-size:0.7rem; margin-top:5px;">● Initialisation JS...
-                </div>
             </div>
         </aside>
 
@@ -258,33 +235,15 @@
                     </div>
                 </div>
 
-                <div class="btn-row">
-                    <button id="search-btn" class="btn btn-primary" disabled onclick="startSearch()">⚠️ 2 CRITÈRES
-                        REQUIS</button>
-                    <button class="btn btn-stop" onclick="isStopped=true"><span>🛑</span> ARRÊTER</button>
-                </div>
+                <button id="search-btn" class="btn btn-primary" disabled onclick="startSearch()">⚠️ 2 CRITÈRES
+                    REQUIS</button>
             </div>
 
-            <div class="results-section">
-                <div class="results-area">
-                    <div id="results-card" class="card" style="min-height: 300px;">
-                        <h3>📊 RÉSULTATS</h3>
-                        <div id="results-content" style="margin-top: 15px; color:#7f8c8d; font-style:italic;">En attente
-                            de recherche...</div>
-                    </div>
-                </div>
-                <div class="pdf-area">
-                    <div class="card">
-                        <h3>📕 PDF</h3>
-                        <div id="pdf-placeholder"
-                            style="text-align:center; padding:20px; color:#a4b0be; border:2px dashed #d1d8e0; border-radius:12px; margin-top:10px;">
-                            <span style="font-size:2rem; display:block;">📄</span>Disponible après recherche.
-                        </div>
-                        <div id="pdf-ready" style="display:none; margin-top: 15px;">
-                            <button class="btn btn-primary" style="width:100%;" onclick="downloadPDF()">TÉLÉCHARGER LE
-                                PDF</button>
-                        </div>
-                    </div>
+            <div id="results-area" class="card" style="min-height: 200px;">
+                <h3>📊 RÉSULTATS</h3>
+                <div id="results-content" style="margin-top: 15px;">En attente de saisie...</div>
+                <div id="pdf-ready" style="display:none; margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="downloadPDF()">📥 TÉLÉCHARGER LE PDF COMPLET</button>
                 </div>
             </div>
         </main>
@@ -295,33 +254,24 @@
         const MODEL_NAME = "google/gemini-pro-1.5";
 
         let currentPassages = [];
-        let isStopped = false;
 
         function validateForm() {
-            try {
-                const theme = document.getElementById('theme-input').value.trim();
-                const mots = document.getElementById('mots-cles-input').value.trim();
-                const btn = document.getElementById('search-btn');
+            const theme = document.getElementById('theme-input').value.trim();
+            const mots = document.getElementById('mots-cles-input').value.trim();
+            const btn = document.getElementById('search-btn');
 
-                // On récupère tous les mots de 2+ lettres
-                const combined = theme + " " + mots.replace(/,/g, " ");
-                const words = combined.match(/[a-zA-ZÀ-ÖØ-öø-ÿ]{2,}/g) || [];
+            const allTerms = (theme + " " + mots.replace(/,/g, " ")).split(/\s+/).filter(s => s.length >= 2);
+            const uniqueTerms = [...new Set(allTerms)];
 
-                // On enlève juste les doublons pour la vérification
-                const uniqueWords = words.filter((item, pos) => words.indexOf(item) == pos);
-
-                if (uniqueWords.length >= 2) {
-                    btn.disabled = false;
-                    btn.innerHTML = '🚀 LANCER LA RECHERCHE';
-                    btn.style.opacity = "1";
-                    btn.style.background = "linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #1c2541 100%)";
-                } else {
-                    btn.disabled = true;
-                    btn.innerHTML = '⚠️ 2 CRITÈRES REQUIS';
-                    btn.style.opacity = "0.6";
-                    btn.style.background = "#dfe4ea";
-                }
-            } catch (e) { console.error("Validation Error:", e); }
+            if (uniqueTerms.length >= 2) {
+                btn.disabled = false;
+                btn.innerHTML = '🚀 LANCER LA RECHERCHE';
+                btn.style.opacity = "1";
+            } else {
+                btn.disabled = true;
+                btn.innerHTML = '⚠️ 2 CRITÈRES REQUIS';
+                btn.style.opacity = "0.6";
+            }
         }
 
         function displayLoading(msg) {
@@ -329,7 +279,6 @@
         }
 
         async function startSearch() {
-            isStopped = false;
             const btn = document.getElementById('search-btn');
             const tomeFile = document.getElementById('tome-select').value;
             const theme = document.getElementById('theme-input').value;
@@ -338,10 +287,8 @@
             btn.disabled = true;
             currentPassages = [];
             document.getElementById('pdf-ready').style.display = 'none';
-            document.getElementById('pdf-placeholder').style.display = 'block';
 
             try {
-                // 1. Chargement et Découpage
                 displayLoading("Lecture du dictionnaire...");
                 const response = await fetch(tomeFile);
                 const arrayBuffer = await response.arrayBuffer();
@@ -355,103 +302,78 @@
                     return acc;
                 }, []);
 
-                // 2. Scoring
-                displayLoading("Criblage théologique...");
-                const themeTerms = theme.toLowerCase().split(/\s+/).filter(t => t.length >= 3);
-                const keywordTerms = mots.toLowerCase().replace(/,/g, " ").split(/\s+/).filter(t => t.length >= 3);
+                displayLoading("Analyse théologique...");
+                const tier1 = ["oraison", "contemplation", "extase", "mystique", "union divine"];
+                const themeTerms = theme.toLowerCase().split(/\s+/).filter(t => t.length > 3);
 
-                const vocabTier1 = ["oraison", "contemplation", "extase", "union mystique"];
-                const vocabTier2 = ["âme", "grâce", "prière", "mystique", "divin"];
-
-                let scores = chunks.map((chunk, index) => {
+                let scoredChunks = chunks.map((text, idx) => {
                     let score = 0;
-                    const low = chunk.toLowerCase();
-
+                    const low = text.toLowerCase();
                     themeTerms.forEach(t => { if (low.includes(t)) score += 15; });
-                    keywordTerms.forEach(k => { if (low.includes(k)) score += 10; });
+                    tier1.forEach(w => { if (low.includes(w)) score += 10; });
+                    if (text.includes('"')) score += 20;
+                    return { text, score };
+                }).filter(c => c.score > 20).sort((a, b) => b.score - a.score).slice(0, 8);
 
-                    vocabTier1.forEach(w => { if (low.includes(w)) score += 3; });
-                    vocabTier2.forEach(w => { if (low.includes(w)) score += 1; });
-
-                    // Bonus Quotes & Markers
-                    if (low.includes('"') || low.includes('«')) score += 20;
-                    if (/^[A-ZÀ-Z]{2,}/.test(chunk.trim())) score += 20;
-
-                    return { id: index, text: chunk, score };
-                });
-
-                scores.sort((a, b) => b.score - a.score);
-                const topChunks = scores.filter(s => s.score > 10).slice(0, 20); // 20 chunks, score > 10
-
-                if (topChunks.length === 0) {
-                    document.getElementById('results-content').innerHTML = "❌ Aucun extrait probant trouvé. Essayez d'autres mots.";
-                    btn.disabled = false; return;
+                if (scoredChunks.length === 0) {
+                    document.getElementById('results-content').innerHTML = "❌ Aucun passage spirituel majeur trouvé.";
+                    btn.disabled = false;
+                    return;
                 }
 
-                // 3. Extraction IA
-                displayLoading("L'IA affine les passages...");
-                const profil = document.querySelector('input[name="profil"]:checked').value;
+                displayLoading("Extraction des perles spirituelles...");
                 let htmlResults = "";
+                const profil = document.querySelector('input[name="profil"]:checked').value;
 
-                for (let chunk of topChunks) {
-                    if (isStopped) break;
+                for (let chunk of scoredChunks) {
                     const prompt = `Assistant archiviste. RECOPIE MOT POUR MOT des passages sur "${theme}" et "${mots}". 
-                    Profil: ${profil}. REGLES: COPIE EXACTE. Longueur > 10 lignes. 
+                    Profil: ${profil}. 
+                    RÈGLES: Copie exacte. Longueur > 10 lignes. Pas de notes de bas de page. 
                     FORMAT JSON: {"passages": [{"titre": "...", "texte": "...", "contexte": "..."}]}`;
 
                     try {
-                        const hfRes = await fetch(HF_API_URL, {
+                        const res = await fetch(HF_API_URL, {
                             method: "POST", headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ prompt: prompt + "\nSOURCE:\n" + chunk.text, model: MODEL_NAME })
                         });
-                        const data = await hfRes.json();
+                        const data = await res.json();
                         const jsonMatch = data.response.match(/\{.*\}/s);
                         if (jsonMatch) {
                             const parsed = JSON.parse(jsonMatch[0]);
                             (parsed.passages || []).forEach(p => {
                                 currentPassages.push(p);
-                                htmlResults += `<div style="border-left:3px solid #d4af37; padding:10px; margin-bottom:10px; background:#fff;"><b>${p.titre}</b><br><small>${p.texte.substring(0, 250)}...</small></div>`;
+                                htmlResults += `<div style="border-left:3px solid #d4af37; padding:10px; margin-bottom:10px; background:#fff;">
+                                    <b>${p.titre}</b><br><small>${p.texte.substring(0, 200)}...</small>
+                                </div>`;
                                 document.getElementById('results-content').innerHTML = htmlResults;
                             });
                         }
                     } catch (e) { }
                 }
 
-                // 4. Validation et Filtrage ULTRA-SOUPLE
                 if (currentPassages.length > 0) {
-                    displayLoading("Finalisation...");
-                    const validationPrompt = `Évalue ces ${currentPassages.length} passages pour "${theme}" + "${mots}". 
-                    RÉPONDS EN JSON : {"validations": [{"id": 0, "pertinent": true, "score": 80}]}`;
+                    currentPassages = currentPassages.filter(p => p.texte.length > 400);
 
-                    const valRes = await fetch(HF_API_URL, {
-                        method: "POST", headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ prompt: validationPrompt + "\nPASSAGES:\n" + currentPassages.map((p, i) => `[${i}] ${p.texte.substring(0, 100)}...`).join("\n"), model: MODEL_NAME })
-                    });
-                    const valData = await valRes.json();
-                    const valParsed = JSON.parse(valData.response.match(/\{.*\}/s)[0]);
-
-                    const filtered = valParsed.validations.filter(v => {
-                        let p = currentPassages[v.id];
-                        // FILTRAGE ULTRA-SOUPLE
-                        return v.pertinent && v.score >= 50 && p.texte.length > 400;
-                    });
-
-                    currentPassages = filtered.map(f => currentPassages[f.id]).slice(0, 5);
+                    if (currentPassages.length > 5) currentPassages = currentPassages.slice(0, 5);
 
                     if (currentPassages.length > 0) {
-                        document.getElementById('results-content').innerHTML = `<h4>✨ ${currentPassages.length} extraits trouvés</h4>` +
-                            currentPassages.map(p => `<div class="card" style="border-left:4px solid #27ae60;"><b>${p.titre}</b><p style="font-size:0.85rem; font-style:italic;">"${p.texte.substring(0, 400)}..."</p></div>`).join('');
+                        document.getElementById('results-content').innerHTML = `<h4>✨ ${currentPassages.length} extraits validés</h4>` +
+                            currentPassages.map(p => `
+                            <div class="card" style="background:white; border-left:4px solid #27ae60;">
+                                <b>${p.titre}</b><p style="font-size:0.85rem; font-style:italic;">"${p.texte.substring(0, 300)}..."</p>
+                                <span style="font-size:0.7rem; color:#27ae60;">✓ Complet dans le PDF</span>
+                            </div>
+                        `).join('');
                         document.getElementById('pdf-ready').style.display = 'block';
-                        document.getElementById('pdf-placeholder').style.display = 'none';
                     } else {
-                        document.getElementById('results-content').innerHTML = "⚠️ Aucun passage n'a passé le filtre final. Essayez des mots plus simples.";
+                        document.getElementById('results-content').innerHTML = "⚠️ Critères de profondeur non atteints. Essayez d'autres mots.";
                     }
                 } else {
-                    document.getElementById('results-content').innerHTML = "❌ Aucun extrait trouvé par l'IA.";
+                    document.getElementById('results-content').innerHTML = "❌ L'IA n'a pas trouvé de passages assez consistants.";
                 }
 
             } catch (err) {
-                document.getElementById('results-content').innerHTML = `❌ Erreur : ${err.message}`;
+                document.getElementById('results-content').innerHTML = "❌ Erreur système.";
             } finally {
                 btn.disabled = false;
                 validateForm();
@@ -462,81 +384,22 @@
             const docDef = {
                 pageSize: 'A4',
                 content: [
-                    { text: 'DIXIT - EXTRAITS DSAM', fontSize: 18, bold: true, alignment: 'center' },
-                    ...currentPassages.map((p, i) => [
-                        { text: p.titre, fontSize: 14, bold: true, margin: [0, 15, 0, 5] },
-                        { text: p.contexte, italic: true, fontSize: 10, margin: [0, 0, 0, 10] },
-                        { text: p.texte, alignment: 'justify' }
+                    { text: 'RÉSULTATS DE RECHERCHE - DSAM', style: 'header' },
+                    ...currentPassages.map(p => [
+                        { text: p.titre, style: 'title', margin: [0, 20, 0, 5] },
+                        { text: p.contexte, italic: true, fontSize: 9, margin: [0, 0, 0, 10] },
+                        { text: p.texte, alignment: 'justify', fontSize: 11 }
                     ])
-                ]
-            };
-            pdfMake.createPdf(docDef).download('Extraits_DSAM.pdf');
-        }
-
-        // === INITIALISATION SIMPLIFIÉE ===
-        function checkAndInit() {
-            console.log("Tentative d'initialisation...");
-
-            const btn = document.getElementById('search-btn');
-            const themeInput = document.getElementById('theme-input');
-            const motsInput = document.getElementById('mots-cles-input');
-            const status = document.getElementById('system-status');
-
-            if (!btn || !themeInput || !motsInput) {
-                console.log("Éléments pas encore prêts, nouvelle tentative dans 50ms");
-                setTimeout(checkAndInit, 50);
-                return;
-            }
-
-            console.log("✓ Tous les éléments trouvés !");
-
-            if (status) {
-                status.innerHTML = "● Système Actif";
-                status.style.color = "#27ae60";
-            }
-
-            // Fonction de validation
-            window.validateForm = function () {
-                const theme = themeInput.value.trim();
-                const mots = motsInput.value.trim();
-
-                const combined = theme + " " + mots.replace(/,/g, " ");
-                const words = combined.match(/[a-zA-ZÀ-ÖØ-öø-ÿ]{2,}/g) || [];
-                const uniqueWords = words.filter((item, pos) => words.indexOf(item) === pos);
-
-                console.log("Validation:", uniqueWords.length, "mots uniques");
-
-                if (uniqueWords.length >= 2) {
-                    btn.disabled = false;
-                    btn.innerHTML = '🚀 LANCER LA RECHERCHE';
-                    btn.style.opacity = "1";
-                    btn.style.background = "linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #1c2541 100%)";
-                } else {
-                    btn.disabled = true;
-                    btn.innerHTML = '⚠️ 2 CRITÈRES REQUIS';
-                    btn.style.opacity = "0.6";
-                    btn.style.background = "#dfe4ea";
+                ],
+                styles: {
+                    header: { fontSize: 18, bold: true, alignment: 'center', margin: [0, 0, 0, 20] },
+                    title: { fontSize: 14, bold: true, color: '#1c2541' }
                 }
             };
-
-            // Première validation
-            validateForm();
-
-            // Écouteurs
-            themeInput.addEventListener('input', validateForm);
-            motsInput.addEventListener('input', validateForm);
-            themeInput.addEventListener('keyup', validateForm);
-            motsInput.addEventListener('keyup', validateForm);
-
-            console.log("✓ Système initialisé avec succès");
+            pdfMake.createPdf(docDef).download('Extraits_Spiritualite.pdf');
         }
 
-        // Lancement
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', checkAndInit);
-        } else {
-            checkAndInit();
-        }
+        window.addEventListener('load', validateForm);
     </script>
 </body>
 
