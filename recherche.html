@@ -469,20 +469,24 @@
             const mots = document.getElementById('mots-cles-input').value.trim();
             const btn = document.getElementById('search-btn');
 
-            let count = 0;
-            if (theme) count++;
-            if (mots) {
-                const parts = mots.split(',').filter(s => s.trim().length > 0);
-                if (parts.length >= 2) count += 2;
-                else if (parts.length === 1) count++;
-            }
+            // Extraction des mots uniques (thème + mots clés)
+            // On sépare par virgule OU espace pour être plus souple
+            const allTerms = (theme + " " + mots.replace(/,/g, " ")).split(/\s+/).filter(s => s.length >= 2);
+            const uniqueTerms = [...new Set(allTerms)];
+
+            const count = uniqueTerms.length;
+            console.log(`Validation: ${count} termes trouvés (${uniqueTerms.join(', ')})`);
 
             if (count >= 2) {
                 btn.disabled = false;
+                btn.classList.remove('disabled'); // Au cas où une classe CSS bloque
+                btn.style.opacity = "1";
+                btn.style.cursor = "pointer";
                 btn.innerHTML = '🚀 RECHERCHER';
             } else {
                 btn.disabled = true;
                 btn.innerHTML = '⚠️ 2 CRITÈRES REQUIS';
+                btn.style.opacity = "0.5";
             }
         }
 
