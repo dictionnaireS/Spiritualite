@@ -573,7 +573,7 @@
                 });
 
                 scores.sort((a, b) => b.score - a.score);
-                const topChunks = scores.slice(0, 10);
+                const topChunks = scores.slice(0, 20);
 
                 if (topChunks.length === 0) {
                     document.getElementById('results-content').innerHTML = "❌ Aucun extrait pertinent trouvé.";
@@ -654,7 +654,7 @@ ${chunk.text}`;
                     if (validationResult && validationResult.validations) {
                         const passes = validationResult.validations.filter(v => {
                             let p = currentPassages[v.id];
-                            return v.pertinent && v.score >= 70 && p.texte.length > 700;
+                            return v.pertinent && v.score >= 50 && p.texte.length > 400;
                         });
 
                         const validatedIds = new Set(passes.map(v => v.id));
