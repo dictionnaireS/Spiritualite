@@ -584,6 +584,8 @@ Si rien ne correspond, retourne: {"passages":[]}
 TEXTE:
 ${chunk.text.substring(0, 3500)}`;
 
+                    let passageAjouteParIA = false;
+
                     try {
                         const hfResponse = await fetch(HF_API_URL, {
                             method: "POST",
@@ -594,73 +596,82 @@ ${chunk.text.substring(0, 3500)}`;
 
                         if (!hfResponse.ok) {
                             console.error("Erreur API:", hfResponse.status);
-                            continue;
-                        }
-
-                        const data = await hfResponse.json();
-                        let content = data.response || "";
-                        
-                        // Extraction JSON robuste
-                        let jsonMatch = content.match(/\{[\s\S]*"passages"[\s\S]*\}/);
-                        if (!jsonMatch) {
-                            // Fallback: créer un passage du chunk direct
-                            if (chunk.text.length > 500) {
-                                const excerpt = chunk.text.substring(0, 1200);
-                                currentPassages.push({
-                                    texte: excerpt,
-                                    titre: `Extrait sur ${theme}`,
-                                    contexte: "Passage identifié par recherche textuelle"
-                                });
-                                
-                                const apercu = excerpt.length > 350 ? excerpt.substring(0, 350) + "..." : excerpt;
-                                htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #d4af37; padding:15px; margin-bottom:15px;">
-                                    <h5 style="color:#1c2541; margin-bottom:5px;">Extrait sur ${theme}</h5>
-                                    <p style="font-style:italic; font-size:0.9rem; color:#555;">"${apercu}"</p>
-                                    <div style="font-size:0.7rem; color:#27ae60;">✓ Passage pertinent détecté</div>
-                                </div>`;
-                            }
-                            continue;
-                        }
-
-                        const parsed = JSON.parse(jsonMatch[0]);
-                        if (parsed.passages && Array.isArray(parsed.passages)) {
-                            parsed.passages.forEach(p => {
-                                if (p.texte && p.texte.length > 150) {
-                                    currentPassages.push(p);
-                                    const apercu = p.texte.length > 350 ? p.texte.substring(0, 350) + "..." : p.texte;
-                                    htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #d4af37; padding:15px; margin-bottom:15px;">
-                                        <h5 style="color:#1c2541; margin-bottom:5px;">${p.titre || 'Extrait'}</h5>
-                                        <p style="font-style:italic; font-size:0.9rem; color:#555;">"${apercu}"</p>
-                                        <div style="font-size:0.7rem; color:#888; text-align:right;">(Texte complet dans le PDF)</div>
-                                    </div>`;
+                        } else {
+                            const data = await hfResponse.json();
+                            let content = data.response || "";
+                            
+                            console.log("Réponse IA:", content.substring(0, 200));
+                            
+                            // Extraction JSON robuste
+                            let jsonMatch = content.match(/\{[\s\S]*"passages"[\s\S]*\}/);
+                            if (jsonMatch) {
+                                try {
+                                    const parsed = JSON.parse(jsonMatch[0]);
+                                    if (parsed.passages && Array.isArray(parsed.passages) && parsed.passages.length > 0) {
+                                        parsed.passages.forEach(p => {
+                                            if (p.texte && p.texte.length > 150) {
+                                                currentPassages.push(p);
+                                                passageAjouteParIA = true;
+                                                const apercu = p.texte.length > 350 ? p.texte.substring(0, 350) + "..." : p.texte;
+                                                htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #d4af37; padding:15px; margin-bottom:15px;">
+                                                    <h5 style="color:#1c2541; margin-bottom:5px;">${p.titre || 'Extrait'}</h5>
+                                                    <p style="font-style:italic; font-size:0.9rem; color:#555;">"${apercu}"</p>
+                                                    <div style="font-size:0.7rem; color:#888; text-align:right;">(Texte complet dans le PDF)</div>
+                                                </div>`;
+                                            }
+                                        });
+                                    }
+                                } catch (parseError) {
+                                    console.error("Erreur parsing JSON:", parseError);
                                 }
-                            });
-                        }
-
-                        processed++;
-                        if (processed % 3 === 0) {
-                            displayLoading(`Extraction en cours... (${processed}/${topChunks.length})`);
+                            }
                         }
 
                     } catch (e) {
                         console.error("Erreur extraction:", e);
-                        // En cas d'erreur, utiliser le chunk brut si pertinent
-                        if (chunk.text.length > 500 && currentPassages.length < 8) {
-                            const excerpt = chunk.text.substring(0, 1000);
-                            currentPassages.push({
-                                texte: excerpt,
-                                titre: `Extrait pertinent`,
-                                contexte: "Identifié par analyse textuelle"
-                            });
-                            
-                            const apercu = excerpt.length > 350 ? excerpt.substring(0, 350) + "..." : excerpt;
-                            htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #f39c12; padding:15px; margin-bottom:15px;">
-                                <h5 style="color:#1c2541; margin-bottom:5px;">Extrait pertinent</h5>
-                                <p style="font-style:italic; font-size:0.9rem; color:#555;">"${apercu}"</p>
-                                <div style="font-size:0.7rem; color:#888;">⚠ Extrait brut (erreur IA)</div>
-                            </div>`;
-                        }
                     }
+
+                    // FALLBACK SYSTEMATIQUE : Si l'IA n'a rien donné, on prend le chunk brut
+                    if (!passageAjouteParIA && chunk.text.length > 400 && currentPassages.length < 8) {
+                        const excerpt = chunk.text.substring(0, 1200);
+                        currentPassages.push({
+                            texte: excerpt,
+                            titre: `Extrait sur ${theme}`,
+                            contexte: "Passage identifié par recherche textuelle"
+                        });
+                        
+                        const apercu = excerpt.length > 350 ? excerpt.substring(0, 350) + "..." : excerpt;
+                        htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #f39c12; padding:15px; margin-bottom:15px;">
+                            <h5 style="color:#1c2541; margin-bottom:5px;">Extrait sur ${theme}</h5>
+                            <p style="font-style:italic; font-size:0.9rem; color:#555;">"${apercu}"</p>
+                            <div style="font-size:0.7rem; color:#f39c12;">⚠ Extrait direct (IA indisponible)</div>
+                        </div>`;
+                    }
+
+                    processed++;
+                    if (processed % 3 === 0) {
+                        displayLoading(`Extraction en cours... (${processed}/${topChunks.length})`);
+                    }
+                }
+
+                // GARANTIE FINALE : Si vraiment rien n'a été trouvé, forcer les 5 meilleurs chunks
+                if (currentPassages.length === 0 && topChunks.length > 0) {
+                    console.log("Mode garantie: ajout forcé des meilleurs chunks");
+                    topChunks.slice(0, 5).forEach((chunk, i) => {
+                        const excerpt = chunk.text.substring(0, 1500);
+                        currentPassages.push({
+                            texte: excerpt,
+                            titre: `Passage pertinent ${i + 1}`,
+                            contexte: `Score de pertinence: ${chunk.score}`
+                        });
+                        
+                        const apercu = excerpt.length > 350 ? excerpt.substring(0, 350) + "..." : excerpt;
+                        htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #3498db; padding:15px; margin-bottom:15px;">
+                            <h5 style="color:#1c2541; margin-bottom:5px;">Passage pertinent ${i + 1}</h5>
+                            <p style="font-style:italic; font-size:0.9rem; color:#555;">"${apercu}"</p>
+                            <div style="font-size:0.7rem; color:#3498db;">ℹ️ Extrait par analyse textuelle (Score: ${chunk.score})</div>
+                        </div>`;
+                    });
                 }
 
                 // 6. Affichage final
