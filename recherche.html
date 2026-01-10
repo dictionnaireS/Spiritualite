@@ -192,22 +192,6 @@
             color: #ff4757;
         }
 
-        .search-loader {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(52, 152, 219, 0.1);
-            border-left-color: var(--border-blue);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
         .results-section {
             display: grid;
             grid-template-columns: 1fr 280px;
@@ -237,14 +221,6 @@
                 <p style="font-size: 0.75rem;">Connecté via Hugging Face.</p>
                 <div id="system-status" style="color:#27ae60; font-size:0.7rem; margin-top:5px;">● Système Prêt (JS)
                 </div>
-            </div>
-            <div class="card" style="background: var(--info-blue); border-left: 5px solid var(--border-blue);">
-                <h3>📖 Guide</h3>
-                <ol style="padding-left:18px; font-size:0.85rem;">
-                    <li>Choissisez un tome.</li>
-                    <li>Saisissez Thème + Mots-clés.</li>
-                    <li>L'IA extrait et valide.</li>
-                </ol>
             </div>
         </aside>
 
@@ -371,14 +347,13 @@
                     return acc;
                 }, []);
 
-                // 2. Scoring Avancé
+                // 2. Scoring
                 displayLoading("Criblage théologique...");
                 const themeTerms = theme.toLowerCase().split(/\s+/).filter(t => t.length >= 3);
                 const keywordTerms = mots.toLowerCase().replace(/,/g, " ").split(/\s+/).filter(t => t.length >= 3);
 
-                const tier1 = ["oraison", "contemplation", "extase", "mystique", "union divine", "ascèse"];
-                const tier2 = ["âme", "grâce", "prière", "esprit", "saint", "coeur", "charité", "foi"];
-                const tier3 = ["thérèse", "jean de la croix", "augustin", "bernard", "ignace"];
+                const vocabTier1 = ["oraison", "contemplation", "extase", "union mystique"];
+                const vocabTier2 = ["âme", "grâce", "prière", "mystique", "divin"];
 
                 let scores = chunks.map((chunk, index) => {
                     let score = 0;
@@ -387,31 +362,21 @@
                     themeTerms.forEach(t => { if (low.includes(t)) score += 15; });
                     keywordTerms.forEach(k => { if (low.includes(k)) score += 10; });
 
-                    let tier1Count = 0;
-                    tier1.forEach(w => { if (low.includes(w)) { score += 5; tier1Count++; } });
-                    tier2.forEach(w => { if (low.includes(w)) score += 2; });
-                    tier3.forEach(w => { if (low.includes(w)) score += 3; });
+                    vocabTier1.forEach(w => { if (low.includes(w)) score += 3; });
+                    vocabTier2.forEach(w => { if (low.includes(w)) score += 1; });
 
-                    // Pénalités assouplies
-                    const refs = (low.match(/cf\.|voir tome|ibid/g) || []).length;
-                    if (refs > 3) score -= 5;
-                    if (chunk.length < 800) score -= 10;
-
-                    // Bonus
+                    // Bonus Quotes & Markers
                     if (low.includes('"') || low.includes('«')) score += 20;
-                    const markers = ["c'est pourquoi", "il faut comprendre", "en effet", "par conséquent"];
-                    markers.forEach(m => { if (low.includes(m)) score += 20; });
                     if (/^[A-ZÀ-Z]{2,}/.test(chunk.trim())) score += 20;
 
-                    const t1Ratio = (tier1Count / chunk.split(/\s+/).length) * 100;
-                    return { id: index, text: chunk, score, t1Ratio };
+                    return { id: index, text: chunk, score };
                 });
 
                 scores.sort((a, b) => b.score - a.score);
-                const topChunks = scores.slice(0, 15); // Augmenté à 15
+                const topChunks = scores.filter(s => s.score > 10).slice(0, 20); // 20 chunks, score > 10
 
-                if (topChunks.length === 0 || topChunks[0].score < 5) {
-                    document.getElementById('results-content').innerHTML = "❌ Aucun extrait ne semble correspondre. Essayez d'autres mots.";
+                if (topChunks.length === 0) {
+                    document.getElementById('results-content').innerHTML = "❌ Aucun extrait probant trouvé. Essayez d'autres mots.";
                     btn.disabled = false; return;
                 }
 
@@ -436,8 +401,6 @@
                         if (jsonMatch) {
                             const parsed = JSON.parse(jsonMatch[0]);
                             (parsed.passages || []).forEach(p => {
-                                p.chunkScore = chunk.score;
-                                p.chunkT1Ratio = chunk.t1Ratio;
                                 currentPassages.push(p);
                                 htmlResults += `<div style="border-left:3px solid #d4af37; padding:10px; margin-bottom:10px; background:#fff;"><b>${p.titre}</b><br><small>${p.texte.substring(0, 250)}...</small></div>`;
                                 document.getElementById('results-content').innerHTML = htmlResults;
@@ -446,48 +409,41 @@
                     } catch (e) { }
                 }
 
-                // 4. Validation et Filtrage
+                // 4. Validation et Filtrage ULTRA-SOUPLE
                 if (currentPassages.length > 0) {
-                    displayLoading("Audit de qualité final...");
+                    displayLoading("Finalisation...");
                     const validationPrompt = `Évalue ces ${currentPassages.length} passages pour "${theme}" + "${mots}". 
-                    PRÉFÈRE : passages avec développement argumenté. 
-                    ÉVITE SI POSSIBLE : notes purement bibliographiques ou simples listes de dates.
-                    RÉPONDS EN JSON : {"validations": [{"id": 0, "pertinent": true, "score": 80, "profondeur": 65}]}`;
+                    RÉPONDS EN JSON : {"validations": [{"id": 0, "pertinent": true, "score": 80}]}`;
 
                     const valRes = await fetch(HF_API_URL, {
                         method: "POST", headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ prompt: validationPrompt + "\nPASSAGES:\n" + currentPassages.map((p, i) => `[${i}] ${p.texte.substring(0, 150)}...`).join("\n"), model: MODEL_NAME })
+                        body: JSON.stringify({ prompt: validationPrompt + "\nPASSAGES:\n" + currentPassages.map((p, i) => `[${i}] ${p.texte.substring(0, 100)}...`).join("\n"), model: MODEL_NAME })
                     });
                     const valData = await valRes.json();
                     const valParsed = JSON.parse(valData.response.match(/\{.*\}/s)[0]);
 
-                    // Filtrage assoupli
                     const filtered = valParsed.validations.filter(v => {
                         let p = currentPassages[v.id];
-                        const hasQuotes = p.texte.includes('"') || p.texte.includes('«');
-                        return v.pertinent && v.score >= 60 && p.texte.length > 600 && v.profondeur >= 50 && (p.chunkT1Ratio > 0.2 || hasQuotes);
+                        // FILTRAGE ULTRA-SOUPLE
+                        return v.pertinent && v.score >= 50 && p.texte.length > 400;
                     });
 
                     currentPassages = filtered.map(f => currentPassages[f.id]).slice(0, 5);
 
                     if (currentPassages.length > 0) {
-                        document.getElementById('results-content').innerHTML = `<h4>✨ ${currentPassages.length} extraits majeurs validés</h4>` +
-                            currentPassages.map(p => `<div class="card" style="border-left:4px solid #27ae60;"><b>${p.titre}</b><p style="font-size:0.85rem; font-style:italic; text-align:justify;">"${p.texte.substring(0, 400)}..."</p><div style="font-size:0.75rem; color:#27ae60; font-weight:bold;">✓ Validé pour le PDF</div></div>`).join('');
+                        document.getElementById('results-content').innerHTML = `<h4>✨ ${currentPassages.length} extraits trouvés</h4>` +
+                            currentPassages.map(p => `<div class="card" style="border-left:4px solid #27ae60;"><b>${p.titre}</b><p style="font-size:0.85rem; font-style:italic;">"${p.texte.substring(0, 400)}..."</p></div>`).join('');
                         document.getElementById('pdf-ready').style.display = 'block';
                         document.getElementById('pdf-placeholder').style.display = 'none';
                     } else {
-                        document.getElementById('results-content').innerHTML = `
-                            <div class="card" style="border-left:4px solid #f39c12; background:#fff;">
-                                <p>⚠️ <b>Critères trop restrictifs.</b></p>
-                                <p style="font-size:0.85rem;">L'IA a trouvé des passages mais ils n'ont pas atteint le seuil de profondeur requis. Essayez des mots-clés plus larges.</p>
-                            </div>`;
+                        document.getElementById('results-content').innerHTML = "⚠️ Aucun passage n'a passé le filtre final. Essayez des mots plus simples.";
                     }
                 } else {
-                    document.getElementById('results-content').innerHTML = "❌ Aucun extrait probant trouvé après analyse.";
+                    document.getElementById('results-content').innerHTML = "❌ Aucun extrait trouvé par l'IA.";
                 }
 
             } catch (err) {
-                document.getElementById('results-content').innerHTML = `❌ Erreur système : ${err.message}`;
+                document.getElementById('results-content').innerHTML = `❌ Erreur : ${err.message}`;
             } finally {
                 btn.disabled = false;
                 validateForm();
@@ -496,19 +452,15 @@
 
         function downloadPDF() {
             const docDef = {
-                pageSize: 'A4', pageMargins: [60, 80, 60, 80],
-                background: () => ({ canvas: [{ type: 'rect', x: 0, y: 0, w: 595.28, h: 841.89, color: '#FDF8F0' }] }),
+                pageSize: 'A4',
                 content: [
-                    { text: 'EXTRAITS DU DICTIONNAIRE DE SPIRITUALITÉ', fontSize: 18, bold: true, alignment: 'center', color: '#1c2541' },
-                    { text: 'ASCÉTIQUE ET MYSTIQUE', fontSize: 18, bold: true, alignment: 'center', color: '#1c2541', margin: [0, 0, 0, 20] },
-                    { text: `Recherche : ${document.getElementById('theme-input').value} + ${document.getElementById('mots-cles-input').value}`, alignment: 'center', margin: [0, 0, 0, 30] },
+                    { text: 'DIXIT - EXTRAITS DSAM', fontSize: 18, bold: true, alignment: 'center' },
                     ...currentPassages.map((p, i) => [
-                        { text: `Extraits ${i + 1} : ${p.titre}`, fontSize: 14, bold: true, color: '#1c2541', margin: [0, 15, 0, 5] },
+                        { text: p.titre, fontSize: 14, bold: true, margin: [0, 15, 0, 5] },
                         { text: p.contexte, italic: true, fontSize: 10, margin: [0, 0, 0, 10] },
-                        { text: p.texte, alignment: 'justify', lineHeight: 1.4 }
+                        { text: p.texte, alignment: 'justify' }
                     ])
-                ],
-                styles: {}
+                ]
             };
             pdfMake.createPdf(docDef).download('Extraits_DSAM.pdf');
         }
