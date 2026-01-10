@@ -594,14 +594,19 @@
                 for (const chunk of topChunks) {
                     if (isStopped) break;
 
-                    const prompt = `CONTEXTE: Tu es un expert théologien.
-TACHE: Analyse le texte ci-dessous pour trouver des passages PARFAITEMENT PERTINENTS sur le thème : "${theme}" et les mots-clés : "${mots}".
-RÈGLES :
-1. D'abord, évalue si le texte parle VRAIMENT du sujet. Si c'est hors-sujet ou trop vague -> Renvoie { "passages": [] }
-2. Si pertinent, extrais le passage exact (sans le modifier). 
-3. Ajoute un titre court et le contexte.
+                    const prompt = `CONTEXTE: Tu es un assistant archiviste de haute précision.
+TACHE: Dans le texte fourni ci-dessous, IDENTITIE et RECOPIE des passages PARFAITEMENT PERTINENTS sur : "${theme}" et "${mots}".
+
+RÈGLES IMPÉRATIVES (Zéro Hallucination) :
+1. Le champ "texte" doit être une COPIE EXACTE ET MOT POUR MOT du texte source.
+   - INTERDICTION FORMELLE de réécrire, résumer, simplifier ou reformuler.
+   - Tu dois te contenter de faire un "copier-coller" intelligent des paragraphes pertinents.
+2. Longueur : Sélectionne des blocs substantiels (paragraphes entiers), environ 10 à 20 lignes pour garder la cohérence.
+3. Si le texte ne contient rien de pertinent, renvoie { "passages": [] }.
+4. Seul le champ "contexte" doit être rédigé par toi pour expliquer l'intérêt du passage.
+
 FORMAT JSON STRICT : { "passages": [{ "texte": "...", "titre": "...", "contexte": "..." }] }
-TEXTE A ANALYSER :
+TEXTE SOURCE :
 ${chunk.text}`;
 
                     try {
