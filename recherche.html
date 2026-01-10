@@ -219,7 +219,7 @@
             <div class="card" style="border-left: 5px solid #27ae60;">
                 <h3 style="font-size: 1rem;">🔗 Connexion Sécurisée</h3>
                 <p style="font-size: 0.75rem;">Connecté via Hugging Face.</p>
-                <div id="system-status" style="color:#27ae60; font-size:0.7rem; margin-top:5px;">● Système Prêt (JS)
+                <div id="system-status" style="color:#e67e22; font-size:0.7rem; margin-top:5px;">● Initialisation JS...
                 </div>
             </div>
         </aside>
@@ -472,13 +472,24 @@
             pdfMake.createPdf(docDef).download('Extraits_DSAM.pdf');
         }
 
-        // Initialisation forcée au chargement
-        window.onload = function () {
+        // Initialisation immédiate
+        function initSystem() {
+            const status = document.getElementById('system-status');
+            if (status) {
+                status.innerHTML = "● Système Prêt (v3)";
+                status.style.color = "#27ae60";
+            }
             validateForm();
-            // On ajoute les écouteurs d'événements par sécurité
-            document.getElementById('theme-input').addEventListener('keyup', validateForm);
-            document.getElementById('mots-cles-input').addEventListener('keyup', validateForm);
-        };
+        }
+
+        // On lance immédiatement
+        initSystem();
+
+        // On ajoute les écouteurs sur les inputs
+        document.getElementById('theme-input').addEventListener('input', validateForm);
+        document.getElementById('mots-cles-input').addEventListener('input', validateForm);
+        document.getElementById('theme-input').addEventListener('keyup', validateForm);
+        document.getElementById('mots-cles-input').addEventListener('keyup', validateForm);
     </script>
 </body>
 
