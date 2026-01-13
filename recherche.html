@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dictionnaire de Spiritualité</title>
 
-    <!-- Bibliothèques JS (Ultra légères) -->
+    <!-- Bibliothèques JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
@@ -149,6 +149,16 @@
             border-radius: 8px;
             font-family: 'Lora', serif;
             font-size: 0.9rem;
+            background: #fff;
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 2px dashed var(--border-blue);
+            border-radius: 8px;
+            text-align: center;
             background: #fff;
         }
 
@@ -339,21 +349,25 @@
 
     <div class="container">
         <aside class="sidebar">
-            <div class="card" style="background: #fff; border-left: 5px solid #27ae60;">
-                <h3 style="font-size: 1rem; font-family: 'Merriweather'; color: #1c2541; margin-bottom: 5px;">🔗
-                    Connexion Sécurisée</h3>
-                <p style="font-size: 0.75rem; color: #666; margin-bottom: 0;">Connecté via Hugging Face.</p>
-                <div id="system-status" class="system-ok">● Système Prêt (JS)</div>
-            </div>
-
             <div class="card guide-box">
-                <h3>📖 Guide</h3>
-                <ol>
-                    <li><b>VOLUME :</b> Choisissez un tome.</li>
-                    <li><b>ORIENTATION :</b> Sélectionnez un profil.</li>
-                    <li><b>CRITÈRES :</b> Thème + Mots-clés.</li>
-                    <li><b>EXPORT :</b> Téléchargez en PDF.</li>
-                </ol>
+                <h3>📖 Guide d'utilisation</h3>
+                <p style="font-size: 0.8rem; margin-bottom: 10px; color: #555;">Pour obtenir des extraits pertinents :
+                </p>
+                <ul style="padding-left: 18px; font-size: 0.85rem;">
+                    <li style="margin-bottom: 8px;">1. <b>VOLUME :</b> Sélectionnez d'abord votre fichier Word (.docx).
+                    </li>
+                    <li style="margin-bottom: 8px;">2. <b>CRITÈRES :</b> Choisissez un <b>thème</b> et/ou un
+                        <b>mot-clé</b>.
+                    </li>
+                    <li style="margin-bottom: 8px;">3. <b>LANCEMENT :</b> Il faut au moins 2 critères (ex: fichier +
+                        thème) pour lancer la recherche.</li>
+                    <li style="margin-bottom: 8px;">4. <b>RAPIDITÉ :</b> L'analyse dure environ <b>15 secondes</b>.
+                    </li>
+                    <li style="margin-bottom: 8px;">5. <b>RÉSULTATS :</b> 1 extrait analysé par IA + 4 extraits bruts.
+                    </li>
+                    <li style="margin-bottom: 8px;">6. <b>PDF :</b> Imprimez le résultat en PDF (plus complet que
+                        l'aperçu).</li>
+                </ul>
             </div>
 
             <div class="card" style="padding: 10px; border: none; background: transparent; box-shadow: none;">
@@ -365,41 +379,30 @@
         <main>
             <div class="card">
                 <div class="form-group">
-                    <label for="tome-select">Tome du dictionnaire</label>
-                    <select id="tome-select">
-                        <option value="Tome_1.docx">Tome I - Exemple (Local)</option>
-                        <option value="Tome_2_1.docx">Tome II.1 - C à D (Local)</option>
+                    <label for="file-select">Choisissez le tome</label>
+                    <select id="file-select">
+                        <option value="">-- Sélectionnez un tome --</option>
+                        <option value="Tome_1.docx">Tome 1 Aa-Byzance</option>
+						<option value="DS2-1_corrige.docx">Tome 2.1 Cabasilas-Communion fréquente</option>
+						<option value="DS2-2_corrige.docx">Tome 2.2 Communion fréquente  Cyrille de Scythopolis</option>
+                        <!-- Ajoutez vos autres tomes ici -->
                     </select>
-                </div>
-
-                <label>Profil de recherche</label>
-                <div class="radio-group">
-                    <div class="radio-item"><input type="radio" name="profil" id="p-equilibre" value="equilibre"
-                            checked><label for="p-equilibre" class="radio-label">⚖️ Équilibré</label></div>
-                    <div class="radio-item"><input type="radio" name="profil" id="p-spiritualite"
-                            value="spiritualite_vivante"><label for="p-spiritualite" class="radio-label">🕊️
-                            Spiritualité</label></div>
-                    <div class="radio-item"><input type="radio" name="profil" id="p-academique"
-                            value="academique"><label for="p-academique" class="radio-label">📚 Académique</label></div>
-                    <div class="radio-item"><input type="radio" name="profil" id="p-historique"
-                            value="historique"><label for="p-historique" class="radio-label">📖 Historique</label></div>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div class="form-group">
                         <label for="theme-input">Thématique</label>
-                        <input type="text" id="theme-input" placeholder="Ex: Oraison..." oninput="validateForm()">
+                        <input type="text" id="theme-input" placeholder="Ex: Oraison...">
                     </div>
                     <div class="form-group">
                         <label for="mots-cles-input">Mots-clés</label>
-                        <input type="text" id="mots-cles-input" placeholder="Ex: union, grâce..."
-                            oninput="validateForm()">
+                        <input type="text" id="mots-cles-input" placeholder="Ex: union, grâce...">
                     </div>
                 </div>
 
                 <div class="btn-row">
-                    <button id="search-btn" class="btn btn-primary" disabled onclick="startSearch()">⚠️ 2 critères
-                        requis</button>
+                    <button id="search-btn" class="btn btn-primary" disabled onclick="startSearch()">🚀 LANCER
+                        RECHERCHE</button>
                     <button id="stop-btn" class="btn btn-stop" onclick="stopSearch()"><span>🛑</span> ARRÊTER</button>
                 </div>
             </div>
@@ -429,7 +432,6 @@
         </main>
     </div>
 
-    <!-- Contact Modal -->
     <div id="contactModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeContactModal()">&times;</span>
@@ -440,49 +442,51 @@
         </div>
     </div>
 
-    <footer>
-        <p><b>Dictionnaire de Spiritualité</b> – 2026</p>
-    </footer>
-
-    <!-- LOGIQUE JAVASCRIPT PURE -->
     <script>
-        // CONFIGURATION
-        const HF_API_URL = "https://gildasr-cle.hf.space/ask_secure";
-        const MODEL_NAME = "meta-llama/llama-3.1-8b-instruct";
+        const GEMINI_API_KEY = "AIzaSyCiAqhmG4y0MyLOUShyGLYb4qGwIBL_nm4";
+        const GEMINI_MODELS = [
+            "gemini-2.5-flash-lite",
+            "gemini-2.0-flash-lite",
+            "gemini-2.5-flash",
+            "gemini-2.0-flash",
+            "gemini-1.5-flash"
+        ];
+        const MAX_EXTRAITS_TOTAL = 5;
+        const MIN_EXTRAIT_IA_CHARS = 1000;  // MINIMUM ABSOLU
+        const TARGET_EXTRAIT_IA_CHARS = 1800;  // CIBLE IDÉALE
+        const MAX_EXTRAIT_BRUT_CHARS = 3000;
+        const MAX_SEGMENT_SOURCE_CHARS = 6000;  // Encore augmenté
 
-        let currentPassages = [];
+        let currentPassageIA = null;
+        let currentPassagesBruts = [];
         let isStopped = false;
 
         window.addEventListener('load', () => {
-            document.getElementById('system-status').style.opacity = '1';
+            document.getElementById('theme-input').addEventListener('input', validateForm);
+            document.getElementById('mots-cles-input').addEventListener('input', validateForm);
+            document.getElementById('file-select').addEventListener('change', validateForm);
+            validateForm();
         });
 
         function openContactModal() { document.getElementById('contactModal').style.display = "block"; }
         function closeContactModal() { document.getElementById('contactModal').style.display = "none"; }
-        function stopSearch() { 
-            isStopped = true; 
-            document.getElementById('results-content').innerHTML += "<br><b>🛑 Arrêt demandé...</b>"; 
+        function stopSearch() {
+            isStopped = true;
+            document.getElementById('results-content').innerHTML += "<br><b>🛑 Arrêt demandé...</b>";
         }
 
         function validateForm() {
             const theme = document.getElementById('theme-input').value.trim();
             const mots = document.getElementById('mots-cles-input').value.trim();
+            const fileSelect = document.getElementById('file-select').value;
             const btn = document.getElementById('search-btn');
 
-            let count = 0;
-            if (theme) count++;
-            if (mots) {
-                const parts = mots.split(',').filter(s => s.trim().length > 0);
-                if (parts.length >= 2) count += 2;
-                else if (parts.length === 1) count++;
-            }
-
-            if (count >= 2) {
+            if (theme.length > 0 && mots.length > 0 && fileSelect) {
                 btn.disabled = false;
-                btn.innerHTML = '🚀 RECHERCHER';
+                btn.innerHTML = '🚀 LANCER RECHERCHE';
             } else {
                 btn.disabled = true;
-                btn.innerHTML = '⚠️ 2 CRITÈRES REQUIS';
+                btn.innerHTML = file ? '⚠️ THÈME + MOTS REQUIS' : '⚠️ CHOISIR UN FICHIER';
             }
         }
 
@@ -493,34 +497,34 @@
         async function startSearch() {
             isStopped = false;
             const btn = document.getElementById('search-btn');
-            const tomeFile = document.getElementById('tome-select').value;
-            const theme = document.getElementById('theme-input').value.trim();
-            const mots = document.getElementById('mots-cles-input').value.trim();
+            const theme = document.getElementById('theme-input').value;
+            const mots = document.getElementById('mots-cles-input').value;
+            const fileName = document.getElementById('file-select').value;
+
+            if (!fileName) return alert("Veuillez d'abord sélectionner un tome dans la liste.");
 
             btn.disabled = true;
             document.getElementById('pdf-placeholder').style.display = 'block';
             document.getElementById('pdf-ready').style.display = 'none';
-            currentPassages = [];
+            currentPassageIA = null;
+            currentPassagesBruts = [];
 
             try {
-                // 1. Chargement Fichier
-                displayLoading(`Chargement du fichier ${tomeFile}...`);
-                const response = await fetch(tomeFile);
-                if (!response.ok) throw new Error("Fichier introuvable");
+                displayLoading(`Chargement du fichier ${fileName}...`);
+                const response = await fetch(fileName);
+                if (!response.ok) throw new Error("Fichier introuvable sur le serveur.");
                 const arrayBuffer = await response.arrayBuffer();
-
-                // 2. Extraction Texte
-                displayLoading("Lecture du contenu Word...");
                 const rawText = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
                 const fullText = rawText.value;
 
-                // 3. Découpage en chunks
+                if (!fullText || fullText.length < 100) throw new Error("Le fichier semble vide ou illisible.");
+
                 function decoupageIntelligent(text) {
                     const cleanText = text.replace(/\r\n/g, "\n");
                     const paragraphs = cleanText.split(/\n\s*\n/);
                     let chunks = [];
                     let current = "";
-                    const TARGET = 3000;
+                    const TARGET = 5000;
 
                     for (let p of paragraphs) {
                         p = p.trim();
@@ -538,260 +542,317 @@
 
                 const chunks = decoupageIntelligent(fullText);
 
-                // 4. Scoring simple
-                displayLoading("Recherche de passages pertinents...");
-                const searchTerms = (theme + " " + mots).toLowerCase().split(/[\s,]+/).filter(k => k.length > 2);
-                
+                displayLoading(`Analyse de pertinence (${chunks.length} segments)...`);
                 let scores = [];
+                const keywords = (theme + " " + mots).toLowerCase().split(/[\s,]+/);
+
                 chunks.forEach((chunk, index) => {
-                    if (isStopped) return;
                     let score = 0;
                     const lowerChunk = chunk.toLowerCase();
-
-                    searchTerms.forEach(term => {
-                        let count = (lowerChunk.match(new RegExp(term, 'g')) || []).length;
-                        score += count * 5;
+                    keywords.forEach(k => {
+                        if (k.length > 3 && lowerChunk.includes(k)) {
+                            score += (lowerChunk.match(new RegExp(k, 'g')) || []).length * 5;
+                        }
                     });
-
-                    if (score > 0) {
-                        scores.push({ id: index, score: score, text: chunk });
-                    }
+                    if (score > 10) scores.push({ id: index, score: score, text: chunk });
                 });
 
                 scores.sort((a, b) => b.score - a.score);
-                const topChunks = scores.slice(0, 10); // Réduit de 15 à 10 car on veut moins de passages mais plus longs
 
-                if (topChunks.length === 0) {
-                    document.getElementById('results-content').innerHTML = "❌ Aucun extrait trouvé. Essayez d'autres mots-clés.";
+                if (scores.length === 0) {
+                    document.getElementById('results-content').innerHTML = "❌ Aucun extrait pertinent trouvé pour ces critères.";
                     btn.disabled = false;
                     return;
                 }
 
-                // 5. Extraction avec IA (MODE SIMPLIFIÉ)
-                displayLoading(`Extraction de passages (${topChunks.length} sections analysées)...`);
-                let htmlResults = "";
-                let processed = 0;
+                let logsIA = [];
 
-                for (const chunk of topChunks) {
-                    if (isStopped) break;
-                    if (currentPassages.length >= 5) break; // Limite à 5 passages longs au lieu de 8 courts
+                // PHASE 1 : Tentative IA sur le chunk avec le score le PLUS élevé
+                displayLoading("🔍 Analyse du passage le plus pertinent par IA...");
+                const bestChunk = scores[0];
+                const successIA = await tryIAExtraction(bestChunk, theme, mots, logsIA, 1);
 
-                    const prompt = `CONSIGNE STRICTE : Tu dois répondre UNIQUEMENT en JSON valide, SANS AUCUN texte avant ou après, SANS balises markdown.
-
-Tu es un extracteur de passages. Dans le texte ci-dessous, trouve tous les passages qui concernent "${theme}" et "${mots}".
-
-RÈGLES IMPÉRATIVES :
-1. Copie EXACTEMENT le texte source - MINIMUM 30 lignes par passage (environ 1500-2000 caractères)
-2. Ne coupe JAMAIS au milieu d'une phrase - termine toujours la phrase complète
-3. Ne coupe JAMAIS au milieu d'un mot
-4. Ajoute un "contexte" d'UNE phrase expliquant de quoi parle l'extrait
-5. Format JSON STRICT (pas de \`\`\`json, juste le JSON pur)
-6. Maximum 3 passages (mais longs et complets)
-7. Si rien ne correspond : {"passages":[]}
-
-FORMAT ATTENDU :
-{"passages":[{"texte":"copie mot pour mot, LONGUE, phrases complètes...","titre":"titre court","contexte":"Une phrase de contexte"}]}
-
-TEXTE SOURCE :
-${chunk.text.substring(0, 4500)}
-
-RÉPONDS MAINTENANT EN JSON PUR :`;
-
-                    let passageAjouteParIA = false;
-
-                    try {
-                        const hfResponse = await fetch(HF_API_URL, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ prompt: prompt, model: MODEL_NAME }),
-                            timeout: 15000
-                        });
-
-                        if (!hfResponse.ok) {
-                            console.error("Erreur API:", hfResponse.status);
-                        } else {
-                            const data = await hfResponse.json();
-                            let content = data.response || "";
-                            
-                            console.log("Réponse IA brute:", content.substring(0, 300));
-                            
-                            // Nettoyage agressif des balises markdown
-                            content = content.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
-                            
-                            console.log("Réponse IA nettoyée:", content.substring(0, 300));
-                            
-                            // Extraction JSON robuste
-                            let jsonMatch = content.match(/\{[\s\S]*"passages"[\s\S]*\}/);
-                            if (jsonMatch) {
-                                try {
-                                    const parsed = JSON.parse(jsonMatch[0]);
-                                    console.log("JSON parsé avec succès:", parsed);
-                                    if (parsed.passages && Array.isArray(parsed.passages) && parsed.passages.length > 0) {
-                                        parsed.passages.forEach(p => {
-                                            if (p.texte && p.texte.length > 800) { // Minimum 800 caractères au lieu de 150
-                                                currentPassages.push(p);
-                                                passageAjouteParIA = true;
-                                                const apercu = p.texte.length > 400 ? p.texte.substring(0, 400) + "..." : p.texte;
-                                                htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #d4af37; padding:15px; margin-bottom:15px;">
-                                                    <h5 style="color:#1c2541; margin-bottom:5px;">${p.titre || 'Extrait'}</h5>
-                                                    ${p.contexte ? `<p style="font-size:0.85rem; color:#8B0000; font-style:italic; margin-bottom:8px;"><strong>Contexte:</strong> ${p.contexte}</p>` : ''}
-                                                    <p style="font-style:italic; font-size:0.9rem; color:#555;">"${apercu}"</p>
-                                                    <div style="font-size:0.7rem; color:#888; text-align:right;">(${p.texte.length} caractères - Texte complet dans le PDF)</div>
-                                                </div>`;
-                                            }
-                                        });
-                                    }
-                                } catch (parseError) {
-                                    console.error("Erreur parsing JSON:", parseError);
-                                }
-                            }
-                        }
-
-                    } catch (e) {
-                        console.error("Erreur extraction:", e);
-                    }
-
-                    // FALLBACK SYSTEMATIQUE : Si l'IA n'a rien donné, on prend le chunk brut
-                    if (!passageAjouteParIA && chunk.text.length > 1000 && currentPassages.length < 5) { // Augmenté de 400 à 1000
-                        // Trouver la fin de phrase la plus proche
-                        let excerpt = chunk.text.substring(0, 2000); // Augmenté de 1200 à 2000
-                        let lastPeriod = excerpt.lastIndexOf('.');
-                        if (lastPeriod > 1500) { // Si on trouve un point après 1500 caractères
-                            excerpt = excerpt.substring(0, lastPeriod + 1);
-                        }
-                        
-                        currentPassages.push({
-                            texte: excerpt,
-                            titre: `Extrait sur ${theme}`,
-                            contexte: `Passage identifié par recherche textuelle (score: ${chunk.score})`
-                        });
-                        
-                        const apercu = excerpt.length > 400 ? excerpt.substring(0, 400) + "..." : excerpt;
-                        htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #f39c12; padding:15px; margin-bottom:15px;">
-                            <h5 style="color:#1c2541; margin-bottom:5px;">Extrait sur ${theme}</h5>
-                            <p style="font-size:0.85rem; color:#8B0000; font-style:italic; margin-bottom:8px;"><strong>Contexte:</strong> Passage identifié par recherche textuelle (score: ${chunk.score})</p>
-                            <p style="font-style:italic; font-size:0.9rem; color:#555;">"${apercu}"</p>
-                            <div style="font-size:0.7rem; color:#f39c12;">⚠ Extrait direct (${excerpt.length} caractères)</div>
-                        </div>`;
-                    }
-
-                    processed++;
-                    if (processed % 3 === 0) {
-                        displayLoading(`Extraction en cours... (${processed}/${topChunks.length})`);
-                    }
+                // PHASE 2 : Fallback sur le 2ème meilleur si échec
+                if (!successIA && scores.length > 1) {
+                    displayLoading("🔄 Tentative de secours sur le 2ème meilleur passage...");
+                    const secondBestChunk = scores[1];
+                    await tryIAExtraction(secondBestChunk, theme, mots, logsIA, 2);
                 }
 
-                // GARANTIE FINALE : Si vraiment rien n'a été trouvé, forcer les 3 meilleurs chunks
-                if (currentPassages.length === 0 && topChunks.length > 0) {
-                    console.log("Mode garantie: ajout forcé des meilleurs chunks");
-                    topChunks.slice(0, 3).forEach((chunk, i) => { // Réduit de 5 à 3
-                        // Trouver la fin de phrase
-                        let excerpt = chunk.text.substring(0, 2500);
-                        let lastPeriod = excerpt.lastIndexOf('.');
-                        if (lastPeriod > 2000) {
-                            excerpt = excerpt.substring(0, lastPeriod + 1);
-                        }
-                        
-                        currentPassages.push({
-                            texte: excerpt,
-                            titre: `Passage pertinent ${i + 1}`,
-                            contexte: `Extrait identifié par analyse textuelle (score de pertinence: ${chunk.score})`
-                        });
-                        
-                        const apercu = excerpt.length > 400 ? excerpt.substring(0, 400) + "..." : excerpt;
-                        htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #3498db; padding:15px; margin-bottom:15px;">
-                            <h5 style="color:#1c2541; margin-bottom:5px;">Passage pertinent ${i + 1}</h5>
-                            <p style="font-size:0.85rem; color:#8B0000; font-style:italic; margin-bottom:8px;"><strong>Contexte:</strong> Extrait identifié par analyse textuelle (score: ${chunk.score})</p>
-                            <p style="font-style:italic; font-size:0.9rem; color:#555;">"${apercu}"</p>
-                            <div style="font-size:0.7rem; color:#3498db;">ℹ️ Extrait par analyse textuelle (${excerpt.length} caractères)</div>
-                        </div>`;
+                // EXTRACTION DES PASSAGES BRUTS (positions 2 à 5, ou 3 à 6 si fallback utilisé)
+                if (isStopped) {
+                    afficherResultats(logsIA);
+                    btn.disabled = false;
+                    return;
+                }
+
+                displayLoading("📝 Extraction des passages complémentaires...");
+                const startIndex = currentPassageIA ? (logsIA.includes("Passage 2 : Succès IA (fallback)") ? 2 : 1) : 0;
+                for (let i = startIndex; i < Math.min(startIndex + 4, scores.length); i++) {
+                    if (currentPassagesBruts.length >= 4) break;
+
+                    let excerpt = scores[i].text.substring(0, MAX_EXTRAIT_BRUT_CHARS);
+                    let lastPeriod = excerpt.lastIndexOf('.');
+                    if (lastPeriod > 1000) excerpt = excerpt.substring(0, lastPeriod + 1);
+
+                    currentPassagesBruts.push({
+                        texte: excerpt,
+                        titre: `Extrait thématique #${currentPassagesBruts.length + 1}`,
+                        contexte: `Analyse textuelle (Mots-clés)`
                     });
                 }
 
-                // 6. Affichage final
-                if (currentPassages.length > 0) {
-                    document.getElementById('results-content').innerHTML = `
-                        <div style="margin-bottom:15px; padding:8px; background:#27ae6020; border-radius:8px; color:#27ae60; font-weight:bold; font-size:0.8rem; text-align:center;">
-                            📚 ${currentPassages.length} extraits trouvés
-                        </div>
-                        ${htmlResults}`;
-                    
-                    document.getElementById('pdf-placeholder').style.display = 'none';
-                    document.getElementById('pdf-ready').style.display = 'block';
-                } else {
-                    document.getElementById('results-content').innerHTML = "❌ Aucun passage exploitable trouvé. Essayez des termes plus généraux.";
-                }
+                afficherResultats(logsIA);
 
             } catch (err) {
-                document.getElementById('results-content').innerHTML = `❌ Erreur: ${err.message}`;
-                console.error("Erreur complète:", err);
+                document.getElementById('results-content').innerHTML = `❌ Erreur lors de la lecture : ${err.message}`;
+                console.error(err);
             } finally {
                 btn.disabled = false;
             }
         }
 
-        function downloadPDF() {
-            if (currentPassages.length === 0) return;
+        async function tryIAExtraction(chunk, theme, mots, logsIA, attemptNumber) {
+            const prompt = `Tu es un outil d'extraction textuelle spécialisé dans les textes spirituels longs.
 
-            const dateGen = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+MISSION : Extraire UN SEUL passage CONTINU et SUBSTANTIEL du texte source ci-dessous.
+
+Thème recherché : « ${theme} »
+Mots-clés : « ${mots} »
+
+⚠️ RÈGLE ABSOLUE DE LONGUEUR (NON NÉGOCIABLE) :
+- MINIMUM STRICT : 1000 caractères (environ 150-180 mots)
+- IDÉAL : 1500-2000 caractères (environ 250-350 mots)
+- Tu DOIS extraire PLUSIEURS PARAGRAPHES CONSÉCUTIFS pour atteindre cette longueur
+- Un extrait court (moins de 1000 caractères) sera AUTOMATIQUEMENT REJETÉ par le système
+
+MÉTHODE D'EXTRACTION :
+1. Identifie un passage riche en lien avec le thème
+2. Commence au début d'un paragraphe pertinent
+3. Continue l'extraction sur 3-5 paragraphes CONSÉCUTIFS
+4. Arrête-toi à la fin d'une phrase complète après avoir dépassé 1500 caractères
+5. Ne résume JAMAIS, ne reformule JAMAIS : COPIE TEXTUELLEMENT
+
+CONTRAINTES TECHNIQUES :
+- Copie MOT POUR MOT depuis le texte source (ponctuation, majuscules, orthographe exactes)
+- Passage CONTINU uniquement (pas de collage de phrases éloignées)
+- Si aucun passage de 1000+ caractères n'existe, réponds : {"passages": []}
+
+PRIORITÉ THÉMATIQUE :
+- Privilégie l'EXPÉRIENCE SPIRITUELLE INTÉRIEURE : oraison, méditation, contemplation, mystique, vertus, union à Dieu
+- Évite les passages purement historiques, biographiques ou dogmatiques
+
+FORMAT JSON STRICT (sans commentaire) :
+{
+  "passages": [
+    {
+      "texte": "...TEXTE LONG copié exactement (1000-2000 caractères)...",
+      "titre": "Titre descriptif (10 mots max)",
+      "contexte": "Synthèse en 3-4 phrases : thème spirituel central, concepts mystiques/ascétiques, dimension d'expérience intérieure, article du dictionnaire, auteur cité si identifiable"
+    }
+  ]
+}
+
+TEXTE SOURCE :
+<<<
+${chunk.text.substring(0, MAX_SEGMENT_SOURCE_CHARS)}
+>>>`;
+
+            for (const model of GEMINI_MODELS) {
+                try {
+                    const controller = new AbortController();
+                    const timer = setTimeout(() => controller.abort(), 15000);
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+
+                    const geminiResp = await fetch(url, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }] }],
+                            generationConfig: {
+                                maxOutputTokens: 2500,
+                                temperature: 0.3
+                            }
+                        }),
+                        signal: controller.signal
+                    });
+                    clearTimeout(timer);
+
+                    if (geminiResp.ok) {
+                        const data = await geminiResp.json();
+                        const cleanJson = (str) => {
+                            try {
+                                let match = str.match(/\{[\s\S]*"passages"[\s\S]*\}/);
+                                if (!match) return null;
+                                let raw = match[0];
+                                try { return JSON.parse(raw); } catch (e) {
+                                    return JSON.parse(raw.replace(/\n/g, "\\n").replace(/\r/g, "\\r"));
+                                }
+                            } catch (e) { return null; }
+                        };
+
+                        const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+                        const parsed = cleanJson(responseText);
+                        if (parsed && Array.isArray(parsed.passages) && parsed.passages.length > 0) {
+                            const passage = parsed.passages[0];
+                            const charCount = passage.texte ? passage.texte.length : 0;
+                            const wordCount = passage.texte ? passage.texte.split(/\s+/).length : 0;
+
+                            if (passage.texte && charCount >= MIN_EXTRAIT_IA_CHARS) {
+                                currentPassageIA = passage;
+                                logsIA.push(`✓ Passage ${attemptNumber} : Succès avec ${model} - ${charCount} car.`);
+                                return true;
+                            } else if (passage.texte) {
+                                logsIA.push(`✗ Passage ${attemptNumber} (${model}) : Trop court (${charCount} car.)`);
+                            }
+                        }
+                    } else if (geminiResp.status === 429 || geminiResp.status === 404) {
+                        const reason = geminiResp.status === 429 ? "Quota atteint" : "Modèle indisponible";
+                        logsIA.push(`⚠️ ${reason} pour ${model}, passage au suivant...`);
+                        continue;
+                    } else {
+                        logsIA.push(`Error ${geminiResp.status} avec ${model}`);
+                    }
+                } catch (e) {
+                    logsIA.push(`Échec ${model} : ${e.message}`);
+                }
+            }
+            return false;
+        }
+
+        function afficherResultats(logs) {
+            let htmlResults = "";
+
+            if (currentPassageIA) {
+                htmlResults += `<div style="background:#eaffea; padding:10px; border-radius:8px; margin-bottom:15px; border:1px solid #27ae60; color:#1e5128;">✨ 1 extrait analysé par l'IA (${currentPassageIA.texte.length} caractères / ${currentPassageIA.texte.split(/\s+/).length} mots)</div>`;
+                htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #27ae60; padding:20px; margin-bottom:15px; border-radius:12px;">
+                    <span style="font-size:0.7rem; color:#27ae60; font-weight:bold; text-transform:uppercase;">Extrait IA - Analyse approfondie</span>
+                    <h5 style="color:#1c2541; margin:5px 0 10px 0; font-size:1.1rem; font-family:'Merriweather';">${currentPassageIA.titre || 'Analyse IA'}</h5>
+                    <p style="font-size:0.85rem; color:#8B0000; font-style:italic; margin-bottom:12px; background:#fff5f5; padding:8px; border-radius:6px;"><strong>Synthèse :</strong> ${currentPassageIA.contexte}</p>
+                    <p style="font-style:italic; font-size:0.95rem; line-height:1.6; color:#2c3e50;">"${currentPassageIA.texte}"</p>
+                </div>`;
+            } else {
+                htmlResults += `<div style="background:#fff3e0; padding:10px; border-radius:8px; margin-bottom:15px; border:1px solid #e67e22; color:#a0522d;">⚠️ L'IA n'a pas pu analyser de passage. Voici ${currentPassagesBruts.length} extraits bruts.</div>`;
+            }
+
+            if (currentPassagesBruts.length > 0) {
+                htmlResults += `<div style="background:#fff3e0; padding:10px; border-radius:8px; margin:20px 0 15px 0; border:1px solid #e67e22; color:#a0522d;">📝 ${currentPassagesBruts.length} extrait(s) complémentaires (mots-clés)</div>`;
+                currentPassagesBruts.forEach(p => {
+                    const apercu = p.texte.length > 800 ? p.texte.substring(0, 800) + "..." : p.texte;
+                    htmlResults += `<div class="card" style="background:#fff; border-left:4px solid #e67e22; padding:15px; margin-bottom:15px;">
+                        <h5 style="color:#1c2541; margin-bottom:5px;">${p.titre}</h5>
+                        <p style="font-size:0.9rem; line-height:1.5; color:#444;">${apercu}</p>
+                    </div>`;
+                });
+            }
+
+            // Journal technique invisible par défaut, utile pour debug
+            if (logs && logs.length > 0) {
+                htmlResults += `<details style="margin-top:20px; font-size:0.7rem; color:#888;">
+                    <summary>Rapport technique de recherche</summary>
+                    <ul>${logs.map(l => `<li>${l}</li>`).join('')}</ul>
+                </details>`;
+            }
+
+            document.getElementById('results-content').innerHTML = htmlResults || "❌ Aucun résultat trouvé.";
+            document.getElementById('pdf-placeholder').style.display = 'none';
+            document.getElementById('pdf-ready').style.display = 'block';
+        }
+
+        function downloadPDF() {
+            const theme = document.getElementById('theme-input').value;
+            const mots = document.getElementById('mots-cles-input').value;
+            const file = document.getElementById('file-input').files[0];
+            const allPassages = currentPassageIA ? [currentPassageIA, ...currentPassagesBruts] : currentPassagesBruts;
+            if (allPassages.length === 0) return;
+
+            const dateObj = new Date();
+            const dateStr = dateObj.toLocaleDateString('fr-FR').replace(/\//g, '-');
+            const fileName = `Extraits_Dictionnaire_Spiritualite_${dateStr}`;
 
             const docDefinition = {
                 pageSize: 'A4',
-                pageMargins: [60, 100, 60, 80],
-                background: function (currentPage) {
-                    return { canvas: [{ type: 'rect', x: 0, y: 0, w: 595.28, h: 841.89, color: '#FDF8F0' }] };
-                },
-                header: function (currentPage, pageCount) {
+                pageMargins: [60, 80, 60, 60],
+                background: () => ({
+                    canvas: [{ type: 'rect', x: 0, y: 0, w: 595.28, h: 841.89, color: '#FDF8F0' }]
+                }),
+                header: (currentPage) => {
                     if (currentPage === 1) return null;
+                    return [
+                        {
+                            text: 'Extraits du Dictionnaire de Spiritualité Ascétique et Mystique',
+                            alignment: 'center',
+                            fontSize: 9,
+                            italics: true,
+                            margin: [0, 40, 0, 5],
+                            color: '#555'
+                        },
+                        {
+                            canvas: [{ type: 'line', x1: 60, y1: 0, x2: 535, y2: 0, lineWidth: 0.5, lineColor: '#d4af37' }]
+                        }
+                    ];
+                },
+                footer: (currentPage) => {
                     return {
-                        columns: [{ text: 'Extraits du Dictionnaire de Spiritualité', alignment: 'center', color: '#555555', fontSize: 10, italics: true, margin: [0, 40, 0, 0] }],
-                        canvas: [{ type: 'line', x1: 60, y1: 55, x2: 535, y2: 55, lineWidth: 0.5, lineColor: '#CCCCCC' }]
+                        stack: [
+                            {
+                                canvas: [{ type: 'line', x1: 250, y1: 0, x2: 345, y2: 0, lineWidth: 0.5, lineColor: '#999' }]
+                            },
+                            {
+                                text: currentPage.toString(),
+                                alignment: 'center',
+                                fontSize: 9,
+                                margin: [0, 5, 0, 0]
+                            }
+                        ],
+                        margin: [0, 20, 0, 0]
                     };
                 },
                 content: [
-                    { text: '\n\n\n' },
-                    { text: 'EXTRAITS DU DICTIONNAIRE DE SPIRITUALITÉ', style: 'grandTitre' },
-                    { text: 'ASCÉTIQUE ET MYSTIQUE', style: 'grandTitre' },
-                    { text: '\n' },
-                    { canvas: [{ type: 'line', x1: 150, y1: 5, x2: 445, y2: 5, lineWidth: 1.5, lineColor: '#2c3e50' }] },
+                    // PAGE 1
+                    { text: 'EXTRAITS DU DICTIONNAIRE DE SPIRITUALITÉ\nASCÉTIQUE ET MYSTIQUE', style: 'mainTitle', alignment: 'center', margin: [0, 150, 0, 20] },
+                    { canvas: [{ type: 'line', x1: 60, y1: 0, x2: 475, y2: 0, lineWidth: 1, lineColor: '#d4af37' }] },
                     { text: '\n\n' },
-                    { text: 'Critères de recherche :', style: 'sousTitre' },
                     {
-                        text: [
-                            { text: 'Volume : ', bold: true }, document.getElementById('tome-select').options[document.getElementById('tome-select').selectedIndex].text, '\n',
-                            { text: 'Profil : ', bold: true }, document.querySelector('input[name="profil"]:checked').nextElementSibling.innerText, '\n',
-                            { text: 'Thématique : ', bold: true }, document.getElementById('theme-input').value, '\n',
-                            { text: 'Mots-clés : ', bold: true }, document.getElementById('mots-cles-input').value
+                        stack: [
+                            { text: `Critères : ${(theme || '')} ${(mots ? ' / ' + mots : '')}`.trim(), margin: [0, 20, 0, 0], bold: true },
+                            { text: `Source : ${fileName}`, margin: [0, 10, 0, 0] },
+                            { text: `Date : ${dateObj.toLocaleDateString('fr-FR')}`, margin: [0, 10, 0, 0] }
                         ],
-                        style: 'normal', alignment: 'center', margin: [0, 0, 0, 20]
+                        alignment: 'center',
+                        fontSize: 12,
+                        color: '#333'
                     },
-                    { text: `Généré le ${dateGen}`, style: 'normal', color: '#888', alignment: 'center', fontSize: 9 },
                     { text: '', pageBreak: 'after' },
-                    ...currentPassages.map((p, i) => {
-                        return [
-                            { text: `Extrait ${i + 1} : ${p.titre || 'Sans titre'}`, style: 'titreSection' },
-                            p.contexte ? [{ text: 'CONTEXTE', style: 'labelContexte' }, { text: p.contexte, style: 'contexte' }] : [],
-                            { canvas: [{ type: 'line', x1: 0, y1: 5, x2: 100, y2: 5, lineWidth: 0.5, lineColor: '#CCCCCC' }], margin: [0, 5, 0, 10] },
-                            { text: p.texte, style: 'texteExtrait' },
-                            { text: '\n\n', margin: [0, 20] }
-                        ];
-                    }).flat()
+
+                    // PAGE 2
+                    { text: 'TABLE DES EXTRAITS', style: 'sectionHeader', margin: [0, 0, 0, 15] },
+                    {
+                        ol: allPassages.map(p => ({ text: p.titre || 'Sans titre', margin: [0, 3] })),
+                        margin: [0, 0, 0, 20]
+                    },
+                    { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 475, y2: 0, lineWidth: 0.7, lineColor: '#d4af37' }] },
+                    { text: '\n' },
+
+                    // PASSAGES
+                    ...allPassages.map((p, i) => [
+                        { text: p.titre || `Extrait #${i + 1}`, style: 'passageTitle', margin: [0, 15, 0, 5] },
+                        p.contexte ? { text: p.contexte, style: 'contextStyle' } : {},
+                        { canvas: [{ type: 'line', x1: 0, y1: 5, x2: 120, y2: 5, lineWidth: 0.2, lineColor: '#bbb' }] },
+                        { text: '\n' },
+                        { text: p.texte, style: 'bodyText' },
+                        { text: '\n', margin: [0, 10] }
+                    ]).flat()
                 ],
                 styles: {
-                    grandTitre: { fontSize: 20, bold: true, alignment: 'center', color: '#1c2541', margin: [0, 5] },
-                    sousTitre: { fontSize: 14, bold: true, alignment: 'center', color: '#2c3e50', margin: [0, 10] },
-                    titreSection: { fontSize: 14, bold: true, color: '#1c2541', margin: [0, 10, 0, 5] },
-                    texteExtrait: { fontSize: 11, alignment: 'justify', lineHeight: 1.5, color: '#333333' },
-                    contexte: { fontSize: 10, italics: true, color: '#555555', margin: [20, 0, 20, 10], alignment: 'justify' },
-                    labelContexte: { fontSize: 8, bold: true, color: '#8B0000', margin: [0, 5, 0, 2] },
-                    normal: { fontSize: 11, color: '#333' }
-                },
-                footer: function (currentPage, pageCount) {
-                    return { columns: [{ text: `— ${currentPage} —`, alignment: 'center', color: '#555555', fontSize: 10 }], margin: [0, 20] };
+                    mainTitle: { fontSize: 24, bold: true, color: '#1c2541' },
+                    sectionHeader: { fontSize: 16, bold: true, color: '#1c2541' },
+                    passageTitle: { fontSize: 14, bold: true, color: '#1c2541' },
+                    contextStyle: { fontSize: 11, italics: true, color: '#444', margin: [0, 5, 0, 5] },
+                    bodyText: { fontSize: 11, lineHeight: 1.5, alignment: 'justify', color: '#222' }
                 }
             };
-
-            pdfMake.createPdf(docDefinition).download(`Resultats_DSAM_${Date.now()}.pdf`);
+            pdfMake.createPdf(docDefinition).download(`${fileName}.pdf`);
         }
     </script>
 </body>
