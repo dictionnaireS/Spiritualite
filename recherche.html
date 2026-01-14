@@ -446,18 +446,17 @@
     </div>
 
     <script>
-        // URL de votre Proxy Sécurisé Hugging Face
-        const PROXY_URL = "https://gildasr-proxy-dictionnaire-api.hf.space/api/generate";
+        // URL de votre Espace Proxy "cle"
+        const PROXY_URL = "https://gildasr-cle.hf.space/";
 
-        const GEMINI_MODELS = [
-            "gemini-2.5-flash-lite",
-            "gemini-2.5-flash",
-            "gemini-3-flash-preview",
-            "gemini-2.0-flash-exp",
-            "gemini-exp-1206",
-            "gemini-2.0-flash",
-            "gemini-2.0-flash-lite",
-            "gemma-3-1b-it"
+        const MODELS = [
+            "google/gemma-3-12b-it:free",
+            "meta-llama/llama-3.2-3b-instruct:free",
+            "mistralai/mistral-7b-instruct:free",
+            "mistralai/mistral-small-3.1-24b-instruct:free",
+            "openai/gpt-oss-20b:free",
+            "meta-llama/llama-3.3-70b-instruct:free",
+            "openai/gpt-oss-120b:free"
         ];
         const MAX_EXTRAITS_TOTAL = 5;
         const MIN_EXTRAIT_IA_CHARS = 1000;  // MINIMUM ABSOLU
@@ -950,9 +949,10 @@ Mots-clés : « ${mots} »
 FORMAT JSON STRICT : {"passages": [{"texte": "...", "titre": "...", "contexte": "..."}]}
 TEXTE SOURCE : <<< ${chunk.text.substring(0, MAX_SEGMENT_SOURCE_CHARS)} >>>`;
 
-            for (const model of GEMINI_MODELS) {
+            for (const model of MODELS) {
                 if (isStopped) break;
-                await new Promise(r => setTimeout(r, 1000));
+                // On passe à 3 secondes de délai entre les essais pour calmer Google
+                await new Promise(r => setTimeout(r, 3000));
 
                 try {
                     const response = await fetch(PROXY_URL, {
@@ -967,7 +967,14 @@ TEXTE SOURCE : <<< ${chunk.text.substring(0, MAX_SEGMENT_SOURCE_CHARS)} >>>`;
 
                     if (response.ok) {
                         const data = await response.json();
-                        const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
+                        // Détection du format (Gemini vs OpenAI/OpenRouter)
+                        let responseText = "";
+                        if (data.candidates && data.candidates[0]) {
+                            responseText = data.candidates[0].content.parts[0].text || "";
+                        } else if (data.choices && data.choices[0]) {
+                            responseText = data.choices[0].message.content || "";
+                        }
 
                         const cleanJson = (str) => {
                             try {
