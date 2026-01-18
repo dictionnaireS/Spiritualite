@@ -375,9 +375,482 @@
             "microsoft/phi-3-mini-128k-instruct:free",
             "nousresearch/hermes-3-llama-3.1-405b:free"
         ];
-
-        const SPIRITUAL_SYNONYMS = { "prière": ["oraison", "méditation", "contemplation"], "oraison": ["prière", "méditation", "contemplation"], "méditation": ["oraison", "contemplation", "réflexion"], "contemplation": ["oraison", "méditation", "vision"], "âme": ["esprit", "cœur", "intérieur"], "dieu": ["seigneur", "christ", "père"], "grâce": ["don", "faveur", "miséricorde"], "union": ["communion", "unité", "fusion"] };
-
+const SPIRITUAL_SYNONYMS = {
+  // Prière et vie de prière
+  "prière": ["oraison", "méditation", "contemplation", "élévation", "recueillement", "dévotion", "supplication", "invocation"],
+  "oraison": ["prière", "méditation", "contemplation", "exercice spirituel", "entretien", "colloque"],
+  "méditation": ["oraison", "contemplation", "réflexion", "considération", "examen", "recueillement"],
+  "contemplation": ["oraison", "méditation", "vision", "regard", "union mystique", "théorie"],
+  "recueillement": ["intériorité", "silence", "concentration", "attention", "présence"],
+  "dévotion": ["piété", "ferveur", "zèle", "attachement", "culte"],
+  
+  // Anthropologie spirituelle
+  "âme": ["esprit", "cœur", "intérieur", "conscience", "psyché", "substance spirituelle"],
+  "esprit": ["âme", "intelligence", "raison", "mens", "pneuma"],
+  "cœur": ["âme", "intérieur", "affectivité", "volonté", "fond de l'être"],
+  "conscience": ["for intérieur", "syndérèse", "scintilla animae", "sentiment intime"],
+  "volonté": ["libre arbitre", "faculté", "détermination", "consentement"],
+  
+  // Théologie
+  "dieu": ["seigneur", "christ", "père", "créateur", "tout-puissant", "éternel", "trinité"],
+  "seigneur": ["dieu", "maître", "christ", "kyrios"],
+  "christ": ["jésus", "verbe", "sauveur", "rédempteur", "fils", "logos"],
+  "père": ["dieu", "créateur", "providence"],
+  "esprit saint": ["paraclet", "consolateur", "esprit", "pneuma"],
+  "trinité": ["trois personnes", "unité divine", "mystère trinitaire"],
+  
+  // Grâce et vie surnaturelle
+  "grâce": ["don", "faveur", "miséricorde", "secours", "assistance divine", "vie surnaturelle"],
+  "don": ["grâce", "charisme", "faveur", "bienfait", "libéralité"],
+  "miséricorde": ["compassion", "pitié", "bonté", "clémence", "charité"],
+  "charité": ["amour", "dilection", "agapè", "caritas"],
+  "foi": ["croyance", "adhésion", "confiance", "fides"],
+  "espérance": ["attente", "confiance", "spes", "assurance"],
+  
+  // Union et communion
+  "union": ["communion", "unité", "fusion", "conformité", "transformation"],
+  "communion": ["union", "participation", "koinonia", "communication"],
+  "unité": ["union", "uniformité", "conformité", "identité"],
+  "conformité": ["ressemblance", "assimilation", "transformation", "configuration"],
+  "transformation": ["métamorphose", "transfiguration", "déification", "théosis"],
+  
+  // Vertus et vie morale
+  "vertu": ["habitus", "disposition", "perfection", "excellence"],
+  "perfection": ["achèvement", "plénitude", "maturité", "consommation"],
+  "humilité": ["abaissement", "anéantissement", "petitesse", "modestie"],
+  "obéissance": ["soumission", "docilité", "abandon", "conformité"],
+  "pauvreté": ["dépouillement", "détachement", "renoncement", "abnégation"],
+  "chasteté": ["pureté", "continence", "virginité", "intégrité"],
+  
+  // Purification et ascèse
+  "purification": ["purgation", "catharsis", "purgatoire", "épreuve"],
+  "mortification": ["pénitence", "macération", "ascèse", "discipline"],
+  "pénitence": ["contrition", "repentir", "conversion", "satisfaction"],
+  "détachement": ["renoncement", "abnégation", "dénuement", "dépouillement"],
+  "nuit": ["obscurité", "ténèbre", "épreuve", "purification passive"],
+  
+  // Vie mystique
+  "extase": ["ravissement", "transport", "suspension", "raptus"],
+  "vision": ["révélation", "contemplation", "apparition", "manifestation"],
+  "illumination": ["lumière", "connaissance", "grâce", "révélation"],
+  "ravissement": ["extase", "transport", "élévation", "suspension"],
+  "union mystique": ["mariage spirituel", "fiançailles", "déification", "transformation"],
+  
+  // Voies spirituelles
+  "voie": ["chemin", "itinéraire", "progression", "acheminement"],
+  "voie purgative": ["purification", "conversion", "pénitence"],
+  "voie illuminative": ["progrès", "perfectionnement", "croissance"],
+  "voie unitive": ["perfection", "union", "consommation"],
+  "progrès": ["croissance", "avancement", "perfectionnement", "profection"],
+  
+  // Discernement et direction
+  "discernement": ["discrimination", "diacrisis", "jugement", "épreuve des esprits"],
+  "direction": ["conduite", "gouvernement", "conseil", "accompagnement"],
+  "consolation": ["réconfort", "joie", "paix", "douceur"],
+  "désolation": ["aridité", "sécheresse", "tristesse", "épreuve"],
+  
+  // Connaissance spirituelle
+  "connaissance": ["science", "gnose", "sagesse", "intelligence"],
+  "sagesse": ["sophia", "sapientia", "prudence", "discernement"],
+  "intelligence": ["intellection", "compréhension", "pénétration", "lumière"],
+  "révélation": ["manifestation", "dévoilement", "apocalypse", "illumination"],
+  
+  // Affectivité spirituelle
+  "amour": ["charité", "dilection", "affection", "tendresse", "éros", "agapè"],
+  "désir": ["aspiration", "appétit", "convoitise", "soif"],
+  "joie": ["allégresse", "jubilation", "contentement", "béatitude"],
+  "paix": ["tranquillité", "quiétude", "repos", "sérénité"],
+  
+  // Pratiques et exercices
+  "exercice spirituel": ["pratique", "ascèse", "discipline", "méthode"],
+  "examen": ["révision", "introspection", "réflexion", "considération"],
+  "lecture spirituelle": ["lectio", "méditation", "rumination"],
+  "jeûne": ["abstinence", "privation", "mortification"],
+  
+  // Communauté et Église
+  "église": ["corps mystique", "épouse", "communion des saints"],
+  "sacrement": ["mystère", "signe", "rite", "célébration"],
+  "eucharistie": ["communion", "sacrifice", "messe", "banquet"],
+  "baptême": ["régénération", "illumination", "initiation"],
+  
+  // Fins dernières
+  "salut": ["rédemption", "délivrance", "libération", "béatitude"],
+  "béatitude": ["félicité", "bonheur", "vision béatifique", "gloire"],
+  "gloire": ["doxa", "splendeur", "manifestation", "rayonnement"],
+  "éternité": ["vie éternelle", "immortalité", "permanence"],
+  
+  // Lutte spirituelle
+  "combat": ["lutte", "guerre spirituelle", "agôn", "ascèse"],
+  "tentation": ["épreuve", "tentation", "sollicitation", "attaque"],
+  "ennemi": ["démon", "tentateur", "adversaire", "satan"],
+  "vigilance": ["veille", "attention", "garde", "sobriété"],
+  
+  // États spirituels
+  "ferveur": ["zèle", "ardeur", "dévotion", "chaleur"],
+  "tiédeur": ["négligence", "relâchement", "indifférence"],
+  "aridité": ["sécheresse", "désolation", "épreuve", "nuit"],
+  "abandon": ["délaissement", "soumission", "confiance", "remise"],
+  
+  // Ordres et familles religieuses
+  "bénédictin": ["monastique", "cénobitique", "régulier"],
+  "cistercien": ["bernardin", "trappiste", "réformé"],
+  "chartreux": ["ermite", "solitaire", "contemplatif"],
+  "franciscain": ["mineur", "cordelier", "séraphique"],
+  "dominicain": ["prêcheur", "jacobin", "frère"],
+  "jésuite": ["compagnie", "ignatien", "père"],
+  "carmélite": ["térésien", "réformé", "déchaux"],
+  "religieux": ["moine", "frère", "régulier", "profès"],
+  "moine": ["religieux", "cénobitique", "monastique"],
+  "ermite": ["anachorète", "solitaire", "reclus"],
+  
+  // Auteurs et écoles spirituelles
+  "ignatien": ["jésuite", "exercices", "discernement"],
+  "thérésien": ["carmélitain", "réforme", "oraison"],
+  "bérullien": ["école française", "christocentrique"],
+  "salésien": ["dévot", "humaniste", "introduction"],
+  "sulpicien": ["séminaire", "sacerdotal", "école française"],
+  
+  // Théologie mystique - Degrés et états
+  "quiétude": ["repos", "paix", "oraison de quiétude", "quietismo"],
+  "simplicité": ["regard simple", "attention amoureuse", "acte simple"],
+  "passivité": ["réception", "souffrance", "patience"],
+  "activité": ["coopération", "effort", "industrie"],
+  "surnaturel": ["infus", "gratuit", "divin"],
+  "naturel": ["acquis", "humain", "ordinaire"],
+  "extraordinaire": ["charismatique", "miraculeux", "phénomène"],
+  "ordinaire": ["commun", "voie commune", "simple"],
+  
+  // Phénomènes mystiques
+  "stigmates": ["plaies", "marques", "participation"],
+  "lévitation": ["élévation", "transport corporel", "prodige"],
+  "bilocatio": ["ubiquité", "présence simultanée", "prodige"],
+  "locution": ["parole intérieure", "voix", "communication"],
+  "songe": ["rêve", "vision nocturne", "révélation"],
+  "apparition": ["vision", "manifestation", "révélation sensible"],
+  
+  // Dons et charismes
+  "charisme": ["don gratuit", "grâce gratis datae", "faveur"],
+  "prophétie": ["don prophétique", "prédiction", "révélation"],
+  "miracle": ["prodige", "signe", "merveille"],
+  "guérison": ["thaumaturgie", "miracle", "don"],
+  "infus": ["surnaturel", "gratuit", "donné"],
+  "acquis": ["naturel", "mérité", "gagné"],
+  
+  // Direction spirituelle et accompagnement
+  "directeur": ["père spirituel", "guide", "maître", "conducteur"],
+  "dirigé": ["disciple", "pénitent", "âme", "enfant spirituel"],
+  "conseil": ["direction", "avis", "lumière", "parole"],
+  "obédience": ["mission", "charge", "office", "ordre"],
+  "manifestation": ["ouverture", "confidence", "aveu"],
+  
+  // Doctrine et enseignement
+  "doctrine": ["enseignement", "théologie", "système", "école"],
+  "tradition": ["transmission", "héritage", "paradosis"],
+  "magistère": ["enseignement", "autorité", "doctrine"],
+  "orthodoxie": ["droite foi", "conformité", "vérité"],
+  "hérésie": ["erreur", "déviation", "fausse doctrine"],
+  
+  // Vocations et états de vie
+  "vocation": ["appel", "élection", "destination"],
+  "élection": ["choix", "prédestination", "appel"],
+  "consécration": ["offrande", "dédicace", "oblation"],
+  "profession": ["vœux", "engagement", "oblation"],
+  "vœu": ["promesse", "engagement", "obligation"],
+  
+  // Les trois vœux
+  "pauvreté évangélique": ["dépouillement", "renoncement", "détachement des biens"],
+  "chasteté consacrée": ["virginité", "célibat", "continence parfaite"],
+  "obéissance religieuse": ["soumission", "dépendance", "renoncement à sa volonté"],
+  
+  // Vie liturgique
+  "liturgie": ["culte", "office", "célébration", "rite"],
+  "office divin": ["bréviaire", "heures canoniales", "prière liturgique"],
+  "messe": ["sacrifice", "eucharistie", "synaxe"],
+  "vêpres": ["office du soir", "lucernaire"],
+  "laudes": ["office du matin", "louange"],
+  
+  // Temps liturgiques
+  "avent": ["attente", "préparation", "venue"],
+  "carême": ["pénitence", "jeûne", "quadragésime"],
+  "pâques": ["résurrection", "passage", "pascha"],
+  "pentecôte": ["esprit", "effusion", "don"],
+  
+  // Symboles et images
+  "époux": ["christ", "bien-aimé", "seigneur"],
+  "épouse": ["âme", "église", "fiancée"],
+  "nuptial": ["sponsal", "matrimonial", "mariage spirituel"],
+  "jardin": ["paradis", "hortus conclusus", "intimité"],
+  "source": ["fontaine", "eau vive", "origine"],
+  "montagne": ["élévation", "carmel", "sommet", "ascension"],
+  
+  // Anthropologie mystique
+  "mémoire": ["réminiscence", "souvenir", "faculté"],
+  "entendement": ["intelligence", "intellect", "raison"],
+  "imagination": ["fantaisie", "sens intérieur", "faculté"],
+  "sens spirituels": ["goût", "toucher", "vue intérieure"],
+  "apex mentis": ["fine pointe", "sommet", "fond de l'âme"],
+  "fond de l'âme": ["centre", "substance", "apex"],
+  "substance de l'âme": ["essence", "fond", "être profond"],
+  
+  // Dynamique spirituelle
+  "mouvement": ["motion", "impulsion", "élan"],
+  "repos": ["quiétude", "stabilité", "paix"],
+  "ascension": ["montée", "élévation", "progrès"],
+  "descente": ["humiliation", "kénose", "abaissement"],
+  "sortie": ["exode", "dépassement", "extase"],
+  "entrée": ["intériorité", "recueillement", "retour"],
+  
+  // Souffrance et épreuve
+  "croix": ["passion", "épreuve", "sacrifice"],
+  "passion": ["souffrance", "croix", "martyre"],
+  "tribulation": ["épreuve", "affliction", "adversité"],
+  "déreliction": ["abandon", "solitude", "délaissement"],
+  "nuit obscure": ["purification passive", "épreuve", "ténèbre"],
+  "nuit des sens": ["purification active", "mortification", "sécheresse"],
+  "nuit de l'esprit": ["purification passive", "épreuve mystique", "ténèbre"],
+  
+  // Demeures et degrés (Sainte Thérèse)
+  "demeures": ["châteaux", "mansions", "étapes"],
+  "château intérieur": ["âme", "demeures", "palais"],
+  "cellule intérieure": ["oratoire", "chambre secrète", "sanctuaire"],
+  
+  // Grâces et consolations
+  "consolation sensible": ["douceur", "sentiment", "goût"],
+  "consolation spirituelle": ["paix profonde", "joie", "force"],
+  "sécheresse": ["aridité", "privation", "nuit"],
+  "douceur": ["suavité", "onction", "délectation"],
+  
+  // Langages mystiques
+  "ineffable": ["indicible", "inexprimable", "mystère"],
+  "apophatique": ["négatif", "via negativa", "ténèbre"],
+  "cataphatique": ["positif", "via affirmativa", "lumière"],
+  "analogie": ["comparaison", "similitude", "ressemblance"],
+  
+  // Présence divine
+  "présence": ["immanence", "inhabitation", "demeure"],
+  "absence": ["éloignement", "nuit", "délaissement"],
+  "inhabitation": ["présence", "demeure", "temple"],
+  "touche": ["attouchement", "contact", "impression"],
+  
+  // Vertus théologales développées
+  "foi nue": ["foi pure", "nuit", "obscurité"],
+  "espérance théologale": ["attente", "confiance", "ancre"],
+  "charité parfaite": ["amour pur", "dilection", "agapè"],
+  
+  // Instruments et moyens
+  "instrument": ["moyen", "outil", "véhicule"],
+  "médiateur": ["intermédiaire", "moyen", "christ"],
+  "médiation": ["intercession", "intermédiaire", "moyen"],
+  
+  // États définitifs
+  "gloire essentielle": ["vision", "béatitude", "possession"],
+  "gloire accidentelle": ["auréole", "couronne", "récompense"],
+  "vision béatifique": ["face à face", "intuition", "contemplation éternelle"],
+  "enfer": ["damnation", "géhenne", "perdition"],
+  "purgatoire": ["expiation", "purification", "souffrance"],
+  
+  // Péchés et obstacles
+  "péché": ["faute", "offense", "transgression"],
+  "concupiscence": ["convoitise", "désir désordonné", "passion"],
+  "attache": ["affection désordonnée", "lien", "dépendance"],
+  "propre volonté": ["amour-propre", "égoïsme", "recherche de soi"],
+  "amour-propre": ["philautie", "égoïsme", "recherche de soi"],
+  
+  // Mystique rhénane (Eckhart, Tauler, Suso)
+  "grunt": ["fond", "abîme", "profondeur"],
+  "abgeschiedenheit": ["détachement", "séparation", "dénuement"],
+  "gelassenheit": ["abandon", "lâcher-prise", "sérénité"],
+  "durchbruch": ["percée", "rupture", "dépassement"],
+  "naissance de dieu": ["génération", "enfantement", "parturition"],
+  "désert": ["solitude", "nudité", "vide"],
+  "néant": ["nihil", "anéantissement", "vacuité"],
+  "déité": ["gottheit", "sur-être", "abîme divin"],
+  "étincelle": ["scintilla", "synderesis", "fine pointe"],
+  "homme noble": ["homme intérieur", "âme élevée"],
+  "pauvreté spirituelle": ["dénuement", "vacuité", "nudité"],
+  
+  // Mystique flamande (Ruusbroec, Béatrice de Nazareth)
+  "vie commune": ["commun", "mode ordinaire"],
+  "vie intérieure": ["intériorité", "recueillement"],
+  "vie contemplative": ["surélévation", "ravissement"],
+  "fruition": ["jouissance", "possession", "union fruitive"],
+  "écoulement": ["émanation", "flux", "procession"],
+  "reflux": ["retour", "conversion", "mouvement ascendant"],
+  "unité sans mode": ["sans manière", "union essentielle"],
+  
+  // Mystique espagnole (Jean de la Croix, Thérèse d'Avila)
+  "nada": ["rien", "néant", "nudité"],
+  "todo": ["tout", "dieu seul", "plénitude"],
+  "subida": ["montée", "ascension", "carmel"],
+  "noche": ["nuit", "obscurité", "purification"],
+  "llama": ["flamme", "amour vif", "cautère"],
+  "cántico": ["cantique", "chant", "noces"],
+  "moradas": ["demeures", "châteaux", "mansions"],
+  "arrobamiento": ["ravissement", "transport", "extase"],
+  "recogimiento": ["recueillement", "attention", "présence"],
+  "quietud": ["quiétude", "repos", "paix"],
+  "unión": ["union", "mariage", "transformation"],
+  "toques": ["touches", "attouchements", "impressions"],
+  
+  // École française (Bérulle, Condren, Olier)
+  "adhérence": ["union", "attachement", "adhésion"],
+  "anéantissement": ["néant", "abaissement", "humiliation"],
+  "capacité": ["aptitude", "ouverture", "réceptivité"],
+  "servitude": ["esclavage", "dépendance", "soumission"],
+  "religion": ["culte", "hommage", "adoration"],
+  "état": ["mystère", "disposition permanente"],
+  "état d'enfance": ["petitesse", "simplicité", "dépendance"],
+  "état de victime": ["immolation", "sacrifice", "oblation"],
+  "grandeurs": ["perfections", "attributs", "excellences"],
+  "mysticisme de l'incarnation": ["christocentrisme", "verbe incarné"],
+  "dévotion": ["culte", "piété", "attachement"],
+  
+  // Spiritualité ignatienne (développée)
+  "composition de lieu": ["représentation", "prélude", "imagination"],
+  "colloque": ["entretien", "conversation", "dialogue"],
+  "application des sens": ["contemplation", "saveur", "goût"],
+  "élection": ["choix", "discernement", "décision"],
+  "indifférence": ["liberté", "équilibre", "disponibilité"],
+  "règles du discernement": ["normes", "critères", "signes"],
+  "motion": ["mouvement", "impulsion", "inspiration"],
+  "bon esprit": ["ange", "consolation", "dieu"],
+  "mauvais esprit": ["démon", "désolation", "ennemi"],
+  "magis": ["plus", "davantage", "excellence"],
+  "contemplation pour obtenir amour": ["finale", "action de grâce"],
+  
+  // Spiritualité carmélitaine (développée)
+  "château": ["demeures", "forteresse", "palais intérieur"],
+  "ver à soie": ["transformation", "métamorphose", "mort"],
+  "palombe": ["colombe", "âme", "simplicité"],
+  "eau vive": ["grâce", "don", "irrigation"],
+  "puits": ["travail", "effort", "méditation"],
+  "aqueduct": ["grâce", "contemplation", "don"],
+  "pluie": ["infusion", "grâce abondante"],
+  
+  // Spiritualité franciscaine
+  "pauvreté parfaite": ["dame pauvreté", "nudité", "minorité"],
+  "minorité": ["petitesse", "humilité", "fraternité mineure"],
+  "joie parfaite": ["béatitude", "paradoxe", "croix"],
+  "stigmatisation": ["conformité", "configuration", "passion"],
+  "canticle": ["louange", "création", "fraternité universelle"],
+  "séraphique": ["ardent", "amour de feu", "extase"],
+  
+  // Spiritualité bénédictine
+  "stabilité": ["persévérance", "enracinement", "fidélité"],
+  "conversatio morum": ["conversion", "transformation", "vie monastique"],
+  "lectio divina": ["lecture priante", "rumination", "méditation"],
+  "ora et labora": ["prière et travail", "rythme", "équilibre"],
+  "opus dei": ["office", "œuvre de dieu", "liturgie"],
+  "discretio": ["discrétion", "mesure", "modération"],
+  
+  // Spiritualité dominicaine
+  "contemplata aliis tradere": ["contemplation partagée", "prédication"],
+  "veritas": ["vérité", "étude", "contemplation"],
+  "studium": ["étude", "recherche", "science sacrée"],
+  
+  // Auteurs et concepts patristiques
+  "théosis": ["déification", "divinisation", "transformation"],
+  "apatheia": ["impassibilité", "paix", "liberté"],
+  "hesychia": ["repos", "silence", "quiétude"],
+  "nepsis": ["vigilance", "sobriété", "attention"],
+  "logismoi": ["pensées", "suggestions", "tentations"],
+  "prière du cœur": ["invocation", "mémoire de dieu"],
+  "prière de jésus": ["invocation du nom", "hésychasme"],
+  "philocalie": ["amour de la beauté", "recueil"],
+  
+  // Augustinisme spirituel
+  "inquiétude": ["recherche", "désir", "tension"],
+  "mémoire de dieu": ["souvenir", "présence", "réminiscence"],
+  "poids de l'amour": ["pondus", "élan", "gravité"],
+  "cité de dieu": ["jérusalem", "église", "communion"],
+  "deux amours": ["charité", "cupidité", "désir"],
+  
+  // Mystique nuptiale
+  "baiser": ["union", "osculum", "contact"],
+  "étreinte": ["amplexus", "union", "embrassement"],
+  "vin": ["amour", "ivresse", "extase"],
+  "jardin clos": ["virginité", "intimité", "secret"],
+  "chambre nuptiale": ["thalamus", "intimité", "union"],
+  "épithalame": ["chant nuptial", "cantique", "célébration"],
+  
+  // Dévotion et piété (XVIIe-XXe siècle)
+  "sacré-cœur": ["cœur de jésus", "amour", "réparation"],
+  "immaculée conception": ["marie", "privilège", "pureté"],
+  "assomption": ["élévation", "glorification", "dormition"],
+  "angelus": ["annonciation", "salutation", "incarnation"],
+  "rosaire": ["chapelet", "mystères", "couronne"],
+  "chemin de croix": ["stations", "passion", "via crucis"],
+  "adoration": ["exposition", "présence réelle", "culte eucharistique"],
+  
+  // Théologie de la perfection
+  "perfection chrétienne": ["sainteté", "plénitude", "maturité"],
+  "voie d'enfance": ["petite voie", "simplicité", "abandon"],
+  "petite voie": ["enfance", "simplicité", "thérèse de lisieux"],
+  "abandon à la providence": ["confiance", "caussade", "moment présent"],
+  "moment présent": ["instant", "maintenant", "présence"],
+  "sainteté": ["perfection", "holiness", "sanctification"],
+  
+  // Souffrances mystiques
+  "blessure d'amour": ["vulnus", "transverbération", "flèche"],
+  "transverbération": ["blessure", "dard", "séraphin"],
+  "martyre d'amour": ["passion", "souffrance", "crucifixion intérieure"],
+  "langueur": ["défaillance", "désir", "absence"],
+  "mort mystique": ["anéantissement", "transformation", "renaissance"],
+  
+  // États et phénomènes
+  "vol de l'esprit": ["ravissement", "transport", "suspension"],
+  "sommeil des puissances": ["suspension", "ligature", "quiétude"],
+  "ivresse spirituelle": ["ébriété", "extase", "transport"],
+  "jubilation": ["joie", "exultation", "allégresse"],
+  "suavité": ["douceur", "onction", "délectation"],
+  
+  // Purifications spécifiques
+  "nuit active": ["mortification", "effort", "ascèse"],
+  "nuit passive": ["purification infuse", "épreuve", "don"],
+  "purification des sens": ["détachement sensible", "mortification"],
+  "purification de l'esprit": ["foi nue", "dépouillement intellectuel"],
+  
+  // Grâces d'union
+  "fiançailles spirituelles": ["accordailles", "promesse", "avant-goût"],
+  "mariage spirituel": ["union transformante", "consommation"],
+  "union transformante": ["déification", "ressemblance parfaite"],
+  "union à dieu": ["conformité", "transformation", "participation"],
+  
+  // Concepts médiévaux
+  "compunction": ["componction", "larmes", "contrition"],
+  "componction": ["repentir", "douleur", "componction"],
+  "jubilus": ["chant sans paroles", "ineffable", "joie"],
+  "raptus": ["ravissement", "extase", "transport"],
+  "excess": ["sortie de soi", "extase", "dépassement"],
+  
+  // Modernité spirituelle (XIXe-XXe)
+  "petite thérèse": ["voie d'enfance", "abandon", "confiance"],
+  "charles de foucauld": ["fraternité", "nazareth", "présence"],
+  "communion réparatrice": ["réparation", "expiation", "amende honorable"],
+  "action catholique": ["apostolat", "engagement", "mission"],
+  "liturgie des heures": ["office", "prière de l'église", "louange"],
+  
+  // Vie intérieure
+  "vie cachée": ["secret", "nazareth", "obscurité"],
+  "vie mixte": ["action et contemplation", "équilibre", "marie et marthe"],
+  "actif et contemplatif": ["marthe et marie", "double vocation"],
+  "retraite": ["solitude", "exercices", "silence"],
+  "solitude": ["désert", "isolement", "recueillement"],
+  
+  // Expérience mystique
+  "toucher substantiel": ["contact essentiel", "fond", "substance"],
+  "regard simple": ["vue simple", "attention amoureuse"],
+  "attention amoureuse": ["regard", "présence", "amour"],
+  "présence de dieu": ["pratique", "exercice", "conscience"],
+  "sentiment de dieu": ["expérience", "goût", "sens"],
+  
+  // Obstacles et tentations
+  "scrupule": ["anxiété", "crainte excessive", "trouble"],
+  "tiédeur spirituelle": ["négligence", "relâchement", "médiocrité"],
+  "acédie": ["dégoût", "tristesse", "paresse spirituelle"],
+  "vaine gloire": ["orgueil", "vanité", "recherche de louange"],
+  "curiosité": ["distraction", "dispersion", "recherche vaine"]
+};
         const MAX_EXTRAITS_TOTAL = 5;
         const MAX_EXTRAIT_BRUT_CHARS = 3000;
         const MAX_SEGMENT_SOURCE_CHARS = 6000;
@@ -396,18 +869,62 @@
         let apiCallIndex = 0;
 
         // Liste des tomes par collection (à compléter selon vos fichiers réels)
-        const TOMES = {
-            DS: [
-                'DS/DS1_corrige-1.docx',
-                'DS/DS2-1_corrige.docx',
-                'DS/DS2-2_corrige.docx'
-            ],
-            DTC: [
-                'DTC/DTC_tome13-1_corrige.docx',
-                'DTC/DTC_tome13-2_corrige.docx',
-                'DTC/DTC_tome14-1_corrige.docx'
-            ]
-        };
+       const TOMES = {
+    DS: [
+        'DS/DS1_corrige-1.docx',
+        'DS/DS2-1_corrige.docx',
+        'DS/DS2-2_corrige.docx',
+        'DS/DS3_corrige.docx',
+        'DS/DS4-1_corrige.docx',
+        'DS/DS4-2_corrige.docx',
+        'DS/DS5_corrige.docx',
+        'DS/DS6_corrige.docx',
+        'DS/DS7-1_corrige.docx',
+        'DS/DS7-2_corrige.docx',
+        'DS/DS8_corrige.docx',
+        'DS/DS9_corrige.docx',
+        'DS/DS10_corrige.docx',
+        'DS/DS11_corrige.docx',
+        'DS/DS12-1_corrige.docx',
+        'DS/DS12-2_corrige.docx',
+        'DS/DS13_corrige.docx',
+        'DS/DS14_corrige.docx',
+        'DS/DS15_corrige.docx',
+        'DS/DS16_corrige.docx'
+    ],
+    DTC: [
+        'DTC/DTC_tome1-1_corrige.docx',
+        'DTC/DTC_tome1-2_corrige.docx',
+        'DTC/DTC_tome2-1_corrige.docx',
+        'DTC/DTC_tome2-2_corrige.docx',
+        'DTC/DTC_tome3-1_corrige.docx',
+        'DTC/DTC_tome3-2_corrige.docx',
+        'DTC/DTC_tome4-1_corrige.docx',
+        'DTC/DTC_tome4-2_corrige.docx',
+        'DTC/DTC_tome5-1_corrige.docx',
+        'DTC/DTC_tome5-2_corrige.docx',
+        'DTC/DTC_tome6-1_corrige.docx',
+        'DTC/DTC_tome6-2_corrige.docx',
+        'DTC/DTC_tome7-1_corrige.docx',
+        'DTC/DTC_tome7-2_corrige.docx',
+        'DTC/DTC_tome8-1_corrige.docx',
+        'DTC/DTC_tome8-2_corrige.docx',
+        'DTC/DTC_tome9-1_corrige.docx',
+        'DTC/DTC_tome9-2_corrige.docx',
+        'DTC/DTC_tome10-1_corrige.docx',
+        'DTC/DTC_tome10-2_corrige.docx',
+        'DTC/DTC_tome11-1_corrige.docx',
+        'DTC/DTC_tome11-2_corrige.docx',
+        'DTC/DTC_tome12-1_corrige.docx',
+        'DTC/DTC_tome12-2_corrige.docx',
+        'DTC/DTC_tome13-1_corrige.docx',
+        'DTC/DTC_tome13-2_corrige.docx',
+        'DTC/DTC_tome14-1_corrige.docx',
+        'DTC/DTC_tome14-2_corrige.docx',
+        'DTC/DTC_tome15-1_corrige.docx',
+        'DTC/DTC_tome15-2_corrige.docx'
+    ]
+};
 
         window.addEventListener('load', () => {
             document.getElementById('theme-input').addEventListener('input', validateForm);
