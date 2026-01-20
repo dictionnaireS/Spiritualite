@@ -9,9 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-dark: #1c2541;
@@ -213,7 +211,6 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -221,7 +218,6 @@
         }
     </style>
 </head>
-
 <body>
     <header>
         <p>Outil de recherche d'extraits du</p>
@@ -232,16 +228,14 @@
         <aside class="sidebar">
             <div class="card guide-box">
                 <h3>📖 Guide Optimisé</h3>
-                <p style="font-size: 0.8rem; margin-bottom: 10px; color: #555;">Recherche ultra-rapide avec index
-                    pré-calculés :</p>
+                <p style="font-size: 0.8rem; margin-bottom: 10px; color: #555;">Recherche ultra-rapide avec index pré-calculés :</p>
                 <ul style="padding-left: 18px; font-size: 0.85rem;">
                     <li style="margin-bottom: 8px;">1. <b>COLLECTION :</b> Choisissez DS ou DTC</li>
                     <li style="margin-bottom: 8px;">2. <b>CRITÈRES :</b> Indiquez thème et mots-clés</li>
                     <li style="margin-bottom: 8px;">3. <b>LANCEMENT :</b> Recherche instantanée</li>
                     <li style="margin-bottom: 8px;">4. <b>AFFICHAGE :</b> Résultats progressifs</li>
                 </ul>
-                <div id="index-status"
-                    style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 0.75rem;">
+                <div id="index-status" style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 0.75rem;">
                     <strong>📊 Index :</strong> <span id="status-text">Chargement...</span>
                 </div>
             </div>
@@ -252,38 +246,31 @@
                 <div class="form-group">
                     <label>Sélectionner une collection</label>
                     <div style="display: flex; gap: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-                        <label
-                            style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: white; padding: 10px 20px; border-radius: 8px; border: 2px solid #e0e0e0;">
-                            <input type="radio" name="collection" value="DS" onchange="handleCollectionSelect()"
-                                style="width: auto;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: white; padding: 10px 20px; border-radius: 8px; border: 2px solid #e0e0e0;">
+                            <input type="radio" name="collection" value="DS" onchange="handleCollectionSelect()" style="width: auto;">
                             <span style="font-weight: bold; color: #2c3e50;">DS (Dictionnaire de Spiritualité)</span>
                         </label>
-                        <label
-                            style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: white; padding: 10px 20px; border-radius: 8px; border: 2px solid #e0e0e0;">
-                            <input type="radio" name="collection" value="DTC" onchange="handleCollectionSelect()"
-                                style="width: auto;">
-                            <span style="font-weight: bold; color: #2c3e50;">DTC (Dictionnaire de Théologie
-                                Catholique)</span>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: white; padding: 10px 20px; border-radius: 8px; border: 2px solid #e0e0e0;">
+                            <input type="radio" name="collection" value="DTC" onchange="handleCollectionSelect()" style="width: auto;">
+                            <span style="font-weight: bold; color: #2c3e50;">DTC (Dictionnaire de Théologie Catholique)</span>
                         </label>
                     </div>
-                    <div id="collection-info" class="file-info" style="margin-top: 10px; color: #666;">Aucune collection
-                        sélectionnée</div>
+                    <div id="collection-info" class="file-info" style="margin-top: 10px; color: #666;">Aucune collection sélectionnée</div>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div class="form-group">
                         <label for="theme-input">Thématique</label>
-                        <input type="text" id="theme-input" placeholder="Ex: Oraison...">
+                        <input type="text" id="theme-input" placeholder="Ex: Oraison..." oninput="validateForm()">
                     </div>
                     <div class="form-group">
                         <label for="mots-cles-input">Mots-clés</label>
-                        <input type="text" id="mots-cles-input" placeholder="Ex: union, grâce...">
+                        <input type="text" id="mots-cles-input" placeholder="Ex: union, grâce..." oninput="validateForm()">
                     </div>
                 </div>
 
                 <div class="btn-row">
-                    <button id="search-btn" class="btn btn-primary" disabled onclick="startSearch()">🚀 LANCER
-                        RECHERCHE</button>
+                    <button id="search-btn" class="btn btn-primary" disabled onclick="startSearch()">🚀 LANCER RECHERCHE</button>
                     <button id="stop-btn" class="btn btn-stop" onclick="stopSearch()"><span>🛑</span> ARRÊTER</button>
                 </div>
             </div>
@@ -292,19 +279,15 @@
                 <div class="results-area">
                     <div class="card" style="min-height: 300px;">
                         <h3>📊 RÉSULTATS</h3>
-                        <div id="results-content" style="color: #7f8c8d; font-style: italic; font-size: 0.85rem;">En
-                            attente...</div>
+                        <div id="results-content" style="color: #7f8c8d; font-style: italic; font-size: 0.85rem;">En attente...</div>
                     </div>
                 </div>
                 <div class="pdf-area">
                     <div class="card">
                         <h3>📕 PDF</h3>
-                        <div id="pdf-placeholder" class="pdf-placeholder"><span
-                                style="font-size: 2.5rem; display: block; margin-bottom: 10px;">📄</span>Disponible
-                            après recherche.</div>
+                        <div id="pdf-placeholder" class="pdf-placeholder"><span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">📄</span>Disponible après recherche.</div>
                         <div id="pdf-ready" style="display: none; text-align: center;">
-                            <button id="pdf-download-btn" class="btn btn-primary" style="width: 100%;"
-                                onclick="downloadPDF()">TÉLÉCHARGER PDF</button>
+                            <button id="pdf-download-btn" class="btn btn-primary" style="width: 100%;" onclick="downloadPDF()">TÉLÉCHARGER PDF</button>
                         </div>
                     </div>
                 </div>
@@ -316,21 +299,497 @@
     </div>
 
     <script>
-        const GEMINI_CONFIGS = [
-            { key: "AIzaSyBDx1K1gaylYbpmveAoelqAqWzPBI51XFE", version: "v1beta" },
-            { key: "AIzaSyDWl5HOhr-OqYY6akOO2Uu2l0aM0DOkcT4", version: "v1beta" }
+        // ============================================
+        // CONFIGURATION OPENROUTER VIA PROXY HF
+        // ============================================
+        const PROXY_URL = "https://gildasr-dictionnaires.hf.space/api/chat";
+        // Modèles OpenRouter gratuits à utiliser
+        const OPENROUTER_MODELS = [
+            "deepseek/deepseek-r1-0528:free",
+            "meta-llama/llama-3.3-70b-instruct:free",
+            "google/gemma-3-27b-it:free",
+            "openai/gpt-oss-120b:free",
+            "google/gemma-3-12b-it:free",
+            "mistralai/devstral-2512:free",
+            "anthropic/claude-3-haiku",
+            "google/gemini-flash-1.5"
         ];
-        const GEMINI_MODELS = ["gemini-2.0-flash-exp", "gemini-2.0-flash"];
 
         const SPIRITUAL_SYNONYMS = {
-            "prière": ["oraison", "méditation", "contemplation"],
-            "oraison": ["prière", "méditation", "contemplation"],
-            "méditation": ["oraison", "contemplation", "réflexion"],
-            "contemplation": ["oraison", "méditation", "vision"],
-            "âme": ["esprit", "cœur", "intérieur"],
-            "dieu": ["seigneur", "christ", "père"],
-            "grâce": ["don", "faveur", "miséricorde"],
-            "union": ["communion", "unité", "fusion"]
+            // Prière et vie de prière
+            "prière": ["oraison", "méditation", "contemplation", "élévation", "recueillement", "dévotion", "supplication", "invocation"],
+            "oraison": ["prière", "méditation", "contemplation", "exercice spirituel", "entretien", "colloque"],
+            "méditation": ["oraison", "contemplation", "réflexion", "considération", "examen", "recueillement"],
+            "contemplation": ["oraison", "méditation", "vision", "regard", "union mystique", "théorie"],
+            "recueillement": ["intériorité", "silence", "concentration", "attention", "présence"],
+            "dévotion": ["piété", "ferveur", "zèle", "attachement", "culte"],
+
+            // Anthropologie spirituelle
+            "âme": ["esprit", "cœur", "intérieur", "conscience", "psyché", "substance spirituelle"],
+            "esprit": ["âme", "intelligence", "raison", "mens", "pneuma"],
+            "cœur": ["âme", "intérieur", "affectivité", "volonté", "fond de l'être"],
+            "conscience": ["for intérieur", "syndérèse", "scintilla animae", "sentiment intime"],
+            "volonté": ["libre arbitre", "faculté", "détermination", "consentement"],
+
+            // Théologie
+            "dieu": ["seigneur", "christ", "père", "créateur", "tout-puissant", "éternel", "trinité"],
+            "seigneur": ["dieu", "maître", "christ", "kyrios"],
+            "christ": ["jésus", "verbe", "sauveur", "rédempteur", "fils", "logos"],
+            "père": ["dieu", "créateur", "providence"],
+            "esprit saint": ["paraclet", "consolateur", "esprit", "pneuma"],
+            "trinité": ["trois personnes", "unité divine", "mystère trinitaire"],
+
+            // Grâce et vie surnaturelle
+            "grâce": ["don", "faveur", "miséricorde", "secours", "assistance divine", "vie surnaturelle"],
+            "don": ["grâce", "charisme", "faveur", "bienfait", "libéralité"],
+            "miséricorde": ["compassion", "pitié", "bonté", "clémence", "charité"],
+            "charité": ["amour", "dilection", "agapè", "caritas"],
+            "foi": ["croyance", "adhésion", "confiance", "fides"],
+            "espérance": ["attente", "confiance", "spes", "assurance"],
+
+            // Union et communion
+            "union": ["communion", "unité", "fusion", "conformité", "transformation"],
+            "communion": ["union", "participation", "koinonia", "communication"],
+            "unité": ["union", "uniformité", "conformité", "identité"],
+            "conformité": ["ressemblance", "assimilation", "transformation", "configuration"],
+            "transformation": ["métamorphose", "transfiguration", "déification", "théosis"],
+
+            // Vertus et vie morale
+            "vertu": ["habitus", "disposition", "perfection", "excellence"],
+            "perfection": ["achèvement", "plénitude", "maturité", "consommation"],
+            "humilité": ["abaissement", "anéantissement", "petitesse", "modestie"],
+            "obéissance": ["soumission", "docilité", "abandon", "conformité"],
+            "pauvreté": ["dépouillement", "détachement", "renoncement", "abnégation"],
+            "chasteté": ["pureté", "continence", "virginité", "intégrité"],
+
+            // Purification et ascèse
+            "purification": ["purgation", "catharsis", "purgatoire", "épreuve"],
+            "mortification": ["pénitence", "macération", "ascèse", "discipline"],
+            "pénitence": ["contrition", "repentir", "conversion", "satisfaction"],
+            "détachement": ["renoncement", "abnégation", "dénuement", "dépouillement"],
+            "nuit": ["obscurité", "ténèbre", "épreuve", "purification passive"],
+
+            // Vie mystique
+            "extase": ["ravissement", "transport", "suspension", "raptus"],
+            "vision": ["révélation", "contemplation", "apparition", "manifestation"],
+            "illumination": ["lumière", "connaissance", "grâce", "révélation"],
+            "ravissement": ["extase", "transport", "élévation", "suspension"],
+            "union mystique": ["mariage spirituel", "fiançailles", "déification", "transformation"],
+
+            // Voies spirituelles
+            "voie": ["chemin", "itinéraire", "progression", "acheminement"],
+            "voie purgative": ["purification", "conversion", "pénitence"],
+            "voie illuminative": ["progrès", "perfectionnement", "croissance"],
+            "voie unitive": ["perfection", "union", "consommation"],
+            "progrès": ["croissance", "avancement", "perfectionnement", "profection"],
+
+            // Discernement et direction
+            "discernement": ["discrimination", "diacrisis", "jugement", "épreuve des esprits"],
+            "direction": ["conduite", "gouvernement", "conseil", "accompagnement"],
+            "consolation": ["réconfort", "joie", "paix", "douceur"],
+            "désolation": ["aridité", "sécheresse", "tristesse", "épreuve"],
+
+            // Connaissance spirituelle
+            "connaissance": ["science", "gnose", "sagesse", "intelligence"],
+            "sagesse": ["sophia", "sapientia", "prudence", "discernement"],
+            "intelligence": ["intellection", "compréhension", "pénétration", "lumière"],
+            "révélation": ["manifestation", "dévoilement", "apocalypse", "illumination"],
+
+            // Affectivité spirituelle
+            "amour": ["charité", "dilection", "affection", "tendresse", "éros", "agapè"],
+            "désir": ["aspiration", "appétit", "convoitise", "soif"],
+            "joie": ["allégresse", "jubilation", "contentement", "béatitude"],
+            "paix": ["tranquillité", "quiétude", "repos", "sérénité"],
+
+            // Pratiques et exercices
+            "exercice spirituel": ["pratique", "ascèse", "discipline", "méthode"],
+            "examen": ["révision", "introspection", "réflexion", "considération"],
+            "lecture spirituelle": ["lectio", "méditation", "rumination"],
+            "jeûne": ["abstinence", "privation", "mortification"],
+
+            // Communauté et Église
+            "église": ["corps mystique", "épouse", "communion des saints"],
+            "sacrement": ["mystère", "signe", "rite", "célébration"],
+            "eucharistie": ["communion", "sacrifice", "messe", "banquet"],
+            "baptême": ["régénération", "illumination", "initiation"],
+
+            // Fins dernières
+            "salut": ["rédemption", "délivrance", "libération", "béatitude"],
+            "béatitude": ["félicité", "bonheur", "vision béatifique", "gloire"],
+            "gloire": ["doxa", "splendeur", "manifestation", "rayonnement"],
+            "éternité": ["vie éternelle", "immortalité", "permanence"],
+
+            // Lutte spirituelle
+            "combat": ["lutte", "guerre spirituelle", "agôn", "ascèse"],
+            "tentation": ["épreuve", "tentation", "sollicitation", "attaque"],
+            "ennemi": ["démon", "tentateur", "adversaire", "satan"],
+            "vigilance": ["veille", "attention", "garde", "sobriété"],
+
+            // États spirituels
+            "ferveur": ["zèle", "ardeur", "dévotion", "chaleur"],
+            "tiédeur": ["négligence", "relâchement", "indifférence"],
+            "aridité": ["sécheresse", "désolation", "épreuve", "nuit"],
+            "abandon": ["délaissement", "soumission", "confiance", "remise"],
+
+            // Ordres et familles religieuses
+            "bénédictin": ["monastique", "cénobitique", "régulier"],
+            "cistercien": ["bernardin", "trappiste", "réformé"],
+            "chartreux": ["ermite", "solitaire", "contemplatif"],
+            "franciscain": ["mineur", "cordelier", "séraphique"],
+            "dominicain": ["prêcheur", "jacobin", "frère"],
+            "jésuite": ["compagnie", "ignatien", "père"],
+            "carmélite": ["térésien", "réformé", "déchaux"],
+            "religieux": ["moine", "frère", "régulier", "profès"],
+            "moine": ["religieux", "cénobitique", "monastique"],
+            "ermite": ["anachorète", "solitaire", "reclus"],
+
+            // Auteurs et écoles spirituelles
+            "ignatien": ["jésuite", "exercices", "discernement"],
+            "thérésien": ["carmélitain", "réforme", "oraison"],
+            "bérullien": ["école française", "christocentrique"],
+            "salésien": ["dévot", "humaniste", "introduction"],
+            "sulpicien": ["séminaire", "sacerdotal", "école française"],
+
+            // Théologie mystique - Degrés et états
+            "quiétude": ["repos", "paix", "oraison de quiétude", "quietismo"],
+            "simplicité": ["regard simple", "attention amoureuse", "acte simple"],
+            "passivité": ["réception", "souffrance", "patience"],
+            "activité": ["coopération", "effort", "industrie"],
+            "surnaturel": ["infus", "gratuit", "divin"],
+            "naturel": ["acquis", "humain", "ordinaire"],
+            "extraordinaire": ["charismatique", "miraculeux", "phénomène"],
+            "ordinaire": ["commun", "voie commune", "simple"],
+
+            // Phénomènes mystiques
+            "stigmates": ["plaies", "marques", "participation"],
+            "lévitation": ["élévation", "transport corporel", "prodige"],
+            "bilocatio": ["ubiquité", "présence simultanée", "prodige"],
+            "locution": ["parole intérieure", "voix", "communication"],
+            "songe": ["rêve", "vision nocturne", "révélation"],
+            "apparition": ["vision", "manifestation", "révélation sensible"],
+
+            // Dons et charismes
+            "charisme": ["don gratuit", "grâce gratis datae", "faveur"],
+            "prophétie": ["don prophétique", "prédiction", "révélation"],
+            "miracle": ["prodige", "signe", "merveille"],
+            "guérison": ["thaumaturgie", "miracle", "don"],
+            "infus": ["surnaturel", "gratuit", "donné"],
+            "acquis": ["naturel", "mérité", "gagné"],
+
+            // Direction spirituelle et accompagnement
+            "directeur": ["père spirituel", "guide", "maître", "conducteur"],
+            "dirigé": ["disciple", "pénitent", "âme", "enfant spirituel"],
+            "conseil": ["direction", "avis", "lumière", "parole"],
+            "obédience": ["mission", "charge", "office", "ordre"],
+            "manifestation": ["ouverture", "confidence", "aveu"],
+
+            // Doctrine et enseignement
+            "doctrine": ["enseignement", "théologie", "système", "école"],
+            "tradition": ["transmission", "héritage", "paradosis"],
+            "magistère": ["enseignement", "autorité", "doctrine"],
+            "orthodoxie": ["droite foi", "conformité", "vérité"],
+            "hérésie": ["erreur", "déviation", "fausse doctrine"],
+
+            // Vocations et états de vie
+            "vocation": ["appel", "élection", "destination"],
+            "élection": ["choix", "prédestination", "appel"],
+            "consécration": ["offrande", "dédicace", "oblation"],
+            "profession": ["vœux", "engagement", "oblation"],
+            "vœu": ["promesse", "engagement", "obligation"],
+
+            // Les trois vœux
+            "pauvreté évangélique": ["dépouillement", "renoncement", "détachement des biens"],
+            "chasteté consacrée": ["virginité", "célibat", "continence parfaite"],
+            "obéissance religieuse": ["soumission", "dépendance", "renoncement à sa volonté"],
+
+            // Vie liturgique
+            "liturgie": ["culte", "office", "célébration", "rite"],
+            "office divin": ["bréviaire", "heures canoniales", "prière liturgique"],
+            "messe": ["sacrifice", "eucharistie", "synaxe"],
+            "vêpres": ["office du soir", "lucernaire"],
+            "laudes": ["office du matin", "louange"],
+
+            // Temps liturgiques
+            "avent": ["attente", "préparation", "venue"],
+            "carême": ["pénitence", "jeûne", "quadragésime"],
+            "pâques": ["résurrection", "passage", "pascha"],
+            "pentecôte": ["esprit", "effusion", "don"],
+
+            // Symboles et images
+            "époux": ["christ", "bien-aimé", "seigneur"],
+            "épouse": ["âme", "église", "fiancée"],
+            "nuptial": ["sponsal", "matrimonial", "mariage spirituel"],
+            "jardin": ["paradis", "hortus conclusus", "intimité"],
+            "source": ["fontaine", "eau vive", "origine"],
+            "montagne": ["élévation", "carmel", "sommet", "ascension"],
+
+            // Anthropologie mystique
+            "mémoire": ["réminiscence", "souvenir", "faculté"],
+            "entendement": ["intelligence", "intellect", "raison"],
+            "imagination": ["fantaisie", "sens intérieur", "faculté"],
+            "sens spirituels": ["goût", "toucher", "vue intérieure"],
+            "apex mentis": ["fine pointe", "sommet", "fond de l'âme"],
+            "fond de l'âme": ["centre", "substance", "apex"],
+            "substance de l'âme": ["essence", "fond", "être profond"],
+
+            // Dynamique spirituelle
+            "mouvement": ["motion", "impulsion", "élan"],
+            "repos": ["quiétude", "stabilité", "paix"],
+            "ascension": ["montée", "élévation", "progrès"],
+            "descente": ["humiliation", "kénose", "abaissement"],
+            "sortie": ["exode", "dépassement", "extase"],
+            "entrée": ["intériorité", "recueillement", "retour"],
+
+            // Souffrance et épreuve
+            "croix": ["passion", "épreuve", "sacrifice"],
+            "passion": ["souffrance", "croix", "martyre"],
+            "tribulation": ["épreuve", "affliction", "adversité"],
+            "déreliction": ["abandon", "solitude", "délaissement"],
+            "nuit obscure": ["purification passive", "épreuve", "ténèbre"],
+            "nuit des sens": ["purification active", "mortification", "sécheresse"],
+            "nuit de l'esprit": ["purification passive", "épreuve mystique", "ténèbre"],
+
+            // Demeures et degrés (Sainte Thérèse)
+            "demeures": ["châteaux", "mansions", "étapes"],
+            "château intérieur": ["âme", "demeures", "palais"],
+            "cellule intérieure": ["oratoire", "chambre secrète", "sanctuaire"],
+
+            // Grâces et consolations
+            "consolation sensible": ["douceur", "sentiment", "goût"],
+            "consolation spirituelle": ["paix profonde", "joie", "force"],
+            "sécheresse": ["aridité", "privation", "nuit"],
+            "douceur": ["suavité", "onction", "délectation"],
+
+            // Langages mystiques
+            "ineffable": ["indicible", "inexprimable", "mystère"],
+            "apophatique": ["négatif", "via negativa", "ténèbre"],
+            "cataphatique": ["positif", "via affirmativa", "lumière"],
+            "analogie": ["comparaison", "similitude", "ressemblance"],
+
+            // Présence divine
+            "présence": ["immanence", "inhabitation", "demeure"],
+            "absence": ["éloignement", "nuit", "délaissement"],
+            "inhabitation": ["présence", "demeure", "temple"],
+            "touche": ["attouchement", "contact", "impression"],
+
+            // Vertus théologales développées
+            "foi nue": ["foi pure", "nuit", "obscurité"],
+            "espérance théologale": ["attente", "confiance", "ancre"],
+            "charité parfaite": ["amour pur", "dilection", "agapè"],
+
+            // Instruments et moyens
+            "instrument": ["moyen", "outil", "véhicule"],
+            "médiateur": ["intermédiaire", "moyen", "christ"],
+            "médiation": ["intercession", "intermédiaire", "moyen"],
+
+            // États définitifs
+            "gloire essentielle": ["vision", "béatitude", "possession"],
+            "gloire accidentelle": ["auréole", "couronne", "récompense"],
+            "vision béatifique": ["face à face", "intuition", "contemplation éternelle"],
+            "enfer": ["damnation", "géhenne", "perdition"],
+            "purgatoire": ["expiation", "purification", "souffrance"],
+
+            // Péchés et obstacles
+            "péché": ["faute", "offense", "transgression"],
+            "concupiscence": ["convoitise", "désir désordonné", "passion"],
+            "attache": ["affection désordonnée", "lien", "dépendance"],
+            "propre volonté": ["amour-propre", "égoïsme", "recherche de soi"],
+            "amour-propre": ["philautie", "égoïsme", "recherche de soi"],
+
+            // Mystique rhénane (Eckhart, Tauler, Suso)
+            "grunt": ["fond", "abîme", "profondeur"],
+            "abgeschiedenheit": ["détachement", "séparation", "dénuement"],
+            "gelassenheit": ["abandon", "lâcher-prise", "sérénité"],
+            "durchbruch": ["percée", "rupture", "dépassement"],
+            "naissance de dieu": ["génération", "enfantement", "parturition"],
+            "désert": ["solitude", "nudité", "vide"],
+            "néant": ["nihil", "anéantissement", "vacuité"],
+            "déité": ["gottheit", "sur-être", "abîme divin"],
+            "étincelle": ["scintilla", "synderesis", "fine pointe"],
+            "homme noble": ["homme intérieur", "âme élevée"],
+            "pauvreté spirituelle": ["dénuement", "vacuité", "nudité"],
+
+            // Mystique flamande (Ruusbroec, Béatrice de Nazareth)
+            "vie commune": ["commun", "mode ordinaire"],
+            "vie intérieure": ["intériorité", "recueillement"],
+            "vie contemplative": ["surélévation", "ravissement"],
+            "fruition": ["jouissance", "possession", "union fruitive"],
+            "écoulement": ["émanation", "flux", "procession"],
+            "reflux": ["retour", "conversion", "mouvement ascendant"],
+            "unité sans mode": ["sans manière", "union essentielle"],
+
+            // Mystique espagnole (Jean de la Croix, Thérèse d'Avila)
+            "nada": ["rien", "néant", "nudité"],
+            "todo": ["tout", "dieu seul", "plénitude"],
+            "subida": ["montée", "ascension", "carmel"],
+            "noche": ["nuit", "obscurité", "purification"],
+            "llama": ["flamme", "amour vif", "cautère"],
+            "cántico": ["cantique", "chant", "noces"],
+            "moradas": ["demeures", "châteaux", "mansions"],
+            "arrobamiento": ["ravissement", "transport", "extase"],
+            "recogimiento": ["recueillement", "attention", "présence"],
+            "quietud": ["quiétude", "repos", "paix"],
+            "unión": ["union", "mariage", "transformation"],
+            "toques": ["touches", "attouchements", "impressions"],
+
+            // École française (Bérulle, Condren, Olier)
+            "adhérence": ["union", "attachement", "adhésion"],
+            "anéantissement": ["néant", "abaissement", "humiliation"],
+            "capacité": ["aptitude", "ouverture", "réceptivité"],
+            "servitude": ["esclavage", "dépendance", "soumission"],
+            "religion": ["culte", "hommage", "adoration"],
+            "état": ["mystère", "disposition permanente"],
+            "état d'enfance": ["petitesse", "simplicité", "dépendance"],
+            "état de victime": ["immolation", "sacrifice", "oblation"],
+            "grandeurs": ["perfections", "attributs", "excellences"],
+            "mysticisme de l'incarnation": ["christocentrisme", "verbe incarné"],
+            "dévotion": ["culte", "piété", "attachement"],
+
+            // Spiritualité ignatienne (développée)
+            "composition de lieu": ["représentation", "prélude", "imagination"],
+            "colloque": ["entretien", "conversation", "dialogue"],
+            "application des sens": ["contemplation", "saveur", "goût"],
+            "élection": ["choix", "discernement", "décision"],
+            "indifférence": ["liberté", "équilibre", "disponibilité"],
+            "règles du discernement": ["normes", "critères", "signes"],
+            "motion": ["mouvement", "impulsion", "inspiration"],
+            "bon esprit": ["ange", "consolation", "dieu"],
+            "mauvais esprit": ["démon", "désolation", "ennemi"],
+            "magis": ["plus", "davantage", "excellence"],
+            "contemplation pour obtenir amour": ["finale", "action de grâce"],
+
+            // Spiritualité carmélitaine (développée)
+            "château": ["demeures", "forteresse", "palais intérieur"],
+            "ver à soie": ["transformation", "métamorphose", "mort"],
+            "palombe": ["colombe", "âme", "simplicité"],
+            "eau vive": ["grâce", "don", "irrigation"],
+            "puits": ["travail", "effort", "méditation"],
+            "aqueduct": ["grâce", "contemplation", "don"],
+            "pluie": ["infusion", "grâce abondante"],
+
+            // Spiritualité franciscaine
+            "pauvreté parfaite": ["dame pauvreté", "nudité", "minorité"],
+            "minorité": ["petitesse", "humilité", "fraternité mineure"],
+            "joie parfaite": ["béatitude", "paradoxe", "croix"],
+            "stigmatisation": ["conformité", "configuration", "passion"],
+            "canticle": ["louange", "création", "fraternité universelle"],
+            "séraphique": ["ardent", "amour de feu", "extase"],
+
+            // Spiritualité bénédictine
+            "stabilité": ["persévérance", "enracinement", "fidélité"],
+            "conversatio morum": ["conversion", "transformation", "vie monastique"],
+            "lectio divina": ["lecture priante", "rumination", "méditation"],
+            "ora et labora": ["prière et travail", "rythme", "équilibre"],
+            "opus dei": ["office", "œuvre de dieu", "liturgie"],
+            "discretio": ["discrétion", "mesure", "modération"],
+
+            // Spiritualité dominicaine
+            "contemplata aliis tradere": ["contemplation partagée", "prédication"],
+            "veritas": ["vérité", "étude", "contemplation"],
+            "studium": ["étude", "recherche", "science sacrée"],
+
+            // Auteurs et concepts patristiques
+            "théosis": ["déification", "divinisation", "transformation"],
+            "apatheia": ["impassibilité", "paix", "liberté"],
+            "hesychia": ["repos", "silence", "quiétude"],
+            "nepsis": ["vigilance", "sobriété", "attention"],
+            "logismoi": ["pensées", "suggestions", "tentations"],
+            "prière du cœur": ["invocation", "mémoire de dieu"],
+            "prière de jésus": ["invocation du nom", "hésychasme"],
+            "philocalie": ["amour de la beauté", "recueil"],
+
+            // Augustinisme spirituel
+            "inquiétude": ["recherche", "désir", "tension"],
+            "mémoire de dieu": ["souvenir", "présence", "réminiscence"],
+            "poids de l'amour": ["pondus", "élan", "gravité"],
+            "cité de dieu": ["jérusalem", "église", "communion"],
+            "deux amours": ["charité", "cupidité", "désir"],
+
+            // Mystique nuptiale
+            "baiser": ["union", "osculum", "contact"],
+            "étreinte": ["amplexus", "union", "embrassement"],
+            "vin": ["amour", "ivresse", "extase"],
+            "jardin clos": ["virginité", "intimité", "secret"],
+            "chambre nuptiale": ["thalamus", "intimité", "union"],
+            "épithalame": ["chant nuptial", "cantique", "célébration"],
+
+            // Dévotion et piété (XVIIe-XXe siècle)
+            "sacré-cœur": ["cœur de jésus", "amour", "réparation"],
+            "immaculée conception": ["marie", "privilège", "pureté"],
+            "assomption": ["élévation", "glorification", "dormition"],
+            "angelus": ["annonciation", "salutation", "incarnation"],
+            "rosaire": ["chapelet", "mystères", "couronne"],
+            "chemin de croix": ["stations", "passion", "via crucis"],
+            "adoration": ["exposition", "présence réelle", "culte eucharistique"],
+
+            // Théologie de la perfection
+            "perfection chrétienne": ["sainteté", "plénitude", "maturité"],
+            "voie d'enfance": ["petite voie", "simplicité", "abandon"],
+            "petite voie": ["enfance", "simplicité", "thérèse de lisieux"],
+            "abandon à la providence": ["confiance", "caussade", "moment présent"],
+            "moment présent": ["instant", "maintenant", "présence"],
+            "sainteté": ["perfection", "holiness", "sanctification"],
+
+            // Souffrances mystiques
+            "blessure d'amour": ["vulnus", "transverbération", "flèche"],
+            "transverbération": ["blessure", "dard", "séraphin"],
+            "martyre d'amour": ["passion", "souffrance", "crucifixion intérieure"],
+            "langueur": ["défaillance", "désir", "absence"],
+            "mort mystique": ["anéantissement", "transformation", "renaissance"],
+
+            // États et phénomènes
+            "vol de l'esprit": ["ravissement", "transport", "suspension"],
+            "sommeil des puissances": ["suspension", "ligature", "quiétude"],
+            "ivresse spirituelle": ["ébriété", "extase", "transport"],
+            "jubilation": ["joie", "exultation", "allégresse"],
+            "suavité": ["douceur", "onction", "délectation"],
+
+            // Purifications spécifiques
+            "nuit active": ["mortification", "effort", "ascèse"],
+            "nuit passive": ["purification infuse", "épreuve", "don"],
+            "purification des sens": ["détachement sensible", "mortification"],
+            "purification de l'esprit": ["foi nue", "dépouillement intellectuel"],
+
+            // Grâces d'union
+            "fiançailles spirituelles": ["accordailles", "promesse", "avant-goût"],
+            "mariage spirituel": ["union transformante", "consommation"],
+            "union transformante": ["déification", "ressemblance parfaite"],
+            "union à dieu": ["conformité", "transformation", "participation"],
+
+            // Concepts médiévaux
+            "compunction": ["componction", "larmes", "contrition"],
+            "componction": ["repentir", "douleur", "componction"],
+            "jubilus": ["chant sans paroles", "ineffable", "joie"],
+            "raptus": ["ravissement", "extase", "transport"],
+            "excess": ["sortie de soi", "extase", "dépassement"],
+
+            // Modernité spirituelle (XIXe-XXe)
+            "petite thérèse": ["voie d'enfance", "abandon", "confiance"],
+            "charles de foucauld": ["fraternité", "nazareth", "présence"],
+            "communion réparatrice": ["réparation", "expiation", "amende honorable"],
+            "action catholique": ["apostolat", "engagement", "mission"],
+            "liturgie des heures": ["office", "prière de l'église", "louange"],
+
+            // Vie intérieure
+            "vie cachée": ["secret", "nazareth", "obscurité"],
+            "vie mixte": ["action et contemplation", "équilibre", "marie et marthe"],
+            "actif et contemplatif": ["marthe et marie", "double vocation"],
+            "retraite": ["solitude", "exercices", "silence"],
+            "solitude": ["désert", "isolement", "recueillement"],
+
+            // Expérience mystique
+            "toucher substantiel": ["contact essentiel", "fond", "substance"],
+            "regard simple": ["vue simple", "attention amoureuse"],
+            "attention amoureuse": ["regard", "présence", "amour"],
+            "présence de dieu": ["pratique", "exercice", "conscience"],
+            "sentiment de dieu": ["expérience", "goût", "sens"],
+
+            // Obstacles et tentations
+            "scrupule": ["anxiété", "crainte excessive", "trouble"],
+            "tiédeur spirituelle": ["négligence", "relâchement", "médiocrité"],
+            "acédie": ["dégoût", "tristesse", "paresse spirituelle"],
+            "vaine gloire": ["orgueil", "vanité", "recherche de louange"],
+            "curiosité": ["distraction", "dispersion", "recherche vaine"]
         };
 
         const TYPING_SPEED_MS = 10;
@@ -394,18 +853,14 @@
             const normalizedTheme = expandedTheme.map(normalizeWord);
             const normalizedKeywords = expandedKeywords.map(normalizeWord);
 
-            // Si un thème est spécifié, il doit être présent (ou un de ses synonymes)
-            if (normalizedTheme.length > 0) {
-                const hasTheme = normalizedTheme.some(term => tokens[term] > 0);
-                if (!hasTheme) return 0;
-                normalizedTheme.forEach(term => {
-                    score += (tokens[term] || 0) * 10;
-                });
-            }
+            const hasTheme = normalizedTheme.some(term => tokens[term] && tokens[term] > 0);
+            const hasKeyword = normalizedKeywords.some(term => tokens[term] && tokens[term] > 0);
 
-            // Au moins un mot-clé doit être présent
-            const matchingKeywords = normalizedKeywords.filter(term => tokens[term] > 0);
-            if (matchingKeywords.length === 0) return 0;
+            if (!hasTheme || !hasKeyword) return 0;
+
+            normalizedTheme.forEach(term => {
+                score += (tokens[term] || 0) * 10;
+            });
 
             normalizedKeywords.forEach(term => {
                 score += (tokens[term] || 0) * 12;
@@ -418,8 +873,8 @@
             const tome = TOMES_INDEX[tomeId];
             if (!tome) return [];
 
-            const themeWords = theme.toLowerCase().split(/[\s,]+/).filter(w => w.length >= 3);
-            const keywordWords = keywords.toLowerCase().split(/[\s,]+/).filter(w => w.length >= 2);
+            const themeWords = theme.toLowerCase().split(/[\s,]+/).filter(w => w.length > 3);
+            const keywordWords = keywords.toLowerCase().split(/[\s,]+/).filter(w => w.length > 2);
 
             const scoredChunks = tome.chunks.map(chunk => ({
                 ...chunk,
@@ -427,7 +882,7 @@
                 tomeId: tomeId
             }));
 
-            return scoredChunks.filter(c => c.score > 0).sort((a, b) => b.score - a.score);
+            return scoredChunks.filter(c => c.score > 10).sort((a, b) => b.score - a.score);
         }
 
         async function searchRandomTome(collection, theme, keywords) {
@@ -442,10 +897,6 @@
         }
 
         window.addEventListener('load', async () => {
-            document.getElementById('theme-input').addEventListener('input', validateForm);
-            document.getElementById('theme-input').addEventListener('change', validateForm);
-            document.getElementById('mots-cles-input').addEventListener('input', validateForm);
-            document.getElementById('mots-cles-input').addEventListener('change', validateForm);
             validateForm();
 
             await Promise.all([
@@ -471,18 +922,11 @@
 
         function validateForm() {
             const theme = document.getElementById('theme-input').value.trim();
-            const motsInput = document.getElementById('mots-cles-input').value.trim();
-            // On compte les mots-clés (séparés par espace ou virgule)
-            const keywordList = motsInput.split(/[\s,]+/).filter(w => w.length >= 2);
+            const mots = document.getElementById('mots-cles-input').value.trim();
             const btn = document.getElementById('search-btn');
-
-            const hasTheme = theme.length >= 2;
-            const keywordCount = keywordList.length;
-
-            // Règle : (Un thème ET au moins un mot-clé) OU (au moins deux mots-clés)
-            const canSearch = (hasTheme && keywordCount >= 1) || (keywordCount >= 2);
-
-            btn.disabled = !(canSearch && selectedCollection);
+            
+            // Le bouton est actif si : collection sélectionnée ET thème ET mots-clés remplis
+            btn.disabled = !(selectedCollection && theme.length > 0 && mots.length > 0);
         }
 
         function displayProgress(msg) {
@@ -547,10 +991,11 @@
             isStopped = false;
             logsIA = [];
             const btn = document.getElementById('search-btn');
-            const theme = document.getElementById('theme-input').value;
-            const mots = document.getElementById('mots-cles-input').value;
+            const theme = document.getElementById('theme-input').value.trim();
+            const mots = document.getElementById('mots-cles-input').value.trim();
 
             if (!selectedCollection) return alert("Veuillez sélectionner une collection.");
+            if (!theme || !mots) return alert("Veuillez saisir un thème ET des mots-clés.");
 
             btn.disabled = true;
             document.getElementById('pdf-placeholder').style.display = 'block';
@@ -561,7 +1006,7 @@
             selectedTomes = [];
 
             try {
-                displayProgress(`🔍 Recherche dans ${selectedCollection}...`);
+                displayProgress(`🔎 Recherche dans ${selectedCollection}...`);
                 const search1 = await searchRandomTome(selectedCollection, theme, mots);
 
                 if (search1.results.length === 0) {
@@ -594,7 +1039,7 @@
                 }
 
                 if (!isStopped) {
-                    displayProgress("📝 Extraits thématiques...");
+                    displayProgress("🔎 Extraits thématiques...");
                     const allResults = [
                         ...(search1.results || []).map(r => ({ ...r, source: search1.tomeId })),
                         ...(search2?.results || []).map(r => ({ ...r, source: search2.tomeId }))
@@ -631,42 +1076,40 @@
         async function tryIAExtraction(chunk, theme, mots) {
             const prompt = `Tu es un outil d'extraction textuelle. Thème : "${theme}", Mots-clés : "${mots}". Extrais COPIE TEXTUELLEMENT un passage de 1500 caractères. Format JSON : {"passages": [{"texte": "...", "titre": "...", "contexte": "..."}]} Texte source : ${chunk.text.substring(0, 6000)}`;
 
-            for (let modelIdx = 0; modelIdx < GEMINI_MODELS.length; modelIdx++) {
-                for (let configIdx = 0; configIdx < GEMINI_CONFIGS.length; configIdx++) {
-                    if (isStopped) return null;
-                    const config = GEMINI_CONFIGS[configIdx];
-                    const model = GEMINI_MODELS[modelIdx];
+            for (let modelIdx = 0; modelIdx < OPENROUTER_MODELS.length; modelIdx++) {
+                if (isStopped) return null;
+                const model = OPENROUTER_MODELS[modelIdx];
 
-                    await new Promise(r => setTimeout(r, 2000));
+                await new Promise(r => setTimeout(r, 2000));
 
-                    try {
-                        const url = `https://generativelanguage.googleapis.com/${config.version}/models/${model}:generateContent?key=${config.key}`;
-                        const response = await fetch(url, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                contents: [{ parts: [{ text: prompt }] }],
-                                generationConfig: { maxOutputTokens: 2500, temperature: 0.3 }
-                            })
-                        });
+                try {
+                    const response = await fetch(PROXY_URL, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            model: model,
+                            messages: [
+                                { role: "user", content: prompt }
+                            ]
+                        })
+                    });
 
-                        if (response.ok) {
-                            const data = await response.json();
-                            const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-                            const match = responseText.match(/\{[\s\S]*"passages"[\s\S]*\}/);
-                            if (match) {
-                                const parsed = JSON.parse(match[0]);
-                                if (parsed.passages?.[0]) {
-                                    logsIA.push(`✓ ${model}`);
-                                    return parsed.passages[0];
-                                }
+                    if (response.ok) {
+                        const data = await response.json();
+                        const responseText = data.choices?.[0]?.message?.content || "";
+                        const match = responseText.match(/\{[\s\S]*"passages"[\s\S]*\}/);
+                        if (match) {
+                            const parsed = JSON.parse(match[0]);
+                            if (parsed.passages?.[0]) {
+                                logsIA.push(`✔ ${model}`);
+                                return parsed.passages[0];
                             }
-                        } else {
-                            logsIA.push(`⚠️ ${model}: ${response.status}`);
                         }
-                    } catch (e) {
-                        logsIA.push(`❌ ${model}: ${e.message}`);
+                    } else {
+                        logsIA.push(`⚠️ ${model}: ${response.status}`);
                     }
+                } catch (e) {
+                    logsIA.push(`❌ ${model}: ${e.message}`);
                 }
             }
             return null;
@@ -757,3 +1200,5 @@
 
             return stats;
         }
+    </script>
+</body>
