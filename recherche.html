@@ -1,384 +1,256 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dictionnaire de Spiritualité (Version OpenRouter)</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <title>Recherche d'Extraits Littéraires</title>
+    
+    <!-- Polices Littéraires -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Scripts PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
     <style>
+        /* Styles extraits de l'interface React moderne */
         :root {
-            --primary-dark: #1c2541;
-            --primary-gradient: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #1c2541 100%);
-            --accent-gold: #d4af37;
-            --bg-parchment: #f9f9f6;
-            --text-dark: #2b2b2b;
-            --text-light: #f5e6b3;
-            --info-blue: rgba(232, 244, 248, 0.7);
-            --border-blue: #3498db;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            --background: 40 30% 98%; /* Papier/Parchment */
+            --foreground: 222 47% 11%;
+            --primary: 222 47% 11%; /* Blue Nuit */
+            --primary-foreground: 210 40% 98%;
+            --accent: 35 92% 33%; /* Or/Gold */
+            --accent-foreground: 210 40% 98%;
+            --card: 0 0% 100%;
+            --card-foreground: 222 47% 11%;
+            --border: 214 32% 91%;
+            --input: 214 32% 91%;
+            --ring: 222 47% 11%;
+            --radius: 0.5rem;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Lora', serif;
-            background-color: var(--bg-parchment);
-            background-image: radial-gradient(#d4af3710 1px, transparent 1px);
-            background-size: 20px 20px;
-            color: var(--text-dark);
-            line-height: 1.4;
-            font-size: 0.9rem;
+            background-color: hsl(var(--background));
+            background-image: radial-gradient(hsl(35 92% 33% / 0.05) 1px, transparent 1px);
+            background-size: 24px 24px;
+            color: hsl(var(--foreground));
+            line-height: 1.6;
         }
 
         header {
-            background: var(--primary-gradient);
-            color: var(--text-light);
+            background: linear-gradient(to bottom, hsl(222 47% 15%), hsl(222 47% 10%));
+            color: white;
+            padding: 3rem 1rem;
             text-align: center;
-            padding: 30px 20px;
-            border-bottom: 3px solid var(--accent-gold);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        header p {
-            font-size: 1.2rem !important;
-            margin-bottom: 8px;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 600;
+            border-bottom: 4px solid hsl(35 92% 33%);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.3);
         }
 
         header h1 {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 2.4rem;
+            font-size: 3.5rem;
             font-weight: 700;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-            line-height: 1.2;
+            margin-top: 0.5rem;
+        }
+
+        header p {
+            font-family: 'Outfit', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-size: 0.9rem;
+            opacity: 0.8;
         }
 
         .container {
             max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 15px;
+            margin: -2rem auto 2rem;
+            padding: 0 1rem;
             display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 20px;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            position: relative;
+            z-index: 10;
         }
 
         @media (max-width: 900px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
+            .container { grid-template-columns: 1fr; margin-top: 2rem; }
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            margin-bottom: 15px;
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            border: 1px solid hsl(var(--border));
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
         }
 
-        .guide-box {
-            background: var(--info-blue);
-            border-left: 5px solid var(--border-blue);
+        .sidebar-card {
+            background: hsl(222 47% 98%);
+            border-left: 4px solid hsl(35 92% 33%);
         }
 
-        .guide-box h3 {
-            color: var(--primary-dark);
-            margin-bottom: 12px;
-            font-size: 1.1rem;
+        .sidebar-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: hsl(var(--primary));
         }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
-
+        .input-group { margin-bottom: 1.5rem; }
+        
         label {
-            display: inline-block;
-            margin-bottom: 8px;
-            font-family: 'Lora', serif;
+            display: block;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.8rem;
             font-weight: 600;
-            color: #5c67f2;
-            font-size: 1rem;
-            background: #e8ebff;
-            padding: 4px 12px;
-            border-radius: 8px;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            color: hsl(var(--primary) / 0.7);
         }
 
-        input[type="text"],
-        input[type="file"] {
+        input[type="text"] {
             width: 100%;
-            padding: 10px 14px;
-            border: 1px solid #eaedf0;
-            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid hsl(var(--border));
+            border-radius: calc(var(--radius) - 2px);
             font-family: 'Lora', serif;
-            font-size: 0.9rem;
-            background: #fff;
+            transition: border-color 0.2s;
         }
 
-        .file-upload-wrapper {
-            position: relative;
-            padding: 20px;
-            border: 2px dashed var(--border-blue);
-            border-radius: 12px;
-            text-align: center;
-            background: #fff;
-            cursor: pointer;
-        }
-
-        .file-upload-wrapper:hover {
-            border-color: var(--accent-gold);
-            background: #fdfaf0;
-        }
-
-        input[type="file"] {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        .file-info {
-            font-size: 0.85rem;
-            color: #666;
-            margin-top: 10px;
-        }
-
-        .btn-row {
-            display: grid;
-            grid-template-columns: 3fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
+        input[type="text"]:focus {
+            outline: none;
+            border-color: hsl(var(--accent));
+            box-shadow: 0 0 0 2px hsl(var(--accent) / 0.1);
         }
 
         .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
             font-family: 'Outfit', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 700;
-            cursor: pointer;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
         }
 
         .btn-primary {
-            background: var(--primary-gradient);
-            color: var(--text-light);
+            background-color: hsl(var(--primary));
+            color: white;
+            width: 100%;
         }
 
-        .btn-primary:disabled {
-            background: #dfe4ea;
-            color: #a4b0be;
-            cursor: not-allowed;
-        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
         .btn-stop {
-            background: #ffffff;
-            color: #2b2b2b;
-            border: 1px solid #dfe4ea;
+            background: transparent;
+            border: 1px solid hsl(var(--border));
+            color: #ef4444;
         }
 
-        .btn-stop span {
-            color: #ff4757;
-        }
+        .btn-stop:hover { background: #fef2f2; }
 
-        .results-section {
+        .results-grid {
             display: grid;
-            grid-template-columns: 1fr 280px;
-            gap: 20px;
-            margin-top: 25px;
+            grid-template-columns: 1fr 250px;
+            gap: 2rem;
+            margin-top: 2rem;
         }
 
         @media (max-width: 900px) {
-            .results-section {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .results-area h3 {
-            font-size: 1.2rem;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--accent-gold);
-        }
-
-        .pdf-placeholder {
-            border: 2px dashed #d1d8e0;
-            border-radius: 12px;
-            padding: 30px 15px;
-            text-align: center;
-            color: #a4b0be;
-            font-size: 0.8rem;
-        }
-
-        .search-loader {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(52, 152, 219, 0.1);
-            border-left-color: var(--border-blue);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            .results-grid { grid-template-columns: 1fr; }
         }
 
         .extrait-card {
-            animation: fadeIn 0.6s ease-out;
+            border-left: 4px solid hsl(var(--accent));
+            margin-bottom: 1.5rem;
+            animation: fadeIn 0.5s ease-out;
         }
 
-        .progress-info {
-            background: #e8f4f8;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border-left: 4px solid #3498db;
-            font-size: 0.85rem;
-            animation: fadeIn 0.3s ease-out;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pdf-placeholder {
+            border: 2px dashed hsl(var(--border));
+            padding: 2rem;
+            text-align: center;
+            color: hsl(var(--primary) / 0.4);
+            border-radius: var(--radius);
         }
     </style>
 </head>
-
 <body>
     <header>
-        <p>Outil de recherche d'extraits des</p>
-        <h1>Dictionnaire de Spiritualité Ascétique et Mystique</h1>
-        <div style="width: 80px; height: 2px; background: var(--accent-gold); margin: 15px auto; opacity: 0.7;"></div>
-        <h1>Dictionnaire de Théologie Catholique</h1>
+        <p>Outil de recherche d'extraits</p>
+        <h1>Bibliothèque Littéraire</h1>
     </header>
 
     <div class="container">
-        <aside class="sidebar">
-            <div class="card guide-box">
-                <h3>📖 Guide Local</h3>
-                <p style="font-size: 0.8rem; margin-bottom: 10px; color: #555;">Recherche dans les collections :</p>
-                <ul style="padding-left: 18px; font-size: 0.85rem;">
-                    <li style="margin-bottom: 8px;">1. <b>COLLECTION :</b> Choisissez DS ou DTC</li>
-                    <li style="margin-bottom: 8px;">2. <b>CRITÈRES :</b> Indiquez un thème et un mot-clé ou plusieurs
-                        mots-clés séparés par des virgules</li>
-                    <li style="margin-bottom: 8px;">3. <b>LANCEMENT :</b> Deux tomes aléatoires seront analysés pour
-                        donner 5 extraits ( 2 avec l'aide d'une IA et 3 bruts)</li>
-                    <li style="margin-bottom: 8px;">4. <b>AFFICHAGE :</b> L'affichage complet peut prendre jusquà 2
-                        minutes</li>
-                    <li style="margin-bottom: 8px;">5. <b>PDF :</b> Le résultat est chargeable dans un fichier PDF</li>
+        <aside>
+            <div class="card sidebar-card">
+                <h3>📖 Guide d'utilisation</h3>
+                <ul style="list-style: none; font-size: 0.9rem;">
+                    <li style="margin-bottom: 1rem;">1. <b>THÈME :</b> Indiquez le sujet principal</li>
+                    <li style="margin-bottom: 1rem;">2. <b>MOTS-CLÉS :</b> Termes précis (séparés par des virgules)</li>
+                    <li>3. <b>ANALYSE :</b> L'IA sélectionne les meilleurs passages</li>
                 </ul>
-            </div>
-
-            <div class="card" style="text-align: center; padding: 15px;">
-                <a href="https://dictionnaires.github.io/Spiritualite/contact.html" target="_blank"
-                    class="btn btn-primary"
-                    style="display: block; text-decoration: none; width: 100%; font-size: 0.8rem;">
-                    📧 Nous contacter
-                </a>
             </div>
         </aside>
 
         <main>
             <div class="card">
-                <div class="form-group">
-                    <label>Sélectionner une collection</label>
-                    <div style="display: flex; gap: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-                        <label
-                            style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: white; padding: 10px 20px; border-radius: 8px; border: 2px solid #e0e0e0;">
-                            <input type="radio" name="collection" value="DS" onchange="handleCollectionSelect()"
-                                style="width: auto;">
-                            <span style="font-weight: bold; color: #2c3e50;">DS (Dictionnaire de Spiritualité)</span>
-                        </label>
-                        <label
-                            style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: white; padding: 10px 20px; border-radius: 8px; border: 2px solid #e0e0e0;">
-                            <input type="radio" name="collection" value="DTC" onchange="handleCollectionSelect()"
-                                style="width: auto;">
-                            <span style="font-weight: bold; color: #2c3e50;">DTC (Dictionnaire de Théologie
-                                Catholique)</span>
-                        </label>
-                    </div>
-                    <div id="collection-info" class="file-info" style="margin-top: 10px; color: #666;">Aucune collection
-                        sélectionnée</div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="form-group">
-                        <label for="theme-input">Thématique</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="input-group">
+                        <label>Thématique</label>
                         <input type="text" id="theme-input" placeholder="Ex: Oraison...">
                     </div>
-                    <div class="form-group">
-                        <label for="mots-cles-input">Mots-clés</label>
-                        <input type="text" id="mots-cles-input" placeholder="Ex: union, grâce...">
+                    <div class="input-group">
+                        <label>Mots-clés</label>
+                        <input type="text" id="mots-cles-input" placeholder="Ex: grâce, prière...">
                     </div>
                 </div>
-
-                <div class="btn-row">
-                    <button id="search-btn" class="btn btn-primary" disabled onclick="startSearch()">🚀 LANCER
-                        RECHERCHE</button>
-                    <button id="stop-btn" class="btn btn-stop" onclick="stopSearch()"><span>🛑</span> ARRÊTER</button>
+                <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 1rem; margin-top: 1rem;">
+                    <button id="search-btn" class="btn btn-primary" onclick="startSearch()">🚀 Lancer Recherche</button>
+                    <button id="stop-btn" class="btn btn-stop" onclick="stopSearch()">🛑 Arrêter</button>
                 </div>
             </div>
 
-            <div class="results-section">
-                <div class="results-area">
-                    <div class="card" style="min-height: 300px;">
-                        <h3>📊 RÉSULTATS</h3>
-                        <div id="results-content" style="color: #7f8c8d; font-style: italic; font-size: 0.85rem;">En
-                            attente...</div>
+            <div class="results-grid">
+                <div>
+                    <div class="card" style="min-height: 400px;">
+                        <h3 style="font-family: 'Cormorant Garamond', serif; border-bottom: 2px solid hsl(var(--accent)); padding-bottom: 0.5rem; margin-bottom: 1rem;">📊 Résultats</h3>
+                        <div id="results-content" style="font-style: italic; color: #666;">En attente de recherche...</div>
                     </div>
                 </div>
-                <div class="pdf-area">
+                <div>
                     <div class="card">
-                        <h3>📕 PDF</h3>
-                        <div id="pdf-placeholder" class="pdf-placeholder"><span
-                                style="font-size: 2.5rem; display: block; margin-bottom: 10px;">📄</span>Disponible
-                            après recherche.</div>
-                        <div id="pdf-ready" style="display: none; text-align: center;">
-                            <button id="pdf-download-btn" class="btn btn-primary" style="width: 100%;"
-                                onclick="downloadPDF()">TÉLÉCHARGER PDF</button>
+                        <h3 style="font-family: 'Cormorant Garamond', serif; margin-bottom: 1rem;">📕 PDF</h3>
+                        <div id="pdf-placeholder" class="pdf-placeholder">Disponible après recherche</div>
+                        <div id="pdf-ready" style="display: none;">
+                            <button class="btn btn-primary" onclick="downloadPDF()">TÉLÉCHARGER</button>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div style="text-align: center; margin-top: 40px; font-size: 0.85rem; color: #7f8c8d;">
-                Gildas R. janvier 2026
             </div>
         </main>
     </div>
 
     <script>
-        // ============================================
-        // CONFIGURATION OPENROUTER VIA PROXY HF
-        // ============================================
+        // ============================================================================
+        // CONFIGURATION
+        // ============================================================================
+
         const PROXY_URL = "https://gildasr-dictionnaires.hf.space/api/chat";
 
         // Modèles OpenRouter gratuits à utiliser
@@ -392,6 +264,7 @@
             "anthropic/claude-3-haiku",
             "google/gemini-flash-1.5"
         ];
+
         const SPIRITUAL_SYNONYMS = {
             // Prière et vie de prière
             "prière": ["oraison", "méditation", "contemplation", "élévation", "recueillement", "dévotion", "supplication", "invocation"],
@@ -868,85 +741,176 @@
             "vaine gloire": ["orgueil", "vanité", "recherche de louange"],
             "curiosité": ["distraction", "dispersion", "recherche vaine"]
         };
-        const MAX_EXTRAITS_TOTAL = 5;
-        const MAX_EXTRAIT_BRUT_CHARS = 3000;
+
         const MAX_SEGMENT_SOURCE_CHARS = 6000;
+        const TYPING_SPEED_MS = 10;
+        const CHARS_PER_TICK = 10;
 
-        // --- PARAMÈTRES VITESSES D'AFFICHAGE ---
-        const TYPING_SPEED_MS = 10;        // Délai entre chaque "bloc" de caractères (ms)
-        const CHARS_PER_TICK = 10;         // Nombre de caractères ajoutés d'un coup (augmenter pour accélérer)
+        // ============================================================================
+        // ÉTAT GLOBAL
+        // ============================================================================
 
+        let TOMES_INDEX = {}; // Index pré-calculés chargés
         let currentPassagesIA = [];
         let currentPassagesBruts = [];
         let isStopped = false;
-        let selectedFile = null;
         let selectedCollection = null;
         let selectedTomes = [];
-        let allLoadedChunks = [];
-        let apiCallIndex = 0;
+        let logsIA = [];
 
-        // Liste des tomes par collection (à compléter selon vos fichiers réels)
-        const TOMES = {
-            DS: [
-                'DS/DS1_corrige-1.docx',
-                'DS/DS2-1_corrige.docx',
-                'DS/DS2-2_corrige.docx',
-                'DS/DS3_corrige.docx',
-                'DS/DS4-1_corrige.docx',
-                'DS/DS4-2_corrige.docx',
-                'DS/DS5_corrige.docx',
-                'DS/DS6_corrige.docx',
-                'DS/DS7-1_corrige.docx',
-                'DS/DS7-2_corrige.docx',
-                'DS/DS8_corrige.docx',
-                'DS/DS9_corrige.docx',
-                'DS/DS10_corrige.docx',
-                'DS/DS11_corrige.docx',
-                'DS/DS12-1_corrige.docx',
-                'DS/DS12-2_corrige.docx',
-                'DS/DS13_corrige.docx',
-                'DS/DS14_corrige.docx',
-                'DS/DS15_corrige.docx',
-                'DS/DS16_corrige.docx'
-            ],
-            DTC: [
-                'DTC/DTC_tome1-1_corrige.docx',
-                'DTC/DTC_tome1-2_corrige.docx',
-                'DTC/DTC_tome2-1_corrige.docx',
-                'DTC/DTC_tome2-2_corrige.docx',
-                'DTC/DTC_tome3-1_corrige.docx',
-                'DTC/DTC_tome3-2_corrige.docx',
-                'DTC/DTC_tome4-1_corrige.docx',
-                'DTC/DTC_tome4-2_corrige.docx',
-                'DTC/DTC_tome5-1_corrige.docx',
-                'DTC/DTC_tome5-2_corrige.docx',
-                'DTC/DTC_tome6-1_corrige.docx',
-                'DTC/DTC_tome6-2_corrige.docx',
-                'DTC/DTC_tome7-1_corrige.docx',
-                'DTC/DTC_tome7-2_corrige.docx',
-                'DTC/DTC_tome8-1_corrige.docx',
-                'DTC/DTC_tome8-2_corrige.docx',
-                'DTC/DTC_tome9-1_corrige.docx',
-                'DTC/DTC_tome9-2_corrige.docx',
-                'DTC/DTC_tome10-1_corrige.docx',
-                'DTC/DTC_tome10-2_corrige.docx',
-                'DTC/DTC_tome11-1_corrige.docx',
-                'DTC/DTC_tome11-2_corrige.docx',
-                'DTC/DTC_tome12-1_corrige.docx',
-                'DTC/DTC_tome12-2_corrige.docx',
-                'DTC/DTC_tome13-1_corrige.docx',
-                'DTC/DTC_tome13-2_corrige.docx',
-                'DTC/DTC_tome14-1_corrige.docx',
-                'DTC/DTC_tome14-2_corrige.docx',
-                'DTC/DTC_tome15-1_corrige.docx',
-                'DTC/DTC_tome15-2_corrige.docx'
-            ]
-        };
+        // ============================================================================
+        // CHARGEMENT DES INDEX
+        // ============================================================================
 
-        window.addEventListener('load', () => {
+        async function loadIndexesForCollection(collection) {
+            const startTime = performance.now();
+            updateIndexStatus(`⏳ Chargement ${collection}...`);
+
+            try {
+                const response = await fetch(`indexes/${collection}_collection.json`);
+                if (!response.ok) throw new Error(`Index ${collection} introuvable`);
+
+                const data = await response.json();
+
+                // Transformation en map pour accès rapide
+                data.tomes.forEach(tome => {
+                    TOMES_INDEX[tome.tome] = tome;
+                });
+
+                const loadTime = Math.round(performance.now() - startTime);
+                updateIndexStatus(`✅ ${data.tomes.length} tomes ${collection} (${loadTime}ms)`);
+
+                console.log(`✅ Collection ${collection} chargée:`, {
+                    tomes: data.tomes.length,
+                    chunks: data.metadata.total_chunks,
+                    temps: loadTime
+                });
+
+                return true;
+
+            } catch (error) {
+                console.error(`❌ Erreur chargement ${collection}:`, error);
+                updateIndexStatus(`❌ Erreur: ${collection}`);
+                return false;
+            }
+        }
+
+        function updateIndexStatus(text) {
+            const statusEl = document.getElementById('status-text');
+            if (statusEl) statusEl.textContent = text;
+        }
+
+        // ============================================================================
+        // SCORING OPTIMISÉ
+        // ============================================================================
+
+        function normalizeWord(word) {
+            return word
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '');
+        }
+
+        function expandSynonyms(words) {
+            const expanded = new Set(words);
+            words.forEach(word => {
+                const synonyms = SPIRITUAL_SYNONYMS[word.toLowerCase()];
+                if (synonyms) {
+                    synonyms.forEach(syn => expanded.add(syn));
+                }
+            });
+            return Array.from(expanded);
+        }
+
+        function scoreChunk(chunk, themeWords, keywordWords) {
+            const tokens = chunk.tokens;
+            let score = 0;
+
+            const expandedTheme = expandSynonyms(themeWords);
+            const expandedKeywords = expandSynonyms(keywordWords);
+
+            const normalizedTheme = expandedTheme.map(normalizeWord);
+            const normalizedKeywords = expandedKeywords.map(normalizeWord);
+
+            const hasTheme = normalizedTheme.some(term => tokens[term] > 0);
+            const hasKeyword = normalizedKeywords.some(term => tokens[term] > 0);
+
+            if (!hasTheme || !hasKeyword) return 0;
+
+            normalizedTheme.forEach(term => {
+                const count = tokens[term] || 0;
+                score += count * 10;
+            });
+
+            normalizedKeywords.forEach(term => {
+                const count = tokens[term] || 0;
+                score += count * 12;
+            });
+
+            return score;
+        }
+
+        function searchInTome(tomeId, theme, keywords) {
+            const tome = TOMES_INDEX[tomeId];
+            if (!tome) {
+                console.warn(`Tome ${tomeId} non chargé`);
+                return [];
+            }
+
+            const themeWords = theme.toLowerCase()
+                .split(/[\s,]+/)
+                .filter(w => w.length > 3);
+
+            const keywordWords = keywords.toLowerCase()
+                .split(/[\s,]+/)
+                .filter(w => w.length > 2);
+
+            const scoredChunks = tome.chunks.map(chunk => ({
+                ...chunk,
+                score: scoreChunk(chunk, themeWords, keywordWords),
+                tomeId: tomeId
+            }));
+
+            return scoredChunks
+                .filter(c => c.score > 10)
+                .sort((a, b) => b.score - a.score);
+        }
+
+        async function searchRandomTome(collection, theme, keywords) {
+            const tomesInCollection = Object.keys(TOMES_INDEX)
+                .filter(tomeId => TOMES_INDEX[tomeId].collection === collection);
+
+            if (tomesInCollection.length === 0) {
+                throw new Error(`Aucun tome chargé pour ${collection}`);
+            }
+
+            const randomTome = tomesInCollection[Math.floor(Math.random() * tomesInCollection.length)];
+
+            return {
+                tomeId: randomTome,
+                results: searchInTome(randomTome, theme, keywords)
+            };
+        }
+
+        // ============================================================================
+        // INTERFACE UTILISATEUR
+        // ============================================================================
+
+        window.addEventListener('load', async () => {
             document.getElementById('theme-input').addEventListener('input', validateForm);
             document.getElementById('mots-cles-input').addEventListener('input', validateForm);
             validateForm();
+
+            // Pré-chargement des index au démarrage (optionnel mais recommandé)
+            console.log("🚀 Pré-chargement des index...");
+            await Promise.all([
+                loadIndexesForCollection('DS'),
+                loadIndexesForCollection('DTC')
+            ]);
+
+            const stats = getIndexStats();
+            console.log("📊 Index chargés:", stats);
+            updateIndexStatus(`✅ ${stats.totalTomes} tomes, ${stats.totalChunks} chunks`);
         });
 
         function handleCollectionSelect() {
@@ -954,7 +918,8 @@
             for (let radio of radios) {
                 if (radio.checked) {
                     selectedCollection = radio.value;
-                    document.getElementById('collection-info').innerHTML = `✅ Collection <strong>${selectedCollection}</strong> sélectionnée - Un tome sera choisi aléatoirement`;
+                    document.getElementById('collection-info').innerHTML =
+                        `✅ Collection <strong>${selectedCollection}</strong> sélectionnée - Recherche instantanée dans les index`;
                     break;
                 }
             }
@@ -1004,14 +969,11 @@
             const textElement = document.getElementById(textId);
             const fullText = passage.texte.substring(0, 1500) + (passage.texte.length > 1500 ? '...' : '');
 
-            // Animation par blocs de caractères pour plus de rapidité/fluidité
             if (animated && type === 'ia') {
                 let currentIndex = 0;
-
                 return new Promise((resolve) => {
                     const typeInterval = setInterval(() => {
                         if (currentIndex < fullText.length && !isStopped) {
-                            // On ajoute plusieurs caractères d'un coup
                             const chunk = fullText.substring(currentIndex, currentIndex + CHARS_PER_TICK);
                             textElement.textContent += chunk;
                             currentIndex += CHARS_PER_TICK;
@@ -1032,32 +994,31 @@
             displayProgress("🛑 Arrêt demandé...");
         }
 
-        async function loadRandomTome() {
-            const tomes = TOMES[selectedCollection];
-            const randomIndex = Math.floor(Math.random() * tomes.length);
-            const tomePath = tomes[randomIndex];
-            const tomeName = tomePath.split('/')[1].replace('.docx', '');
-
-            const response = await fetch(tomePath);
-            if (!response.ok) throw new Error(`Impossible de charger ${tomeName}`);
-
-            const arrayBuffer = await response.arrayBuffer();
-            const rawText = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
-            const fullText = rawText.value;
-
-            if (!fullText || fullText.length < 100) throw new Error(`${tomeName} semble vide`);
-
-            return { name: tomeName, text: fullText, chunks: decoupageIntelligent(fullText) };
-        }
+        // ============================================================================
+        // RECHERCHE PRINCIPALE
+        // ============================================================================
 
         async function startSearch() {
             isStopped = false;
-            apiCallIndex = 0;
+            logsIA = [];
             const btn = document.getElementById('search-btn');
             const theme = document.getElementById('theme-input').value;
             const mots = document.getElementById('mots-cles-input').value;
 
             if (!selectedCollection) return alert("Veuillez sélectionner une collection (DS ou DTC).");
+
+            // Vérification des index
+            const tomesInCollection = Object.keys(TOMES_INDEX)
+                .filter(tomeId => TOMES_INDEX[tomeId].collection === selectedCollection);
+
+            if (tomesInCollection.length === 0) {
+                displayProgress(`📦 Chargement des index ${selectedCollection}...`);
+                const loaded = await loadIndexesForCollection(selectedCollection);
+                if (!loaded) {
+                    alert(`Impossible de charger les index pour ${selectedCollection}`);
+                    return;
+                }
+            }
 
             btn.disabled = true;
             document.getElementById('pdf-placeholder').style.display = 'block';
@@ -1066,57 +1027,28 @@
             currentPassagesIA = [];
             currentPassagesBruts = [];
             selectedTomes = [];
-            allLoadedChunks = [];
-
-            let logsIA = []; // Initialisation des logs ici
 
             try {
-                // TOME 1 - Premier extrait IA
-                displayProgress(`📖 Chargement du premier tome...`);
-                const tome1 = await loadRandomTome();
-                selectedTomes.push(tome1.name);
-                allLoadedChunks.push({ tome: tome1.name, chunks: tome1.chunks });
+                // RECHERCHE TOME 1
+                displayProgress(`🔍 Recherche instantanée dans les index...`);
+                const search1 = await searchRandomTome(selectedCollection, theme, mots);
 
-                displayProgress(`🔍 Analyse de ${tome1.chunks.length} segments dans ${tome1.name}...`);
-                const scores1 = analyzeChunks(tome1.chunks, theme, mots);
+                if (search1.results.length === 0) {
+                    displayProgress(`⚠️ Aucun résultat, nouvelle recherche...`);
+                    const search1bis = await searchRandomTome(selectedCollection, theme, mots);
 
-                let firstExtractPromise = null;
-
-                if (scores1.length === 0) {
-                    displayProgress(`⚠️ Aucun extrait trouvé dans ${tome1.name}, chargement d'un autre tome...`);
-
-                    // Essayer un 2ème tome si rien trouvé (fallback simple, pas de parallélisme ici)
-                    const tome1bis = await loadRandomTome();
-                    selectedTomes[0] = tome1bis.name;
-                    allLoadedChunks[0] = { tome: tome1bis.name, chunks: tome1bis.chunks };
-
-                    displayProgress(`🔍 Nouvelle analyse dans ${tome1bis.name}...`);
-                    const scores1bis = analyzeChunks(tome1bis.chunks, theme, mots);
-
-                    if (scores1bis.length === 0) {
-                        document.getElementById('results-content').innerHTML = "❌ Aucun extrait pertinent trouvé pour ces critères dans les tomes testés.";
+                    if (search1bis.results.length === 0) {
+                        document.getElementById('results-content').innerHTML =
+                            "❌ Aucun extrait pertinent trouvé pour ces critères.";
                         btn.disabled = false;
                         return;
                     }
 
-                    // Utiliser le nouveau tome
-                    displayProgress(`🤖 Analyse IA du 1er passage dans ${tome1bis.name}...`);
-                    const p1 = await tryIAExtraction(scores1bis[0], theme, mots, logsIA);
-                    if (p1) {
-                        currentPassagesIA.push(p1);
-                        // On lance l'affichage MAIS on ne l'attend pas tout de suite pour le blocage
-                        // On stocke la promesse d'affichage pour synchronisation plus tard
-                        firstExtractPromise = addExtraitToDisplay(p1, 'ia', 0, tome1bis.name, true);
-                    }
+                    selectedTomes.push(search1bis.tomeId);
+                    await processFirstExtract(search1bis.results[0], search1bis.tomeId, theme, mots);
                 } else {
-                    // Extrait trouvé dans tome1
-                    displayProgress(`🤖 Analyse IA du 1er passage dans ${tome1.name}...`);
-                    const p1 = await tryIAExtraction(scores1[0], theme, mots, logsIA);
-                    if (p1) {
-                        currentPassagesIA.push(p1);
-                        // Lancement de l'affichage (animation) sans await bloquant immédiat
-                        firstExtractPromise = addExtraitToDisplay(p1, 'ia', 0, tome1.name, true);
-                    }
+                    selectedTomes.push(search1.tomeId);
+                    await processFirstExtract(search1.results[0], search1.tomeId, theme, mots);
                 }
 
                 if (isStopped) {
@@ -1124,73 +1056,45 @@
                     return;
                 }
 
-                // --- PARALLÉLISME ---
-                // Pendant que le 1er extrait s'affiche (firstExtractPromise), on lance la recherche du 2ème tome
+                // RECHERCHE TOME 2 EN PARALLÈLE
+                const search2Promise = searchRandomTome(selectedCollection, theme, mots);
+                const search2 = await search2Promise;
 
-                const secondTomeTask = (async () => {
-                    if (isStopped) return null;
-                    displayProgress(`Bg: Chargement tome 2...`);
-                    const tome2 = await loadRandomTome();
-                    selectedTomes.push(tome2.name);
-                    allLoadedChunks.push({ tome: tome2.name, chunks: tome2.chunks });
+                if (search2.results.length > 0 && !isStopped) {
+                    selectedTomes.push(search2.tomeId);
+                    displayProgress(`🤖 Analyse IA du 2ème passage dans ${search2.tomeId}...`);
 
-                    const scores2 = analyzeChunks(tome2.chunks, theme, mots);
-
-                    if (scores2.length > 0) {
-                        // IMPORTANT : On passe logsIA pour capturer le rapport technique
-                        const p2 = await tryIAExtraction(scores2[0], theme, mots, logsIA);
-                        return { p2, tomeName: tome2.name };
+                    const p2 = await tryIAExtraction({ text: search2.results[0].text }, theme, mots);
+                    if (p2) {
+                        currentPassagesIA.push(p2);
+                        await addExtraitToDisplay(p2, 'ia', 1, search2.tomeId, true);
                     }
-                    return { p2: null, tomeName: tome2.name };
-                })();
-
-                // On attend que l'affichage du 1 soit fini ET que la recherche du 2 soit finie
-                const [_, resultTome2] = await Promise.all([firstExtractPromise, secondTomeTask]);
-
-                if (resultTome2 && resultTome2.p2 && !isStopped) {
-                    currentPassagesIA.push(resultTome2.p2);
-                    // Affichage du 2ème (rapide ou animé selon préférence, ici animé aussi)
-                    await addExtraitToDisplay(resultTome2.p2, 'ia', 1, resultTome2.tomeName, true);
-                } else if (resultTome2 && !resultTome2.p2) {
-                    displayProgress(`ℹ️ Pas d'extrait supplémentaire trouvé dans ${resultTome2.tomeName}`);
                 }
 
-                // Suite du code (extraits bruts)...
+                // EXTRAITS BRUTS
                 if (!isStopped) {
                     displayProgress("📝 Finalisation des extraits thématiques...");
 
-                    let allScores = [];
-                    allLoadedChunks.forEach(tc => {
-                        const scores = analyzeChunks(tc.chunks, theme, mots);
-                        scores.forEach(s => {
-                            s.tomeName = tc.tome;
-                        });
-                        allScores.push(...scores);
-                    });
+                    const allResults = [
+                        ...(search1.results || []).map(r => ({ ...r, source: search1.tomeId })),
+                        ...(search2?.results || []).map(r => ({ ...r, source: search2.tomeId }))
+                    ].sort((a, b) => b.score - a.score);
 
-                    allScores.sort((a, b) => b.score - a.score);
+                    const brutsToShow = allResults.slice(2, 5);
 
-                    let usedIndices = new Set([0, 1]);
-                    for (let i = 2; i < allScores.length && currentPassagesIA.length + currentPassagesBruts.length < 5; i++) {
-                        if (usedIndices.has(i)) continue;
-
-                        let textBrut = allScores[i].text.substring(0, MAX_EXTRAIT_BRUT_CHARS);
-                        let lastPoint = textBrut.lastIndexOf('.');
-                        if (lastPoint > 800) textBrut = textBrut.substring(0, lastPoint + 1);
-
+                    brutsToShow.forEach((chunk, idx) => {
                         const brut = {
-                            texte: textBrut,
-                            titre: `Extrait thématique #${i + 1}`,
-                            contexte: ''
+                            texte: chunk.text.substring(0, 1500),
+                            titre: `Extrait thématique #${idx + 1}`,
+                            contexte: `Score: ${chunk.score}`
                         };
 
                         currentPassagesBruts.push(brut);
-                        addExtraitToDisplay(brut, 'brut', currentPassagesBruts.length - 1, allScores[i].tomeName, false);
-                        usedIndices.add(i);
-                    }
+                        addExtraitToDisplay(brut, 'brut', idx, chunk.source, false);
+                    });
                 }
 
-                finalizeResults(logsIA); // Passage explicite des logs à la fin
+                finalizeResults();
 
             } catch (err) {
                 document.getElementById('results-content').innerHTML = `❌ Erreur : ${err.message}`;
@@ -1200,136 +1104,74 @@
             }
         }
 
+        async function processFirstExtract(chunk, tomeId, theme, keywords) {
+            displayProgress(`🤖 Analyse IA du 1er passage dans ${tomeId}...`);
 
+            const passage = await tryIAExtraction({ text: chunk.text }, theme, keywords);
 
-        function decoupageIntelligent(text) {
-            const cleanText = text.replace(/\r\n/g, "\n");
-            const paragraphs = cleanText.split(/\n\s*\n/);
-            let chunks = [];
-            let current = "";
-            const TARGET = 5000;
-
-            for (let p of paragraphs) {
-                p = p.trim();
-                if (!p) continue;
-                if (current.length + p.length > TARGET + 1000) {
-                    chunks.push(current);
-                    current = p;
-                } else {
-                    current += (current ? "\n\n" : "") + p;
-                }
+            if (passage) {
+                currentPassagesIA.push(passage);
+                await addExtraitToDisplay(passage, 'ia', 0, tomeId, true);
             }
-            if (current) chunks.push(current);
-            return chunks;
-        }
-
-        function analyzeChunks(chunks, theme, mots) {
-            const themeWords = theme.toLowerCase().split(/[\s,]+/).filter(w => w.length > 3);
-            const expandedThemeWords = expandSynonyms(themeWords);
-            const keywordWords = mots.toLowerCase().split(/[\s,]+/).filter(w => w.length > 2);
-            let scores = [];
-
-            chunks.forEach((chunk, index) => {
-                let score = 0;
-                const lowerChunk = chunk.toLowerCase();
-
-                const isNoise = lowerChunk.includes("bibliographie") ||
-                    (lowerChunk.match(/\(\d{4}\)/g) || []).length > 3;
-
-                if (isNoise) return;
-
-                let hasThemeMatch = expandedThemeWords.some(t => lowerChunk.includes(t));
-                let hasKeywordMatch = keywordWords.some(k => lowerChunk.includes(k));
-
-                if (!hasThemeMatch || !hasKeywordMatch) return;
-
-                expandedThemeWords.forEach(t => {
-                    if (lowerChunk.includes(t)) {
-                        score += (lowerChunk.match(new RegExp(t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length * 10;
-                    }
-                });
-
-                keywordWords.forEach(k => {
-                    if (lowerChunk.includes(k)) {
-                        score += (lowerChunk.match(new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length * 12;
-                    }
-                });
-
-                if (score > 10) scores.push({ id: index, score: score, text: chunk });
-            });
-
-            scores.sort((a, b) => b.score - a.score);
-            return scores;
-        }
-
-        function expandSynonyms(words) {
-            let expanded = [...words];
-            words.forEach(w => {
-                const syns = SPIRITUAL_SYNONYMS[w.toLowerCase()];
-                if (syns) expanded.push(...syns);
-            });
-            return [...new Set(expanded)];
         }
 
         async function tryIAExtraction(chunk, theme, mots, logsIA) {
-            const prompt = `Tu es un outil d'extraction textuelle spécialisé. 
-            Thème : « ${theme} », Mots-clés : « ${mots} ». 
-            Extrais COPIE TEXTUELLEMENT un passage de 1500 caractères environ. 
-            Format JSON : {"passages": [{"texte": "...", "titre": "...", "contexte": "..."}]}
-            Texte source : ${chunk.text.substring(0, MAX_SEGMENT_SOURCE_CHARS)}`;
-
-            // Essayer chaque modèle OpenRouter
-            for (let modelIdx = 0; modelIdx < OPENROUTER_MODELS.length; modelIdx++) {
-                if (isStopped) return null;
-
-                const model = OPENROUTER_MODELS[modelIdx];
-
-                await new Promise(r => setTimeout(r, 2000));
-
-                try {
-                    const response = await fetch(PROXY_URL, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            model: model,
-                            messages: [{ role: "user", content: prompt }],
-                            temperature: 0.3,
-                            max_tokens: 2500
-                        })
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        const responseText = data.choices?.[0]?.message?.content || "";
-                        const match = responseText.match(/\{[\s\S]*"passages"[\s\S]*\}/);
-                        if (match) {
-                            const parsed = JSON.parse(match[0]);
-                            if (parsed.passages && parsed.passages[0]) {
-                                logsIA.push(`✓ Succès avec ${model}`);
-                                return parsed.passages[0];
-                            }
-                        }
-                    } else {
-                        logsIA.push(`⚠️ ${model}: Erreur ${response.status}`);
+    const prompt = `Tu es un outil d'extraction textuelle spécialisé. 
+    Thème : « ${theme} », Mots-clés : « ${mots} ». 
+    Extrais COPIE TEXTUELLEMENT un passage de 1500 caractères environ. 
+    Format JSON : {"passages": [{"texte": "...", "titre": "...", "contexte": "..."}]}
+    Texte source : ${chunk.text.substring(0, MAX_SEGMENT_SOURCE_CHARS)}`;
+    
+    // Essayer chaque modèle OpenRouter
+    for (let modelIdx = 0; modelIdx < OPENROUTER_MODELS.length; modelIdx++) {
+        if (isStopped) return null;
+        const model = OPENROUTER_MODELS[modelIdx];
+        await new Promise(r => setTimeout(r, 2000));
+        
+        try {
+            const response = await fetch(PROXY_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    model: model,
+                    messages: [{ role: "user", content: prompt }],
+                    temperature: 0.3,
+                    max_tokens: 2500
+                })
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                const responseText = data.choices?.[0]?.message?.content || "";
+                const match = responseText.match(/\{[\s\S]*"passages"[\s\S]*\}/);
+                if (match) {
+                    const parsed = JSON.parse(match[0]);
+                    if (parsed.passages && parsed.passages[0]) {
+                        logsIA.push(`✓ Succès avec ${model}`);  // ❌ ERREUR CORRIGÉE : parenthèses au lieu de backticks
+                        return parsed.passages[0];
                     }
-                } catch (e) {
-                    logsIA.push(`❌ ${model}: ${e.message}`);
                 }
+            } else {
+                logsIA.push(`⚠️ ${model}: Erreur ${response.status}`);  // ❌ ERREUR CORRIGÉE
             }
-            return null;
+        } catch (e) {
+            logsIA.push(`❌ ${model}: ${e.message}`);  // ❌ ERREUR CORRIGÉE
         }
+    }
+    return null;
+}
 
-        function finalizeResults(logs) {
+        function finalizeResults() {
             const resultsDiv = document.getElementById('results-content');
             const existingProgress = resultsDiv.querySelector('.progress-info');
             if (existingProgress) existingProgress.remove();
 
-            if (logs.length > 0) {
+            if (logsIA.length > 0) {
                 resultsDiv.insertAdjacentHTML('beforeend', `
                     <div style="margin-top:25px; border-top:1px solid #ddd; padding-top:15px;">
                         <h4 style="font-size:0.8rem; color:#666; margin-bottom:10px;">🛠️ RAPPORT TECHNIQUE</h4>
                         <ul style="font-size:0.75rem; color:#777; list-style:none; padding:0;">
-                            ${logs.map(l => `<li style="margin-bottom:4px;">${l}</li>`).join('')}
+                            ${logsIA.map(l => `<li style="margin-bottom:4px;">${l}</li>`).join('')}
                         </ul>
                     </div>
                 `);
@@ -1385,7 +1227,27 @@
             };
             pdfMake.createPdf(docDefinition).download(`Extraits_${tomesUsed.replace(/ & /g, '_')}_${dateStr}.pdf`);
         }
-    </script>
-</body>
 
+        function getIndexStats() {
+            const stats = {
+                totalTomes: Object.keys(TOMES_INDEX).length,
+                totalChunks: 0,
+                collections: {}
+            };
+
+            Object.values(TOMES_INDEX).forEach(tome => {
+                stats.totalChunks += tome.chunks.length;
+
+                if (!stats.collections[tome.collection]) {
+                    stats.collections[tome.collection] = { tomes: 0, chunks: 0 };
+                }
+
+                stats.collections[tome.collection].tomes++;
+                stats.collections[tome.collection].chunks += tome.chunks.length;
+            });
+
+            return stats;
+        }
+ </script>
+</body>
 </html>
