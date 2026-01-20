@@ -9,7 +9,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --primary-dark: #1c2541;
@@ -211,6 +213,7 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -229,14 +232,16 @@
         <aside class="sidebar">
             <div class="card guide-box">
                 <h3>📖 Guide Optimisé</h3>
-                <p style="font-size: 0.8rem; margin-bottom: 10px; color: #555;">Recherche ultra-rapide avec index pré-calculés :</p>
+                <p style="font-size: 0.8rem; margin-bottom: 10px; color: #555;">Recherche ultra-rapide avec index
+                    pré-calculés :</p>
                 <ul style="padding-left: 18px; font-size: 0.85rem;">
                     <li style="margin-bottom: 8px;">1. <b>COLLECTION :</b> Choisissez DS ou DTC</li>
                     <li style="margin-bottom: 8px;">2. <b>CRITÈRES :</b> Indiquez thème et mots-clés</li>
                     <li style="margin-bottom: 8px;">3. <b>LANCEMENT :</b> Recherche instantanée</li>
                     <li style="margin-bottom: 8px;">4. <b>AFFICHAGE :</b> Résultats progressifs</li>
                 </ul>
-                <div id="index-status" style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 0.75rem;">
+                <div id="index-status"
+                    style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 0.75rem;">
                     <strong>📊 Index :</strong> <span id="status-text">Chargement...</span>
                 </div>
             </div>
@@ -247,16 +252,22 @@
                 <div class="form-group">
                     <label>Sélectionner une collection</label>
                     <div style="display: flex; gap: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: white; padding: 10px 20px; border-radius: 8px; border: 2px solid #e0e0e0;">
-                            <input type="radio" name="collection" value="DS" onchange="handleCollectionSelect()" style="width: auto;">
+                        <label
+                            style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: white; padding: 10px 20px; border-radius: 8px; border: 2px solid #e0e0e0;">
+                            <input type="radio" name="collection" value="DS" onchange="handleCollectionSelect()"
+                                style="width: auto;">
                             <span style="font-weight: bold; color: #2c3e50;">DS (Dictionnaire de Spiritualité)</span>
                         </label>
-                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: white; padding: 10px 20px; border-radius: 8px; border: 2px solid #e0e0e0;">
-                            <input type="radio" name="collection" value="DTC" onchange="handleCollectionSelect()" style="width: auto;">
-                            <span style="font-weight: bold; color: #2c3e50;">DTC (Dictionnaire de Théologie Catholique)</span>
+                        <label
+                            style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: white; padding: 10px 20px; border-radius: 8px; border: 2px solid #e0e0e0;">
+                            <input type="radio" name="collection" value="DTC" onchange="handleCollectionSelect()"
+                                style="width: auto;">
+                            <span style="font-weight: bold; color: #2c3e50;">DTC (Dictionnaire de Théologie
+                                Catholique)</span>
                         </label>
                     </div>
-                    <div id="collection-info" class="file-info" style="margin-top: 10px; color: #666;">Aucune collection sélectionnée</div>
+                    <div id="collection-info" class="file-info" style="margin-top: 10px; color: #666;">Aucune collection
+                        sélectionnée</div>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
@@ -271,7 +282,8 @@
                 </div>
 
                 <div class="btn-row">
-                    <button id="search-btn" class="btn btn-primary" disabled onclick="startSearch()">🚀 LANCER RECHERCHE</button>
+                    <button id="search-btn" class="btn btn-primary" disabled onclick="startSearch()">🚀 LANCER
+                        RECHERCHE</button>
                     <button id="stop-btn" class="btn btn-stop" onclick="stopSearch()"><span>🛑</span> ARRÊTER</button>
                 </div>
             </div>
@@ -280,15 +292,19 @@
                 <div class="results-area">
                     <div class="card" style="min-height: 300px;">
                         <h3>📊 RÉSULTATS</h3>
-                        <div id="results-content" style="color: #7f8c8d; font-style: italic; font-size: 0.85rem;">En attente...</div>
+                        <div id="results-content" style="color: #7f8c8d; font-style: italic; font-size: 0.85rem;">En
+                            attente...</div>
                     </div>
                 </div>
                 <div class="pdf-area">
                     <div class="card">
                         <h3>📕 PDF</h3>
-                        <div id="pdf-placeholder" class="pdf-placeholder"><span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">📄</span>Disponible après recherche.</div>
+                        <div id="pdf-placeholder" class="pdf-placeholder"><span
+                                style="font-size: 2.5rem; display: block; margin-bottom: 10px;">📄</span>Disponible
+                            après recherche.</div>
                         <div id="pdf-ready" style="display: none; text-align: center;">
-                            <button id="pdf-download-btn" class="btn btn-primary" style="width: 100%;" onclick="downloadPDF()">TÉLÉCHARGER PDF</button>
+                            <button id="pdf-download-btn" class="btn btn-primary" style="width: 100%;"
+                                onclick="downloadPDF()">TÉLÉCHARGER PDF</button>
                         </div>
                     </div>
                 </div>
@@ -378,14 +394,18 @@
             const normalizedTheme = expandedTheme.map(normalizeWord);
             const normalizedKeywords = expandedKeywords.map(normalizeWord);
 
-            const hasTheme = normalizedTheme.some(term => tokens[term] > 0);
-            const hasKeyword = normalizedKeywords.some(term => tokens[term] > 0);
+            // Si un thème est spécifié, il doit être présent (ou un de ses synonymes)
+            if (normalizedTheme.length > 0) {
+                const hasTheme = normalizedTheme.some(term => tokens[term] > 0);
+                if (!hasTheme) return 0;
+                normalizedTheme.forEach(term => {
+                    score += (tokens[term] || 0) * 10;
+                });
+            }
 
-            if (!hasTheme || !hasKeyword) return 0;
-
-            normalizedTheme.forEach(term => {
-                score += (tokens[term] || 0) * 10;
-            });
+            // Au moins un mot-clé doit être présent
+            const matchingKeywords = normalizedKeywords.filter(term => tokens[term] > 0);
+            if (matchingKeywords.length === 0) return 0;
 
             normalizedKeywords.forEach(term => {
                 score += (tokens[term] || 0) * 12;
@@ -398,8 +418,8 @@
             const tome = TOMES_INDEX[tomeId];
             if (!tome) return [];
 
-            const themeWords = theme.toLowerCase().split(/[\s,]+/).filter(w => w.length > 3);
-            const keywordWords = keywords.toLowerCase().split(/[\s,]+/).filter(w => w.length > 2);
+            const themeWords = theme.toLowerCase().split(/[\s,]+/).filter(w => w.length >= 3);
+            const keywordWords = keywords.toLowerCase().split(/[\s,]+/).filter(w => w.length >= 2);
 
             const scoredChunks = tome.chunks.map(chunk => ({
                 ...chunk,
@@ -407,7 +427,7 @@
                 tomeId: tomeId
             }));
 
-            return scoredChunks.filter(c => c.score > 10).sort((a, b) => b.score - a.score);
+            return scoredChunks.filter(c => c.score > 0).sort((a, b) => b.score - a.score);
         }
 
         async function searchRandomTome(collection, theme, keywords) {
@@ -423,7 +443,9 @@
 
         window.addEventListener('load', async () => {
             document.getElementById('theme-input').addEventListener('input', validateForm);
+            document.getElementById('theme-input').addEventListener('change', validateForm);
             document.getElementById('mots-cles-input').addEventListener('input', validateForm);
+            document.getElementById('mots-cles-input').addEventListener('change', validateForm);
             validateForm();
 
             await Promise.all([
@@ -449,9 +471,18 @@
 
         function validateForm() {
             const theme = document.getElementById('theme-input').value.trim();
-            const mots = document.getElementById('mots-cles-input').value.trim();
+            const motsInput = document.getElementById('mots-cles-input').value.trim();
+            // On compte les mots-clés (séparés par espace ou virgule)
+            const keywordList = motsInput.split(/[\s,]+/).filter(w => w.length >= 2);
             const btn = document.getElementById('search-btn');
-            btn.disabled = !(theme && mots && selectedCollection);
+
+            const hasTheme = theme.length >= 2;
+            const keywordCount = keywordList.length;
+
+            // Règle : (Un thème ET au moins un mot-clé) OU (au moins deux mots-clés)
+            const canSearch = (hasTheme && keywordCount >= 1) || (keywordCount >= 2);
+
+            btn.disabled = !(canSearch && selectedCollection);
         }
 
         function displayProgress(msg) {
