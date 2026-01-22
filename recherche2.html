@@ -298,19 +298,28 @@
                     <li
                         style="margin-top: 1.5rem; border-top: 2px solid var(--accent-gold); padding-top: 1rem; list-style: none;">
                         <button id="search-no-ia-btn" class="btn"
-                            style="background-color: var(--accent-gold); color: white; width: 100%; font-size: 0.75rem; transition: all 0.2s;"
+                            style="background-color: white; color: var(--accent-gold); border: 2px solid var(--accent-gold); width: 100%; font-size: 0.75rem; transition: all 0.2s;"
                             disabled onclick="toggleIAMode()">
-                            ⚡ Activer Mode Sans IA
+                            ✨ Activer l'Analyse IA
                         </button>
                         <div id="no-ia-status"
-                            style="display:none; text-align:center; margin-top:0.5rem; color:var(--accent-gold); font-weight:700; font-size:0.75rem;">
+                            style="text-align:center; margin-top:0.5rem; color:var(--accent-gold); font-weight:700; font-size:0.75rem;">
                             Mode Sans IA sélectionné
                         </div>
-                        <p
-                            style="font-size: 0.7rem; margin-top: 0.5rem; opacity: 0.7; font-style: italic; text-align: center; color: var(--text-dark);">
-                            Utilisez ce bouton pour choisir entre une analyse IA ou une extraction brute avant de Lancer
-                            la Recherche.
-                        </p>
+                    </li>
+                    <li
+                        style="margin-top: 1.5rem; border-top: 2px solid var(--accent-gold); padding-top: 1rem; list-style: none;">
+                        <label
+                            style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: transparent; padding: 0; border: none; font-size: 0.8rem; color: var(--primary-dark);">
+                            <input type="checkbox" id="manual-tome-toggle" onchange="toggleManualMode()">
+                            <b>Choisir un tome précis</b>
+                        </label>
+                        <div id="manual-tome-container" style="display: none; margin-top: 10px;">
+                            <select id="tome-selector"
+                                style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--accent-gold); font-family: 'Lora', serif; font-size: 0.8rem;">
+                                <option value="">-- Sélectionnez un tome --</option>
+                            </select>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -351,8 +360,8 @@
                 </div>
 
                 <div class="btn-row">
-                    <button id="search-btn" class="btn btn-primary" disabled onclick="startSearch()">🚀 LANCER RECHERCHE
-                        (IA)</button>
+                    <button id="search-btn" class="btn btn-primary" disabled onclick="startSearch()">⚡ LANCER RECHERCHE
+                        (SANS IA)</button>
                     <button id="stop-btn" class="btn btn-stop" onclick="stopSearch()"><span>🛑</span> ARRÊTER</button>
                 </div>
             </div>
@@ -888,7 +897,7 @@
         let currentPassagesIA = [];
         let currentPassagesBruts = [];
         let isStopped = false;
-        let useIA = true; // Mode par défaut avec IA
+        let useIA = false; // Mode par défaut Sans IA
         let selectedFile = null;
         let selectedCollection = null;
         let selectedTomes = [];
@@ -964,11 +973,31 @@
             for (let radio of radios) {
                 if (radio.checked) {
                     selectedCollection = radio.value;
-                    document.getElementById('collection-info').innerHTML = `✅ Collection <strong>${selectedCollection}</strong> sélectionnée - Un tome sera choisi aléatoirement`;
+                    document.getElementById('collection-info').innerHTML = `✅ Collection <strong>${selectedCollection}</strong> sélectionnée`;
+                    updateTomeSelector();
                     break;
                 }
             }
             validateForm();
+        }
+
+        function updateTomeSelector() {
+            const selector = document.getElementById('tome-selector');
+            selector.innerHTML = '<option value="">-- Sélectionnez un tome --</option>';
+            if (selectedCollection && TOMES[selectedCollection]) {
+                TOMES[selectedCollection].forEach(tomePath => {
+                    const tomeName = tomePath.split('/')[1].replace('.docx', '');
+                    const option = document.createElement('option');
+                    option.value = tomePath;
+                    option.textContent = tomeName;
+                    selector.appendChild(option);
+                });
+            }
+        }
+
+        function toggleManualMode() {
+            const isManual = document.getElementById('manual-tome-toggle').checked;
+            document.getElementById('manual-tome-container').style.display = isManual ? 'block' : 'none';
         }
 
         function validateForm() {
@@ -992,16 +1021,18 @@
                 btnNoIa.style.backgroundColor = "white";
                 btnNoIa.style.color = "var(--accent-gold)";
                 btnNoIa.style.border = "2px solid var(--accent-gold)";
-                btnNoIa.innerHTML = "✅ Mode SANS IA sélectionné";
+                btnNoIa.innerHTML = "✨ Activer l'Analyse IA";
                 statusLabel.style.display = "block";
+                statusLabel.innerHTML = "Mode Sans IA sélectionné";
                 btnMain.innerHTML = "⚡ LANCER RECHERCHE (SANS IA)";
             } else {
-                // Mode AVEC IA (par défaut)
+                // Mode AVEC IA
                 btnNoIa.style.backgroundColor = "var(--accent-gold)";
                 btnNoIa.style.color = "white";
                 btnNoIa.style.border = "none";
-                btnNoIa.innerHTML = "⚡ Activer Mode Sans IA";
-                statusLabel.style.display = "none";
+                btnNoIa.innerHTML = "⚡ Revenir au Mode Sans IA";
+                statusLabel.style.display = "block";
+                statusLabel.innerHTML = "Mode IA activé";
                 btnMain.innerHTML = "🚀 LANCER RECHERCHE (IA)";
             }
         }
@@ -1070,22 +1101,19 @@
             displayProgress("🛑 Arrêt demandé...");
         }
 
-        async function loadRandomTome() {
-            const tomes = TOMES[selectedCollection];
-            const randomIndex = Math.floor(Math.random() * tomes.length);
-            const tomePath = tomes[randomIndex];
+        async function loadTome(tomePath) {
             const tomeName = tomePath.split('/')[1].replace('.docx', '');
-
-            const response = await fetch(tomePath);
-            if (!response.ok) throw new Error(`Impossible de charger ${tomeName}`);
-
-            const arrayBuffer = await response.arrayBuffer();
-            const rawText = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
-            const fullText = rawText.value;
-
-            if (!fullText || fullText.length < 100) throw new Error(`${tomeName} semble vide`);
-
-            return { name: tomeName, text: fullText, chunks: decoupageIntelligent(fullText) };
+            try {
+                const response = await fetch(tomePath);
+                if (!response.ok) return null;
+                const arrayBuffer = await response.arrayBuffer();
+                const rawText = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+                if (!rawText.value || rawText.value.length < 100) return null;
+                return { name: tomeName, chunks: decoupageIntelligent(rawText.value) };
+            } catch (e) {
+                console.error(`Erreur chargement ${tomeName}:`, e);
+                return null;
+            }
         }
 
         async function startSearch() {
@@ -1107,157 +1135,162 @@
             selectedTomes = [];
             allLoadedChunks = [];
 
-            let logsIA = []; // Initialisation des logs ici
+            let logsIA = [];
 
             try {
-                // TOME 1 - Premier extrait IA
-                displayProgress(`📖 Chargement du premier tome...`);
-                const tome1 = await loadRandomTome();
-                selectedTomes.push(tome1.name);
-                allLoadedChunks.push({ tome: tome1.name, chunks: tome1.chunks });
+                const manualTomeToggle = document.getElementById('manual-tome-toggle').checked;
+                const manualTomePath = document.getElementById('tome-selector').value;
 
-                displayProgress(`🔍 Analyse de ${tome1.chunks.length} segments dans ${tome1.name}...`);
-                const scores1 = analyzeChunks(tome1.chunks, theme, mots);
-
-                let firstExtractPromise = null;
-
-                if (scores1.length === 0) {
-                    displayProgress(`⚠️ Aucun extrait trouvé dans ${tome1.name}, chargement d'un autre tome...`);
-
-                    // Essayer un 2ème tome si rien trouvé (fallback simple, pas de parallélisme ici)
-                    const tome1bis = await loadRandomTome();
-                    selectedTomes[0] = tome1bis.name;
-                    allLoadedChunks[0] = { tome: tome1bis.name, chunks: tome1bis.chunks };
-
-                    displayProgress(`🔍 Nouvelle analyse dans ${tome1bis.name}...`);
-                    const scores1bis = analyzeChunks(tome1bis.chunks, theme, mots);
-
-                    if (scores1bis.length === 0) {
-                        document.getElementById('results-content').innerHTML = "❌ Aucun extrait pertinent trouvé pour ces critères dans les tomes testés.";
-                        btn.disabled = false;
-                        return;
-                    }
-
-                    // Utiliser le nouveau tome
-                    displayProgress(`🤖 Analyse IA du 1er passage dans ${tome1bis.name}...`);
-                    const p1 = await tryIAExtraction(scores1bis[0], theme, mots, logsIA);
-                    if (p1) {
-                        currentPassagesIA.push(p1);
-                        // On lance l'affichage MAIS on ne l'attend pas tout de suite pour le blocage
-                        // On stocke la promesse d'affichage pour synchronisation plus tard
-                        firstExtractPromise = addExtraitToDisplay(p1, 'ia', 0, tome1bis.name, true);
-                    }
+                let availableTomes = [];
+                if (manualTomeToggle && manualTomePath) {
+                    availableTomes = [manualTomePath];
+                    displayProgress(`🎯 Recherche ciblée sur le tome : ${manualTomePath.split('/')[1].replace('.docx', '')}`);
                 } else {
-                    // Extrait trouvé dans tome1
-                    if (forceNoIA) {
-                        const p1 = {
-                            texte: scores1[0].text.substring(0, MAX_EXTRAITS_TOTAL * 1000),
-                            titre: `Extrait thématique #1`,
-                            contexte: ''
-                        };
-                        currentPassagesBruts.push(p1);
-                        firstExtractPromise = addExtraitToDisplay(p1, 'brut', 0, tome1.name, false);
-                    } else {
-                        displayProgress(`🤖 Analyse IA du 1er passage dans ${tome1.name}...`);
-                        const p1 = await tryIAExtraction(scores1[0], theme, mots, logsIA);
-                        if (p1) {
-                            currentPassagesIA.push(p1);
-                            firstExtractPromise = addExtraitToDisplay(p1, 'ia', 0, tome1.name, true);
-                        }
+                    availableTomes = [...TOMES[selectedCollection]].sort(() => Math.random() - 0.5);
+                    displayProgress(`🔍 Recherche approfondie lancée sur ${availableTomes.length} tomes...`);
+                }
+
+                let tomesWithResults = [];
+
+                for (let i = 0; i < availableTomes.length; i++) {
+                    if (isStopped) break;
+                    const tomePath = availableTomes[i];
+                    const tomeName = tomePath.split('/')[1].replace('.docx', '');
+
+                    displayProgress(`📖 Vérification tome ${i + 1}/${availableTomes.length} : ${tomeName}...`);
+
+                    const tomeData = await loadTome(tomePath);
+                    if (!tomeData) continue;
+
+                    const scores = analyzeChunks(tomeData.chunks, theme, mots);
+                    if (scores.length > 0) {
+                        tomesWithResults.push({ tome: tomeData, scores: scores });
+                        displayProgress(`✅ Passage trouvé dans ${tomeName} !`);
+                        if (tomesWithResults.length >= 2) break;
                     }
                 }
 
-                if (isStopped) {
+                if (tomesWithResults.length === 0) {
+                    if (isStopped) {
+                        displayProgress("🛑 Recherche arrêtée par l'utilisateur.");
+                    } else {
+                        document.getElementById('results-content').innerHTML = `
+                            <div style="padding: 20px; background: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; color: #c53030; text-align: center;">
+                                <h3>Aucun résultat trouvé</h3>
+                                <p style="margin-top: 10px;">Le mot ou la thématique demandée n'a pu être trouvée dans aucun des <strong>${availableTomes.length}</strong> tomes de la collection ${selectedCollection}.</p>
+                                <p style="font-size: 0.85rem; margin-top: 10px; opacity: 0.8;">Essayez des termes plus généraux ou vérifiez l'orthographe.</p>
+                            </div>`;
+                    }
                     btn.disabled = false;
                     return;
                 }
 
-                // --- PARALLÉLISME ---
-                // Pendant que le 1er extrait s'affiche (firstExtractPromise), on lance la recherche du 2ème tome
+                // Préparation des données globales
+                tomesWithResults.forEach(tr => {
+                    selectedTomes.push(tr.tome.name);
+                    allLoadedChunks.push({ tome: tr.tome.name, chunks: tr.tome.chunks });
+                });
 
-                const secondTomeTask = (async () => {
-                    if (isStopped) return null;
-                    displayProgress(`Bg: Chargement tome 2...`);
-                    const tome2 = await loadRandomTome();
-                    selectedTomes.push(tome2.name);
-                    allLoadedChunks.push({ tome: tome2.name, chunks: tome2.chunks });
+                // Premier extrait (IA ou Brut)
+                const tr1 = tomesWithResults[0];
+                const s1 = tr1.scores[0];
+                let firstExtractPromise = null;
 
-                    const scores2 = analyzeChunks(tome2.chunks, theme, mots);
-
-                    if (scores2.length > 0) {
-                        if (forceNoIA) {
-                            const p2 = {
-                                texte: scores2[0].text.substring(0, MAX_EXTRAITS_TOTAL * 1000),
-                                titre: `Extrait thématique #2`,
-                                contexte: ''
-                            };
-                            return { p2, tomeName: tome2.name, type: 'brut' };
-                        }
-                        const p2 = await tryIAExtraction(scores2[0], theme, mots, logsIA);
-                        return { p2, tomeName: tome2.name, type: 'ia' };
-                    }
-                    return { p2: null, tomeName: tome2.name };
-                })();
-
-                // On attend que l'affichage du 1 soit fini ET que la recherche du 2 soit finie
-                const [_, resultTome2] = await Promise.all([firstExtractPromise, secondTomeTask]);
-
-                if (resultTome2 && resultTome2.p2 && !isStopped) {
-                    if (resultTome2.type === 'ia') {
-                        currentPassagesIA.push(resultTome2.p2);
-                        await addExtraitToDisplay(resultTome2.p2, 'ia', 1, resultTome2.tomeName, true);
+                if (forceNoIA) {
+                    const p1 = {
+                        texte: s1.text.substring(0, MAX_EXTRAIT_BRUT_CHARS),
+                        titre: `Extrait thématique #1`,
+                        contexte: ''
+                    };
+                    currentPassagesBruts.push(p1);
+                    firstExtractPromise = addExtraitToDisplay(p1, 'brut', 0, tr1.tome.name, false);
+                } else {
+                    displayProgress(`🤖 Analyse IA du 1er passage dans ${tr1.tome.name}...`);
+                    const p1 = await tryIAExtraction(s1, theme, mots, logsIA);
+                    if (p1) {
+                        currentPassagesIA.push(p1);
+                        firstExtractPromise = addExtraitToDisplay(p1, 'ia', 0, tr1.tome.name, true);
                     } else {
-                        currentPassagesBruts.push(resultTome2.p2);
-                        await addExtraitToDisplay(resultTome2.p2, 'brut', 1, resultTome2.tomeName, false);
+                        // Fallback brut si l'IA échoue
+                        const fallback = { texte: s1.text.substring(0, MAX_EXTRAIT_BRUT_CHARS), titre: "Extrait #1 (Brut)", contexte: "" };
+                        currentPassagesBruts.push(fallback);
+                        firstExtractPromise = addExtraitToDisplay(fallback, 'brut', 0, tr1.tome.name, false);
                     }
-                } else if (resultTome2 && !resultTome2.p2) {
-                    displayProgress(`ℹ️ Pas d'extrait supplémentaire trouvé dans ${resultTome2.tomeName}`);
                 }
 
-                // Suite du code (extraits bruts)...
-                if (!isStopped) {
-                    displayProgress("📝 Finalisation des extraits thématiques...");
+                await firstExtractPromise;
 
-                    let allScores = [];
-                    allLoadedChunks.forEach(tc => {
-                        const scores = analyzeChunks(tc.chunks, theme, mots);
-                        scores.forEach(s => {
-                            s.tomeName = tc.tome;
+                // Deuxième extrait si disponible
+                if (tomesWithResults.length > 1 && !isStopped) {
+                    const tr2 = tomesWithResults[1];
+                    const s2 = tr2.scores[0];
+                    if (forceNoIA) {
+                        const p2 = {
+                            texte: s2.text.substring(0, MAX_EXTRAIT_BRUT_CHARS),
+                            titre: `Extrait thématique #2`,
+                            contexte: ''
+                        };
+                        currentPassagesBruts.push(p2);
+                        await addExtraitToDisplay(p2, 'brut', 1, tr2.tome.name, false);
+                    } else {
+                        displayProgress(`🤖 Analyse IA du 2ème passage dans ${tr2.tome.name}...`);
+                        const p2 = await tryIAExtraction(s2, theme, mots, logsIA);
+                        if (p2) {
+                            currentPassagesIA.push(p2);
+                            await addExtraitToDisplay(p2, 'ia', 1, tr2.tome.name, true);
+                        } else {
+                            const fallback = { texte: s2.text.substring(0, MAX_EXTRAIT_BRUT_CHARS), titre: "Extrait #2 (Brut)", contexte: "" };
+                            currentPassagesBruts.push(fallback);
+                            await addExtraitToDisplay(fallback, 'brut', 1, tr2.tome.name, false);
+                        }
+                    }
+                }
+
+                // Compléter avec 3 autres extraits bruts (les meilleurs scores restants)
+                if (!isStopped) {
+                    displayProgress("📝 Recherche des passages complémentaires les plus pertinents...");
+
+                    let allOtherScores = [];
+                    tomesWithResults.forEach(tr => {
+                        // On ignore le tout premier score de chaque tome car déjà utilisé pour l'en-tête (IA/Brut #1 et #2)
+                        tr.scores.slice(1).forEach(s => {
+                            allOtherScores.push({ ...s, tomeName: tr.tome.name });
                         });
-                        allScores.push(...scores);
                     });
 
-                    allScores.sort((a, b) => b.score - a.score);
+                    allOtherScores.sort((a, b) => b.score - a.score);
 
-                    let usedIndices = new Set([0, 1]);
-                    for (let i = 2; i < allScores.length && currentPassagesIA.length + currentPassagesBruts.length < 5; i++) {
-                        if (usedIndices.has(i)) continue;
-
-                        let textBrut = allScores[i].text.substring(0, MAX_EXTRAIT_BRUT_CHARS);
+                    for (let i = 0; i < allOtherScores.length && (currentPassagesIA.length + currentPassagesBruts.length) < 5; i++) {
+                        const s = allOtherScores[i];
+                        let textBrut = s.text.substring(0, MAX_EXTRAIT_BRUT_CHARS); // Utiliser la même logique de découpe
                         let lastPoint = textBrut.lastIndexOf('.');
                         if (lastPoint > 800) textBrut = textBrut.substring(0, lastPoint + 1);
 
                         const brut = {
                             texte: textBrut,
-                            titre: `Extrait thématique #${i + 1}`,
+                            titre: `Extrait complémentaire`,
                             contexte: ''
                         };
 
                         currentPassagesBruts.push(brut);
-                        addExtraitToDisplay(brut, 'brut', currentPassagesBruts.length - 1, allScores[i].tomeName, false);
-                        usedIndices.add(i);
+                        await addExtraitToDisplay(brut, 'brut', currentPassagesIA.length + currentPassagesBruts.length - 1, s.tomeName, false);
                     }
                 }
 
-                finalizeResults(logsIA); // Passage explicite des logs à la fin
+                finalizeResults(logsIA);
 
             } catch (err) {
-                document.getElementById('results-content').innerHTML = `❌ Erreur : ${err.message}`;
+                document.getElementById('results-content').innerHTML = `
+                    <div style="padding: 20px; background: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; color: #c53030;">
+                        <h3>Erreur technique</h3>
+                        <p>${err.message}</p>
+                    </div>`;
                 console.error(err);
             } finally {
                 btn.disabled = false;
             }
         }
+
 
 
 
