@@ -291,10 +291,12 @@
                     <li style="margin-bottom: 8px;">2. <b>CRITÈRES :</b> Indiquez un thème et un mot-clé ou plusieurs
                         mots-clés séparés par des virgules</li>
                     <li style="margin-bottom: 8px;">3. <b>LANCEMENT :</b> Deux tomes aléatoires seront analysés pour
-                        donner 5 extraits ( 2 avec l'aide d'une IA et 3 bruts)</li>
+                        donner 5 extraits ( soit 5 tomes bruts sans I.A. soit 2 avec l'aide d'une IA et 3 bruts)</li>
                     <li style="margin-bottom: 8px;">4. <b>AFFICHAGE :</b> L'affichage complet peut prendre jusquà 2
-                        minutes</li>
+                        minutes dans le cas avec I.A.</li>
                     <li style="margin-bottom: 8px;">5. <b>PDF :</b> Le résultat est chargeable dans un fichier PDF</li>
+                    <li style="margin-bottom: 8px;">6. <b>CHOIX</b> Il est possible de sélectionner un tome pour la
+                        recherche</li>
                     <li
                         style="margin-top: 1.5rem; border-top: 2px solid var(--accent-gold); padding-top: 1rem; list-style: none;">
                         <button id="search-no-ia-btn" class="btn"
@@ -897,7 +899,7 @@
             "curiosité": ["distraction", "dispersion", "recherche vaine"]
         };
         const MAX_EXTRAITS_TOTAL = 5;
-        const MAX_EXTRAIT_BRUT_CHARS = 3000;
+        const MAX_EXTRAIT_BRUT_CHARS = 4000;
         const MAX_SEGMENT_SOURCE_CHARS = 6000;
 
         // --- PARAMÈTRES VITESSES D'AFFICHAGE ---
@@ -1081,7 +1083,7 @@
             resultsDiv.insertAdjacentHTML('beforeend', html);
 
             const textElement = document.getElementById(textId);
-            const fullText = passage.texte.substring(0, 1500) + (passage.texte.length > 1500 ? '...' : '');
+            const fullText = passage.texte.substring(0, 4000) + (passage.texte.length > 4000 ? '...' : '');
 
             // Animation par blocs de caractères pour plus de rapidité/fluidité
             if (animated && type === 'ia') {
@@ -1381,7 +1383,7 @@
         async function tryIAExtraction(chunk, theme, mots, logsIA) {
             const prompt = `Tu es un outil d'extraction textuelle spécialisé. 
             Thème : « ${theme} », Mots-clés : « ${mots} ». 
-            Extrais COPIE TEXTUELLEMENT un passage de 1500 caractères environ. 
+            Extrais COPIE TEXTUELLEMENT un passage de 2500 à 3500 caractères environ (soit environ 400-600 mots). 
             Format JSON : {"passages": [{"texte": "...", "titre": "...", "contexte": "..."}]}
             Texte source : ${chunk.text.substring(0, MAX_SEGMENT_SOURCE_CHARS)}`;
 
@@ -1401,7 +1403,7 @@
                             model: model,
                             messages: [{ role: "user", content: prompt }],
                             temperature: 0.3,
-                            max_tokens: 2500
+                            max_tokens: 3000
                         })
                     });
 
@@ -1461,11 +1463,16 @@
             const dateStr = new Date().toLocaleDateString('fr-FR').replace(/\//g, '-');
             const tomesUsed = selectedTomes.join(' & ');
 
+            let pdfTitle = 'EXTRAITS DU DICTIONNAIRE DE SPIRITUALITÉ\nASCÉTIQUE ET MYSTIQUE';
+            if (selectedCollection === 'DTC') {
+                pdfTitle = 'EXTRAITS DU DICTIONNAIRE DE THÉOLOGIE CATHOLIQUE';
+            }
+
             const docDefinition = {
                 pageSize: 'A4',
                 pageMargins: [60, 80, 60, 60],
                 content: [
-                    { text: 'EXTRAITS DU DICTIONNAIRE DE SPIRITUALITÉ\nASCÉTIQUE ET MYSTIQUE', style: 'mainTitle', alignment: 'center', margin: [0, 150, 0, 20] },
+                    { text: pdfTitle, style: 'mainTitle', alignment: 'center', margin: [0, 150, 0, 20] },
                     { text: `Critères : ${theme} / ${mots}`, margin: [0, 20, 0, 0], bold: true, alignment: 'center' },
                     { text: `Sources : ${tomesUsed}`, margin: [0, 10, 0, 0], alignment: 'center', fontSize: 12, color: '#e67e22' },
                     { text: `Date : ${dateStr}`, margin: [0, 5, 0, 0], alignment: 'center' },
