@@ -1,5 +1,6 @@
 const CACHE_NAME = 'biblio-spirit-v1';
 const ASSETS = [
+  'index.html',
   'test5.html',
   'recherche2.html',
   'manifest.json'

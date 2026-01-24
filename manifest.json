@@ -2,7 +2,7 @@
   "name": "Bibliothèque Spirituelle IA",
   "short_name": "BiblioSpirit",
   "description": "Recherche d'extraits spirituels et théologiques avec IA",
-  "start_url": "test5.html",
+  "start_url": "recherche2.html",
   "display": "standalone",
   "background_color": "#f9f9f6",
   "theme_color": "#1c2541",
