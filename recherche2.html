@@ -13,6 +13,9 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600&display=swap"
         rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1c2541">
+    <link rel="apple-touch-icon" href="https://dictionnaires.github.io/Spiritualite/icon-192.png">
     <style>
         :root {
             --primary-dark: #1c2541;
@@ -1498,6 +1501,16 @@
                 }
             };
             pdfMake.createPdf(docDefinition).download(`Extraits_${tomesUsed.replace(/ & /g, '_')}_${dateStr}.pdf`);
+        }
+    </script>
+    <script>
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker enregistré !'))
+                    .catch(err => console.log('Erreur SW:', err));
+            });
         }
     </script>
 </body>
