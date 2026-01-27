@@ -1037,10 +1037,25 @@
 
         function validateForm() {
             const theme = document.getElementById('theme-input').value.trim();
-            const mots = document.getElementById('mots-cles-input').value.trim();
+            const motsContent = document.getElementById('mots-cles-input').value.trim();
+
+            // On compte les mots-clés valides (>= 2 lettres)
+            const keywordWords = motsContent.split(/[\s,]+/).filter(w => w.length >= 2);
+
+            const hasTheme = theme.length >= 2;
+            const keywordCount = keywordWords.length;
+
             const btn = document.getElementById('search-btn');
             const btnNoIa = document.getElementById('search-no-ia-btn');
-            const isValid = (theme && mots && selectedCollection);
+
+            // La recherche est valide si :
+            // - Une collection est choisie
+            // - ET (Thème + au moins 1 mot-clé) OU (Au moins 2 mots-clés sans thème)
+            const isValid = selectedCollection && (
+                (hasTheme && keywordCount >= 1) ||
+                (keywordCount >= 2)
+            );
+
             btn.disabled = !isValid;
             if (btnNoIa) btnNoIa.disabled = !isValid;
         }
@@ -1356,9 +1371,10 @@
         }
 
         function analyzeChunks(chunks, theme, mots) {
-            const themeWords = theme.toLowerCase().split(/[\s,]+/).filter(w => w.length > 3);
+            // On accepte maintenant les mots dès 2 lettres pour ne pas rater "Foi", "Âme", "Vie"...
+            const themeWords = theme.toLowerCase().split(/[\s,]+/).filter(w => w.length >= 2);
             const expandedThemeWords = expandSynonyms(themeWords);
-            const keywordWords = mots.toLowerCase().split(/[\s,]+/).filter(w => w.length > 2);
+            const keywordWords = mots.toLowerCase().split(/[\s,]+/).filter(w => w.length >= 2);
             let scores = [];
 
             chunks.forEach((chunk, index) => {
@@ -1370,8 +1386,12 @@
 
                 if (isNoise) return;
 
-                let hasThemeMatch = expandedThemeWords.some(t => lowerChunk.includes(t));
-                let hasKeywordMatch = keywordWords.some(k => lowerChunk.includes(k));
+                // Thème : au moins un des mots (ou synonymes) doit correspondre
+                let hasThemeMatch = expandedThemeWords.length === 0 || expandedThemeWords.some(t => lowerChunk.includes(t));
+
+                // Mots-clés : TOUS les mots-clés saisis doivent être présents (logique "ET")
+                // On utilise keywordWords (les originaux) pour garantir la précision
+                let hasKeywordMatch = keywordWords.length === 0 || keywordWords.every(k => lowerChunk.includes(k));
 
                 if (!hasThemeMatch || !hasKeywordMatch) return;
 
