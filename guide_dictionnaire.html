@@ -1,0 +1,1820 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide & Configuration - Dictionnaire de Spiritualité</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1c2541 0%, #2c3e50 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .subsection {
+            margin-bottom: 30px;
+            padding-left: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .subsection h3 {
+            color: #2c3e50;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subsection h3::before {
+            content: "▶";
+            color: #667eea;
+            font-size: 1rem;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .number-highlight {
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        .step-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .param-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .param-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .param-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .param-table tr:hover {
+            background: #e9ecef;
+        }
+
+        .param-name {
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+            font-weight: bold;
+        }
+
+        .impact-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .impact-high {
+            background: #dc3545;
+            color: white;
+        }
+
+        .impact-medium {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .impact-low {
+            background: #28a745;
+            color: white;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        .flow-diagram {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .flow-step {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+
+        .flow-arrow {
+            color: #667eea;
+            font-size: 2rem;
+            margin: 5px 0;
+        }
+
+        .toc {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+        }
+
+        .toc h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .toc li {
+            padding: 8px 0;
+        }
+
+        .toc a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .toc a:hover {
+            color: #764ba2;
+            padding-left: 10px;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+        }
+
+        /* STYLES POUR L'ONGLET CONFIGURATION */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .tab-button {
+            background: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 10px 10px 0 0;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab-button:hover {
+            background: #f8f9fa;
+            color: #667eea;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .config-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .config-section h4 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .config-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .config-item label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .config-item .description {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .config-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .slider-container {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            border: none;
+        }
+
+        .value-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+            border: 2px solid #667eea;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .preset-btn:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .preset-btn h5 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .preset-btn p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .preset-btn:hover p {
+            color: white;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            flex: 1;
+            min-width: 180px;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            color: white;
+        }
+
+        .btn-reset:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+        }
+
+        .btn-export {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-export:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 20px 30px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease-out;
+            z-index: 1000;
+            display: none;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .current-values-box {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .current-values-box h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .value-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .value-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .value-item strong {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Guide & Configuration</h1>
+            <p>Dictionnaire de Spiritualité Ascétique et Mystique</p>
+            <p>Dictionnaire de Théologie Catholique</p>
+        </header>
+
+        <div class="content">
+            <!-- SYSTÈME D'ONGLETS -->
+            <div class="tabs">
+                <button class="tab-button active" onclick="switchTab('guide')">📖 Guide d'utilisation</button>
+                <button class="tab-button" onclick="switchTab('config')">⚙️ Configuration</button>
+            </div>
+
+            <!-- NOTIFICATION -->
+            <div id="notification" class="notification"></div>
+
+            <!-- ONGLET GUIDE -->
+            <div id="tab-guide" class="tab-content active">
+            <!-- TABLE DES MATIÈRES -->
+            <div class="toc">
+                <h2>📑 Table des matières</h2>
+                <ul>
+                    <li><a href="#partie1">PARTIE 1 : Comment fonctionne l'outil ?</a></li>
+                    <li style="padding-left: 20px;"><a href="#vue-ensemble">Vue d'ensemble</a></li>
+                    <li style="padding-left: 20px;"><a href="#etapes">Les 8 étapes détaillées</a></li>
+                    <li style="padding-left: 20px;"><a href="#deux-modes">Les deux modes de fonctionnement</a></li>
+                    <li><a href="#partie2">PARTIE 2 : Paramètres modifiables</a></li>
+                    <li style="padding-left: 20px;"><a href="#params-extraits">Paramètres des extraits</a></li>
+                    <li style="padding-left: 20px;"><a href="#params-affichage">Paramètres d'affichage</a></li>
+                    <li style="padding-left: 20px;"><a href="#params-recherche">Paramètres de recherche</a></li>
+                    <li style="padding-left: 20px;"><a href="#params-ia">Paramètres IA</a></li>
+                    <li style="padding-left: 20px;"><a href="#params-pdf">Paramètres PDF</a></li>
+                </ul>
+            </div>
+
+            <!-- PARTIE 1 -->
+            <div class="section" id="partie1">
+                <h2 class="section-title">PARTIE 1 : Comment fonctionne l'outil ?</h2>
+
+                <!-- VUE D'ENSEMBLE -->
+                <div class="subsection" id="vue-ensemble">
+                    <h3>🎯 Vue d'ensemble</h3>
+                    <p>Cet outil recherche automatiquement des passages pertinents dans deux collections de dictionnaires religieux :</p>
+                    <ul>
+                        <li><strong>DS</strong> : Dictionnaire de Spiritualité Ascétique et Mystique (<span class="number-highlight">20 tomes</span>)</li>
+                        <li><strong>DTC</strong> : Dictionnaire de Théologie Catholique (<span class="number-highlight">30 tomes</span>)</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <strong>🎁 Ce que vous recevez :</strong>
+                        <ul>
+                            <li><span class="number-highlight">5 extraits</span> au total par recherche</li>
+                            <li>Chaque extrait fait environ <span class="number-highlight">4 000 caractères</span> (600-700 mots)</li>
+                            <li>Un fichier PDF téléchargeable avec tous les extraits</li>
+                            <li>Des informations sur les tomes consultés</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- LES 8 ÉTAPES -->
+                <div class="subsection" id="etapes">
+                    <h3>🔄 Les 8 étapes détaillées du processus</h3>
+
+                    <div class="step-container">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <strong>Saisie des critères de recherche</strong>
+                            <p>L'utilisateur renseigne :</p>
+                            <ul>
+                                <li>Une <strong>thématique</strong> (ex: "Oraison")</li>
+                                <li>Des <strong>mots-clés</strong> séparés par des virgules (ex: "union, grâce")</li>
+                                <li>Une <strong>collection</strong> (DS ou DTC)</li>
+                                <li>Optionnel : un tome spécifique (sinon choix aléatoire)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <strong>Sélection des tomes</strong>
+                            <p>Le système charge <span class="number-highlight">2 tomes différents</span> de la collection choisie :</p>
+                            <ul>
+                                <li>En mode automatique : <strong>2 tomes choisis aléatoirement</strong> parmi les 20 (DS) ou 30 (DTC) disponibles</li>
+                                <li>En mode manuel : <strong>1 tome sélectionné</strong> par l'utilisateur</li>
+                                <li>Le système parcourt les tomes jusqu'à trouver des résultats dans 2 tomes différents</li>
+                            </ul>
+                            <div class="warning-box">
+                                ⚠️ Le système s'arrête dès qu'il a trouvé des résultats dans 2 tomes pour gagner du temps
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <strong>Découpage en morceaux (chunks)</strong>
+                            <p>Chaque tome est découpé intelligemment en morceaux de texte :</p>
+                            <ul>
+                                <li>Taille cible : <span class="number-highlight">5 000 caractères</span> (environ 700-800 mots)</li>
+                                <li>Le découpage respecte les paragraphes (pas de coupure en plein milieu d'une phrase)</li>
+                                <li>Si un paragraphe fait dépasser <span class="number-highlight">6 000 caractères</span>, un nouveau morceau est créé</li>
+                                <li>Chaque tome contient généralement entre 50 et 150 morceaux</li>
+                            </ul>
+                            <div class="info-box">
+                                💡 <strong>Pourquoi découper ?</strong> Pour analyser des sections cohérentes du texte plutôt que des pages entières, ce qui améliore la précision de la recherche.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <strong>Enrichissement de la thématique avec les synonymes</strong>
+                            <p>Le système élargit automatiquement la recherche grâce à un dictionnaire de <span class="number-highlight">200 concepts spirituels</span> :</p>
+                            <div class="success-box">
+                                <strong>Exemple concret :</strong><br>
+                                Vous cherchez : "oraison"<br>
+                                Le système cherche aussi : prière, méditation, contemplation, élévation, recueillement, dévotion, supplication, invocation
+                            </div>
+                            <p>Ce dictionnaire contient environ <span class="number-highlight">1 500 synonymes</span> couvrant :</p>
+                            <ul>
+                                <li>Prière et vie de prière</li>
+                                <li>Vertus et vie morale</li>
+                                <li>Vie mystique</li>
+                                <li>Ordres religieux</li>
+                                <li>Phénomènes mystiques</li>
+                                <li>Et bien d'autres concepts spirituels</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <strong>Attribution d'un score à chaque morceau</strong>
+                            <p>Chaque morceau de texte reçoit un score selon ces critères :</p>
+                            
+                            <div class="info-box">
+                                <strong>🎯 Système de points :</strong><br>
+                                Chaque occurrence d'un mot de la thématique = <span class="number-highlight">+10 points</span><br>
+                                Chaque occurrence d'un mot-clé = <span class="number-highlight">+12 points</span>
+                            </div>
+
+                            <div class="success-box">
+                                <strong>Exemple de calcul :</strong><br>
+                                Thématique : "oraison" (élargi à : oraison, prière, méditation, contemplation...)<br>
+                                Mots-clés : "union, grâce"<br><br>
+                                Un morceau contient :<br>
+                                - 3× le mot "oraison" = 30 points<br>
+                                - 2× le mot "prière" = 20 points<br>
+                                - 4× le mot "union" = 48 points<br>
+                                - 1× le mot "grâce" = 12 points<br>
+                                <strong>Score total : 110 points</strong>
+                            </div>
+
+                            <p><strong>Filtrage automatique :</strong> Les morceaux sont automatiquement éliminés s'ils :</p>
+                            <ul>
+                                <li>Contiennent le mot "bibliographie" (ce sont des références, pas du contenu)</li>
+                                <li>Contiennent plus de <span class="number-highlight">3 dates</span> au format (1995) (ce sont aussi des références)</li>
+                                <li>Ne contiennent <strong>aucun</strong> mot de la thématique élargie</li>
+                                <li>Ne contiennent <strong>aucun</strong> mot-clé</li>
+                                <li>Ont un score inférieur à <span class="number-highlight">10 points</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <div class="step-number">6</div>
+                        <div class="step-content">
+                            <strong>Classement et sélection des meilleurs morceaux</strong>
+                            <p>Les morceaux sont classés du score le plus élevé au plus faible.</p>
+                            <ul>
+                                <li>Le <strong>meilleur morceau</strong> du 1er tome est sélectionné</li>
+                                <li>Le <strong>meilleur morceau</strong> du 2e tome est sélectionné</li>
+                                <li>Les <strong>3 meilleurs morceaux restants</strong> (tous tomes confondus) sont sélectionnés</li>
+                            </ul>
+                            <p>Total : <span class="number-highlight">5 morceaux sélectionnés</span></p>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <div class="step-number">7</div>
+                        <div class="step-content">
+                            <strong>Traitement des extraits (selon le mode choisi)</strong>
+                            
+                            <div class="info-box">
+                                <strong>📋 MODE SANS IA (par défaut) :</strong>
+                                <ul>
+                                    <li>Les 5 morceaux sont simplement raccourcis à <span class="number-highlight">4 000 caractères</span></li>
+                                    <li>La coupure se fait à la dernière phrase complète (au dernier point trouvé)</li>
+                                    <li>Affichage <strong>instantané</strong></li>
+                                    <li>Temps total : <strong>environ 30 secondes</strong></li>
+                                </ul>
+                            </div>
+
+                            <div class="success-box">
+                                <strong>🤖 MODE AVEC IA (à activer) :</strong>
+                                <ul>
+                                    <li><strong>Les 2 premiers extraits</strong> sont envoyés à une intelligence artificielle</li>
+                                    <li>L'IA reçoit un texte de <span class="number-highlight">6 000 caractères</span> maximum</li>
+                                    <li>L'IA est chargée d'extraire un passage de <span class="number-highlight">2 500 à 3 500 caractères</span> (400-600 mots)</li>
+                                    <li>L'IA doit fournir : le texte + un titre + un contexte explicatif</li>
+                                    <li>Affichage avec <strong>animation</strong> (effet machine à écrire)</li>
+                                    <li><strong>Les 3 autres extraits</strong> restent des extraits bruts (comme en mode sans IA)</li>
+                                    <li>Temps total : <strong>environ 2 minutes</strong></li>
+                                </ul>
+                            </div>
+
+                            <div class="warning-box">
+                                <strong>⚙️ Système de secours intelligent :</strong><br>
+                                Le système essaie <span class="number-highlight">8 modèles d'IA différents</span> dans l'ordre. Si un modèle atteint sa limite gratuite, il passe automatiquement au suivant. Si tous les modèles échouent, l'extrait est affiché en mode brut (l'utilisateur reçoit toujours ses 5 extraits).
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <div class="step-number">8</div>
+                        <div class="step-content">
+                            <strong>Affichage et génération du PDF</strong>
+                            
+                            <p><strong>Affichage à l'écran :</strong></p>
+                            <ul>
+                                <li>Extraits IA : fond blanc, bordure verte, avec titre et contexte</li>
+                                <li>Extraits bruts : fond beige, bordure orange, sans contexte</li>
+                                <li>Animation pour les extraits IA : <span class="number-highlight">10 caractères</span> ajoutés toutes les <span class="number-highlight">10 millisecondes</span></li>
+                            </ul>
+
+                            <p><strong>Fichier PDF généré :</strong></p>
+                            <ul>
+                                <li>Page 1 : Page de garde avec titre, critères, sources et date</li>
+                                <li>Page 2 : Table des matières listant les 5 extraits</li>
+                                <li>Pages suivantes : Chaque extrait avec son titre, son contexte (si IA) et son texte complet</li>
+                                <li>Format A4, marges de <span class="number-highlight">60 points</span> (environ 2 cm)</li>
+                                <li>Police de <span class="number-highlight">11 points</span> pour le texte, justifié</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DEUX MODES -->
+                <div class="subsection" id="deux-modes">
+                    <h3>⚡ Les deux modes de fonctionnement en détail</h3>
+
+                    <div class="flow-diagram">
+                        <h4 style="margin-bottom: 20px; color: #2c3e50;">MODE SANS IA (rapide)</h4>
+                        <div class="flow-step">1er extrait : Meilleur morceau du tome 1 → raccourci à 4 000 caractères</div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="flow-step">2e extrait : Meilleur morceau du tome 2 → raccourci à 4 000 caractères</div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="flow-step">3e, 4e, 5e extraits : 3 meilleurs morceaux restants → raccourcis</div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="flow-step">✅ Affichage instantané des 5 extraits (30 secondes)</div>
+                    </div>
+
+                    <div class="flow-diagram" style="margin-top: 30px;">
+                        <h4 style="margin-bottom: 20px; color: #2c3e50;">MODE AVEC IA (précis mais plus lent)</h4>
+                        <div class="flow-step">1er extrait : Meilleur morceau du tome 1 → envoyé à l'IA</div>
+                        <div class="flow-arrow">↓</div>
+                        <div style="background: white; border: 2px dashed #667eea; padding: 10px; margin: 10px 0; border-radius: 5px;">
+                            <strong>L'IA essaie 8 modèles différents (2 secondes d'attente entre chaque)</strong><br>
+                            Si succès : texte extrait + titre + contexte<br>
+                            Si échec total : extrait brut de secours
+                        </div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="flow-step">Affichage avec animation (effet machine à écrire)</div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="flow-step">2e extrait : Même processus avec le meilleur morceau du tome 2</div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="flow-step">3e, 4e, 5e extraits : Extraits bruts (comme en mode sans IA)</div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="flow-step">✅ Affichage complet (environ 2 minutes)</div>
+                    </div>
+
+                    <div class="warning-box" style="margin-top: 20px;">
+                        <strong>🕐 Pourquoi le mode IA est-il plus lent ?</strong>
+                        <ul>
+                            <li>Délai de <span class="number-highlight">2 secondes</span> entre chaque tentative de modèle</li>
+                            <li>Maximum <span class="number-highlight">8 tentatives</span> par extrait = jusqu'à 16 secondes</li>
+                            <li>2 extraits IA = jusqu'à 32 secondes juste pour les appels IA</li>
+                            <li>Plus l'animation d'affichage progressive</li>
+                            <li>Plus le chargement et l'analyse des tomes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PARTIE 2 -->
+            <div class="section" id="partie2">
+                <h2 class="section-title">PARTIE 2 : Paramètres modifiables</h2>
+
+                <div class="info-box">
+                    <strong>ℹ️ Comment modifier ces paramètres ?</strong><br>
+                    Ces valeurs se trouvent dans le code JavaScript du fichier HTML. Pour les modifier, ouvrez le fichier avec un éditeur de texte (Notepad++, Visual Studio Code, etc.) et recherchez le nom du paramètre indiqué.
+                </div>
+
+                <!-- PARAMÈTRES DES EXTRAITS -->
+                <div class="subsection" id="params-extraits">
+                    <h3>📄 Paramètres des extraits</h3>
+                    
+                    <table class="param-table">
+                        <thead>
+                            <tr>
+                                <th>Paramètre</th>
+                                <th>Valeur actuelle</th>
+                                <th>Description</th>
+                                <th>Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="param-name">MAX_EXTRAITS_TOTAL</span></td>
+                                <td><span class="number-highlight">5</span></td>
+                                <td>Nombre total d'extraits retournés par recherche</td>
+                                <td><span class="impact-badge impact-high">FORT</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <strong>💡 Suggestions :</strong>
+                                    <ul>
+                                        <li><code>3</code> : Pour une recherche rapide et ciblée</li>
+                                        <li><code>5</code> : Valeur actuelle équilibrée</li>
+                                        <li><code>7-10</code> : Pour une recherche exhaustive (attention au temps d'attente)</li>
+                                    </ul>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">MAX_EXTRAIT_BRUT_CHARS</span></td>
+                                <td><span class="number-highlight">4 000</span></td>
+                                <td>Longueur maximale d'un extrait brut en caractères (environ 600-700 mots)</td>
+                                <td><span class="impact-badge impact-medium">MOYEN</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <strong>💡 Suggestions :</strong>
+                                    <ul>
+                                        <li><code>2500</code> : Extraits courts et concis</li>
+                                        <li><code>4000</code> : Valeur actuelle (1 page A4)</li>
+                                        <li><code>6000</code> : Extraits longs et détaillés (1,5 page A4)</li>
+                                    </ul>
+                                    <strong>⚠️ Attention :</strong> Si vous augmentez cette valeur, pensez à augmenter aussi la taille du texte envoyé à l'IA (voir ci-dessous).
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">MAX_SEGMENT_SOURCE_CHARS</span></td>
+                                <td><span class="number-highlight">6 000</span></td>
+                                <td>Longueur du texte source envoyé à l'IA pour qu'elle fasse son extraction</td>
+                                <td><span class="impact-badge impact-medium">MOYEN</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <strong>💡 Suggestions :</strong>
+                                    <ul>
+                                        <li><code>4000</code> : Contexte réduit (plus rapide, moins de risque de timeout)</li>
+                                        <li><code>6000</code> : Valeur actuelle équilibrée</li>
+                                        <li><code>8000</code> : Maximum recommandé (au-delà, risque de timeout IA)</li>
+                                    </ul>
+                                    <strong>⚠️ Attention :</strong> Doit toujours être supérieur à MAX_EXTRAIT_BRUT_CHARS. L'IA a besoin de plus de contexte que ce qu'elle va extraire.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- PARAMÈTRES D'AFFICHAGE -->
+                <div class="subsection" id="params-affichage">
+                    <h3>🎨 Paramètres d'affichage</h3>
+                    
+                    <table class="param-table">
+                        <thead>
+                            <tr>
+                                <th>Paramètre</th>
+                                <th>Valeur actuelle</th>
+                                <th>Description</th>
+                                <th>Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="param-name">TYPING_SPEED_MS</span></td>
+                                <td><span class="number-highlight">10</span> ms</td>
+                                <td>Délai en millisecondes entre chaque ajout de caractères dans l'animation (effet machine à écrire)</td>
+                                <td><span class="impact-badge impact-low">FAIBLE</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <strong>💡 Suggestions :</strong>
+                                    <ul>
+                                        <li><code>5</code> : Animation très rapide</li>
+                                        <li><code>10</code> : Valeur actuelle (fluide)</li>
+                                        <li><code>20</code> : Animation plus lente (plus visible)</li>
+                                        <li><code>50</code> : Animation très lente (effet vraie machine à écrire)</li>
+                                    </ul>
+                                    <strong>Calcul :</strong> Pour un extrait de 3000 caractères avec les paramètres actuels, l'affichage prend environ 3 secondes.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">CHARS_PER_TICK</span></td>
+                                <td><span class="number-highlight">10</span></td>
+                                <td>Nombre de caractères ajoutés à chaque fois (par "bloc")</td>
+                                <td><span class="impact-badge impact-low">FAIBLE</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <strong>💡 Suggestions :</strong>
+                                    <ul>
+                                        <li><code>5</code> : Blocs plus petits (animation plus fluide)</li>
+                                        <li><code>10</code> : Valeur actuelle équilibrée</li>
+                                        <li><code>20</code> : Blocs plus gros (affichage plus rapide)</li>
+                                        <li><code>50</code> : Affichage quasi-instantané</li>
+                                    </ul>
+                                    <strong>⚙️ Formule :</strong> Temps d'affichage = (Nombre de caractères ÷ CHARS_PER_TICK) × TYPING_SPEED_MS
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="warning-box">
+                        <strong>🎯 Optimisation recommandée pour accélérer l'affichage :</strong><br>
+                        <code>TYPING_SPEED_MS = 5</code> et <code>CHARS_PER_TICK = 15</code><br>
+                        → Divise le temps d'affichage par 3 tout en gardant une animation fluide
+                    </div>
+                </div>
+
+                <!-- PARAMÈTRES DE RECHERCHE -->
+                <div class="subsection" id="params-recherche">
+                    <h3>🔍 Paramètres de recherche et scoring</h3>
+                    
+                    <table class="param-table">
+                        <thead>
+                            <tr>
+                                <th>Paramètre</th>
+                                <th>Valeur actuelle</th>
+                                <th>Description</th>
+                                <th>Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="param-name">TARGET</span><br>(taille des chunks)</td>
+                                <td><span class="number-highlight">5 000</span> caractères</td>
+                                <td>Taille cible d'un morceau de texte lors du découpage des tomes (700-800 mots)</td>
+                                <td><span class="impact-badge impact-high">FORT</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <strong>💡 Suggestions :</strong>
+                                    <ul>
+                                        <li><code>3000</code> : Morceaux plus petits = recherche plus fine mais plus lente</li>
+                                        <li><code>5000</code> : Valeur actuelle équilibrée</li>
+                                        <li><code>7000</code> : Morceaux plus gros = recherche plus rapide mais moins précise</li>
+                                    </ul>
+                                    <strong>⚠️ Impact :</strong> Plus les chunks sont petits, plus il y a de morceaux à analyser, donc plus la recherche est longue.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">Seuil de tolérance</span></td>
+                                <td><span class="number-highlight">6 000</span> caractères<br>(TARGET + 1000)</td>
+                                <td>Si un chunk + un paragraphe dépasse cette limite, un nouveau chunk est créé</td>
+                                <td><span class="impact-badge impact-low">FAIBLE</span></td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">Points par mot thématique</span></td>
+                                <td><span class="number-highlight">×10</span> points</td>
+                                <td>Nombre de points attribués pour chaque occurrence d'un mot de la thématique (ou ses synonymes)</td>
+                                <td><span class="impact-badge impact-high">FORT</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <strong>💡 Suggestions :</strong>
+                                    <ul>
+                                        <li><code>×8</code> : Moins de poids sur la thématique</li>
+                                        <li><code>×10</code> : Valeur actuelle équilibrée</li>
+                                        <li><code>×15</code> : Plus de poids sur la thématique (favorise les passages très thématiques)</li>
+                                    </ul>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">Points par mot-clé</span></td>
+                                <td><span class="number-highlight">×12</span> points</td>
+                                <td>Nombre de points attribués pour chaque occurrence d'un mot-clé</td>
+                                <td><span class="impact-badge impact-high">FORT</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <strong>💡 Suggestions :</strong>
+                                    <ul>
+                                        <li><code>×10</code> : Poids égal avec la thématique</li>
+                                        <li><code>×12</code> : Valeur actuelle (mots-clés légèrement prioritaires)</li>
+                                        <li><code>×20</code> : Forte priorité aux mots-clés précis</li>
+                                    </ul>
+                                    <strong>⚙️ Stratégie :</strong> Augmenter ce paramètre rend les résultats plus ciblés sur les mots-clés exacts demandés.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">Score minimal</span></td>
+                                <td><span class="number-highlight">10</span> points</td>
+                                <td>Score minimum pour qu'un morceau soit retenu</td>
+                                <td><span class="impact-badge impact-medium">MOYEN</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <strong>💡 Suggestions :</strong>
+                                    <ul>
+                                        <li><code>5</code> : Seuil très bas (plus de résultats, moins précis)</li>
+                                        <li><code>10</code> : Valeur actuelle</li>
+                                        <li><code>25</code> : Seuil élevé (moins de résultats, très précis)</li>
+                                        <li><code>50</code> : Seuil très élevé (seulement les passages parfaitement pertinents)</li>
+                                    </ul>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">Nombre de tomes analysés</span></td>
+                                <td><span class="number-highlight">2</span> tomes max</td>
+                                <td>Le système s'arrête quand il a trouvé des résultats dans 2 tomes différents</td>
+                                <td><span class="impact-badge impact-high">FORT</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <strong>💡 Suggestions :</strong>
+                                    <ul>
+                                        <li><code>1</code> : Recherche ultra-rapide (un seul tome)</li>
+                                        <li><code>2</code> : Valeur actuelle équilibrée</li>
+                                        <li><code>3-5</code> : Recherche plus exhaustive (beaucoup plus lent)</li>
+                                    </ul>
+                                    <strong>⚠️ Impact :</strong> Chaque tome supplémentaire ajoute environ 15-30 secondes au temps de recherche.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">Seuil dates (bruit)</span></td>
+                                <td><span class="number-highlight">3</span> dates</td>
+                                <td>Si un morceau contient plus de 3 dates au format (YYYY), il est considéré comme du bruit (références bibliographiques)</td>
+                                <td><span class="impact-badge impact-low">FAIBLE</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- PARAMÈTRES IA -->
+                <div class="subsection" id="params-ia">
+                    <h3>🤖 Paramètres Intelligence Artificielle</h3>
+                    
+                    <table class="param-table">
+                        <thead>
+                            <tr>
+                                <th>Paramètre</th>
+                                <th>Valeur actuelle</th>
+                                <th>Description</th>
+                                <th>Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="param-name">Nombre de modèles IA</span></td>
+                                <td><span class="number-highlight">8</span> modèles</td>
+                                <td>Nombre de modèles d'IA différents testés en cas d'échec</td>
+                                <td><span class="impact-badge impact-medium">MOYEN</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <strong>📋 Liste des 8 modèles dans l'ordre :</strong>
+                                    <ol>
+                                        <li>deepseek/deepseek-r1-0528:free</li>
+                                        <li>meta-llama/llama-3.3-70b-instruct:free</li>
+                                        <li>google/gemma-3-27b-it:free</li>
+                                        <li>openai/gpt-oss-120b:free</li>
+                                        <li>google/gemma-3-12b-it:free</li>
+                                        <li>mistralai/devstral-2512:free</li>
+                                        <li>anthropic/claude-3-haiku</li>
+                                        <li>google/gemini-flash-1.5</li>
+                                    </ol>
+                                    <strong>💡 Conseil :</strong> Vous pouvez réorganiser cette liste pour mettre les modèles qui fonctionnent le mieux en premier.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">Délai entre tentatives IA</span></td>
+                                <td><span class="number-highlight">2 000</span> ms (2 secondes)</td>
+                                <td>Temps d'attente entre chaque tentative de modèle pour éviter les blocages</td>
+                                <td><span class="impact-badge impact-high">FORT</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <strong>💡 Suggestions :</strong>
+                                    <ul>
+                                        <li><code>1000</code> : Plus rapide mais risque de rate-limit</li>
+                                        <li><code>2000</code> : Valeur actuelle sécurisée</li>
+                                        <li><code>3000</code> : Plus sûr mais plus lent</li>
+                                    </ul>
+                                    <strong>⚙️ Calcul :</strong> Temps max d'attente = 8 modèles × 2 secondes = 16 secondes par extrait IA
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">Longueur demandée à l'IA</span></td>
+                                <td><span class="number-highlight">2 500 - 3 500</span> caractères</td>
+                                <td>Fourchette de longueur demandée à l'IA pour ses extraits (400-600 mots)</td>
+                                <td><span class="impact-badge impact-medium">MOYEN</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <strong>💡 Suggestions :</strong>
+                                    <ul>
+                                        <li><code>1500-2500</code> : Extraits plus courts</li>
+                                        <li><code>2500-3500</code> : Valeur actuelle</li>
+                                        <li><code>4000-5000</code> : Extraits plus longs (attention : doit rester < MAX_SEGMENT_SOURCE_CHARS)</li>
+                                    </ul>
+                                    <strong>⚠️ Note :</strong> Cette valeur est écrite dans le texte du prompt envoyé à l'IA. Pour la modifier, cherchez la phrase "Extrais... un passage de 2500 à 3500 caractères" dans le code.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">Température IA</span></td>
+                                <td><span class="number-highlight">0.3</span></td>
+                                <td>Contrôle la créativité de l'IA (0 = très précis, 1 = très créatif)</td>
+                                <td><span class="impact-badge impact-low">FAIBLE</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <strong>💡 Suggestions :</strong>
+                                    <ul>
+                                        <li><code>0.1</code> : Très précis, extraction stricte</li>
+                                        <li><code>0.3</code> : Valeur actuelle (bon équilibre)</li>
+                                        <li><code>0.5</code> : Plus de variation dans les titres/contextes</li>
+                                    </ul>
+                                    <strong>ℹ️ Note :</strong> Pour ce type d'extraction, une valeur basse est recommandée.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">Tokens max par réponse IA</span></td>
+                                <td><span class="number-highlight">3 000</span> tokens</td>
+                                <td>Longueur maximale de la réponse de l'IA (environ 4500 caractères)</td>
+                                <td><span class="impact-badge impact-low">FAIBLE</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="success-box">
+                        <strong>✅ Système de secours automatique :</strong><br>
+                        Si tous les 8 modèles échouent, le système bascule automatiquement sur un extrait brut. L'utilisateur reçoit toujours ses 5 extraits, même si l'IA ne fonctionne pas.
+                    </div>
+                </div>
+
+                <!-- PARAMÈTRES PDF -->
+                <div class="subsection" id="params-pdf">
+                    <h3>📕 Paramètres du PDF généré</h3>
+                    
+                    <table class="param-table">
+                        <thead>
+                            <tr>
+                                <th>Paramètre</th>
+                                <th>Valeur actuelle</th>
+                                <th>Description</th>
+                                <th>Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="param-name">Format de page</span></td>
+                                <td><span class="number-highlight">A4</span></td>
+                                <td>Format standard européen (210 × 297 mm)</td>
+                                <td><span class="impact-badge impact-low">FAIBLE</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <strong>💡 Autres options possibles :</strong> LETTER (format US), A5 (plus petit), LEGAL, etc.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">Marges</span></td>
+                                <td><span class="number-highlight">60-80 points</span><br>(environ 2-2.5 cm)</td>
+                                <td>Marges gauche/droite : 60 points<br>Marge haut : 80 points<br>Marge bas : 60 points</td>
+                                <td><span class="impact-badge impact-medium">MOYEN</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <strong>💡 Suggestions :</strong>
+                                    <ul>
+                                        <li><code>[40, 60, 40, 60]</code> : Marges réduites (plus de texte par page)</li>
+                                        <li><code>[60, 80, 60, 60]</code> : Valeur actuelle</li>
+                                        <li><code>[80, 100, 80, 80]</code> : Marges larges (plus aéré, meilleur pour impression)</li>
+                                    </ul>
+                                    <strong>Format :</strong> [gauche, haut, droite, bas]
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">Police titre principal</span></td>
+                                <td><span class="number-highlight">24 points</span></td>
+                                <td>Taille de la police du titre en page de garde</td>
+                                <td><span class="impact-badge impact-low">FAIBLE</span></td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">Police sous-titres</span></td>
+                                <td><span class="number-highlight">16 points</span></td>
+                                <td>Taille de la police pour "TABLE DES EXTRAITS" etc.</td>
+                                <td><span class="impact-badge impact-low">FAIBLE</span></td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">Police titres d'extraits</span></td>
+                                <td><span class="number-highlight">14 points</span></td>
+                                <td>Taille de la police des titres de chaque extrait</td>
+                                <td><span class="impact-badge impact-low">FAIBLE</span></td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">Police du texte</span></td>
+                                <td><span class="number-highlight">11 points</span></td>
+                                <td>Taille de la police du corps des extraits</td>
+                                <td><span class="impact-badge impact-medium">MOYEN</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <strong>💡 Suggestions :</strong>
+                                    <ul>
+                                        <li><code>10</code> : Plus compact (plus de texte par page)</li>
+                                        <li><code>11</code> : Valeur actuelle (bonne lisibilité)</li>
+                                        <li><code>12</code> : Plus grand (meilleure lisibilité pour impression)</li>
+                                    </ul>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">Interligne du texte</span></td>
+                                <td><span class="number-highlight">1.4</span></td>
+                                <td>Espacement entre les lignes (1.0 = simple, 2.0 = double)</td>
+                                <td><span class="impact-badge impact-medium">MOYEN</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <strong>💡 Suggestions :</strong>
+                                    <ul>
+                                        <li><code>1.2</code> : Plus compact</li>
+                                        <li><code>1.4</code> : Valeur actuelle (confortable)</li>
+                                        <li><code>1.5</code> : Standard académique</li>
+                                        <li><code>2.0</code> : Double interligne (très aéré)</li>
+                                    </ul>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">Alignement du texte</span></td>
+                                <td><span class="number-highlight">Justifié</span></td>
+                                <td>Le texte est aligné à gauche ET à droite</td>
+                                <td><span class="impact-badge impact-low">FAIBLE</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <strong>💡 Alternatives :</strong> 'left' (aligné à gauche), 'center' (centré), 'right' (aligné à droite)
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><span class="param-name">Marge haut page de garde</span></td>
+                                <td><span class="number-highlight">150 points</span></td>
+                                <td>Espace avant le titre sur la première page (pour centrer verticalement)</td>
+                                <td><span class="impact-badge impact-low">FAIBLE</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="info-box">
+                        <strong>📐 Équivalences de mesures :</strong><br>
+                        1 point = 0.35 mm environ<br>
+                        60 points ≈ 2.1 cm<br>
+                        80 points ≈ 2.8 cm<br>
+                        150 points ≈ 5.3 cm
+                    </div>
+                </div>
+
+                <!-- RÉCAPITULATIF DES OPTIMISATIONS -->
+                <div class="subsection">
+                    <h3>⚡ Récapitulatif des optimisations recommandées</h3>
+                    
+                    <div class="success-box">
+                        <h4 style="margin-bottom: 15px;">🚀 Pour une recherche PLUS RAPIDE :</h4>
+                        <ul>
+                            <li><code>TARGET = 3000</code> (chunks plus petits)</li>
+                            <li><code>Nombre de tomes = 1</code> (arrêt après 1 tome)</li>
+                            <li><code>TYPING_SPEED_MS = 5</code> et <code>CHARS_PER_TICK = 15</code> (affichage rapide)</li>
+                            <li>Utiliser le mode <strong>SANS IA</strong></li>
+                        </ul>
+                        <strong>Temps estimé : 15-20 secondes</strong>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 20px;">
+                        <h4 style="margin-bottom: 15px;">🎯 Pour des résultats PLUS PRÉCIS :</h4>
+                        <ul>
+                            <li><code>Points par mot-clé = ×20</code> (focus sur mots-clés)</li>
+                            <li><code>Score minimal = 25</code> (seuil élevé)</li>
+                            <li><code>Nombre de tomes = 3</code> (plus de sources)</li>
+                            <li>Utiliser le mode <strong>AVEC IA</strong></li>
+                        </ul>
+                        <strong>Temps estimé : 2-3 minutes</strong>
+                    </div>
+
+                    <div class="warning-box" style="margin-top: 20px;">
+                        <h4 style="margin-bottom: 15px;">📚 Pour des extraits PLUS LONGS :</h4>
+                        <ul>
+                            <li><code>MAX_EXTRAIT_BRUT_CHARS = 6000</code></li>
+                            <li><code>MAX_SEGMENT_SOURCE_CHARS = 8000</code></li>
+                            <li>Dans le prompt IA : "passage de 4000 à 5000 caractères"</li>
+                            <li><code>Police du texte PDF = 10 points</code> (pour que ça rentre)</li>
+                        </ul>
+                        <strong>Impact : Extraits d'environ 900-1000 mots (1,5 page A4)</strong>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <!-- ONGLET CONFIGURATION -->
+            <div id="tab-config" class="tab-content">
+                <div class="section">
+                    <h2 class="section-title">⚙️ Configuration des paramètres</h2>
+
+                    <!-- PROFILS PRÉDÉFINIS -->
+                    <div class="subsection">
+                        <h3>🎯 Profils prédéfinis</h3>
+                        <p style="margin-bottom: 20px; color: #666;">Choisissez un profil optimisé selon vos besoins, ou personnalisez les paramètres ci-dessous.</p>
+                        
+                        <div class="preset-buttons">
+                            <div class="preset-btn" onclick="applyPreset('rapide')">
+                                <h5>🚀 Rapide</h5>
+                                <p>Résultats en 15-20 secondes<br>Mode sans IA, 1 tome</p>
+                            </div>
+                            <div class="preset-btn" onclick="applyPreset('equilibre')">
+                                <h5>⚖️ Équilibré</h5>
+                                <p>Résultats en 1-2 minutes<br>Configuration par défaut</p>
+                            </div>
+                            <div class="preset-btn" onclick="applyPreset('precis')">
+                                <h5>🎯 Précis</h5>
+                                <p>Résultats en 2-3 minutes<br>Mode IA, scoring élevé</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VALEURS ACTUELLES -->
+                    <div class="current-values-box">
+                        <h4>📊 Valeurs actuellement enregistrées</h4>
+                        <div class="value-grid" id="currentValues"></div>
+                    </div>
+
+                    <!-- PARAMÈTRES DES EXTRAITS -->
+                    <div class="config-section">
+                        <h4>📄 Paramètres des extraits</h4>
+
+                        <div class="config-item">
+                            <label>Nombre total d'extraits</label>
+                            <div class="description">Nombre d'extraits retournés par recherche (recommandé: 3-10)</div>
+                            <div class="config-controls">
+                                <div class="slider-container">
+                                    <input type="range" id="maxExtraits" min="1" max="15" value="5" oninput="updateValue('maxExtraits')">
+                                </div>
+                                <div class="value-display" id="value-maxExtraits">5</div>
+                            </div>
+                        </div>
+
+                        <div class="config-item">
+                            <label>Longueur maximale d'un extrait brut (caractères)</label>
+                            <div class="description">Environ 600-700 mots pour 4000 caractères (recommandé: 2500-6000)</div>
+                            <div class="config-controls">
+                                <div class="slider-container">
+                                    <input type="range" id="maxExtrait" min="1000" max="8000" step="500" value="4000" oninput="updateValue('maxExtrait')">
+                                </div>
+                                <div class="value-display" id="value-maxExtrait">4000</div>
+                            </div>
+                        </div>
+
+                        <div class="config-item">
+                            <label>Longueur du texte envoyé à l'IA (caractères)</label>
+                            <div class="description">Doit être supérieur à la longueur d'extrait (recommandé: 4000-8000)</div>
+                            <div class="config-controls">
+                                <div class="slider-container">
+                                    <input type="range" id="maxSegment" min="2000" max="10000" step="500" value="6000" oninput="updateValue('maxSegment')">
+                                </div>
+                                <div class="value-display" id="value-maxSegment">6000</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PARAMÈTRES D'AFFICHAGE -->
+                    <div class="config-section">
+                        <h4>🎨 Paramètres d'affichage</h4>
+
+                        <div class="config-item">
+                            <label>Vitesse d'animation (millisecondes)</label>
+                            <div class="description">Délai entre chaque bloc de texte affiché (5 = rapide, 50 = lent)</div>
+                            <div class="config-controls">
+                                <div class="slider-container">
+                                    <input type="range" id="typingSpeed" min="1" max="50" value="10" oninput="updateValue('typingSpeed')">
+                                </div>
+                                <div class="value-display" id="value-typingSpeed">10 ms</div>
+                            </div>
+                        </div>
+
+                        <div class="config-item">
+                            <label>Caractères par bloc</label>
+                            <div class="description">Nombre de caractères ajoutés à chaque fois (5 = fluide, 50 = rapide)</div>
+                            <div class="config-controls">
+                                <div class="slider-container">
+                                    <input type="range" id="charsPerTick" min="1" max="50" value="10" oninput="updateValue('charsPerTick')">
+                                </div>
+                                <div class="value-display" id="value-charsPerTick">10</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PARAMÈTRES DE RECHERCHE -->
+                    <div class="config-section">
+                        <h4>🔍 Paramètres de recherche</h4>
+
+                        <div class="config-item">
+                            <label>Taille des chunks (caractères)</label>
+                            <div class="description">Taille des morceaux de texte analysés (3000 = précis, 7000 = rapide)</div>
+                            <div class="config-controls">
+                                <div class="slider-container">
+                                    <input type="range" id="targetChunk" min="2000" max="10000" step="500" value="5000" oninput="updateValue('targetChunk')">
+                                </div>
+                                <div class="value-display" id="value-targetChunk">5000</div>
+                            </div>
+                        </div>
+
+                        <div class="config-item">
+                            <label>Points par mot thématique</label>
+                            <div class="description">Score attribué à chaque occurrence d'un mot de la thématique (recommandé: 8-20)</div>
+                            <div class="config-controls">
+                                <div class="slider-container">
+                                    <input type="range" id="pointsTheme" min="5" max="30" value="10" oninput="updateValue('pointsTheme')">
+                                </div>
+                                <div class="value-display" id="value-pointsTheme">×10</div>
+                            </div>
+                        </div>
+
+                        <div class="config-item">
+                            <label>Points par mot-clé</label>
+                            <div class="description">Score attribué à chaque occurrence d'un mot-clé (recommandé: 10-20)</div>
+                            <div class="config-controls">
+                                <div class="slider-container">
+                                    <input type="range" id="pointsKeyword" min="5" max="30" value="12" oninput="updateValue('pointsKeyword')">
+                                </div>
+                                <div class="value-display" id="value-pointsKeyword">×12</div>
+                            </div>
+                        </div>
+
+                        <div class="config-item">
+                            <label>Score minimal requis</label>
+                            <div class="description">Score minimum pour qu'un chunk soit retenu (10 = permissif, 50 = strict)</div>
+                            <div class="config-controls">
+                                <div class="slider-container">
+                                    <input type="range" id="scoreMin" min="5" max="100" step="5" value="10" oninput="updateValue('scoreMin')">
+                                </div>
+                                <div class="value-display" id="value-scoreMin">10</div>
+                            </div>
+                        </div>
+
+                        <div class="config-item">
+                            <label>Nombre de tomes analysés</label>
+                            <div class="description">Le système s'arrête après avoir trouvé des résultats dans X tomes (1 = rapide, 5 = exhaustif)</div>
+                            <div class="config-controls">
+                                <div class="slider-container">
+                                    <input type="range" id="nbTomes" min="1" max="5" value="2" oninput="updateValue('nbTomes')">
+                                </div>
+                                <div class="value-display" id="value-nbTomes">2</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PARAMÈTRES IA -->
+                    <div class="config-section">
+                        <h4>🤖 Paramètres Intelligence Artificielle</h4>
+
+                        <div class="config-item">
+                            <label>Délai entre tentatives IA (millisecondes)</label>
+                            <div class="description">Temps d'attente entre chaque modèle (1000 = rapide mais risqué, 3000 = sécurisé)</div>
+                            <div class="config-controls">
+                                <div class="slider-container">
+                                    <input type="range" id="delaiIA" min="500" max="5000" step="500" value="2000" oninput="updateValue('delaiIA')">
+                                </div>
+                                <div class="value-display" id="value-delaiIA">2000 ms</div>
+                            </div>
+                        </div>
+
+                        <div class="config-item">
+                            <label>Température IA</label>
+                            <div class="description">Créativité de l'IA (0.1 = très précis, 0.5 = plus créatif)</div>
+                            <div class="config-controls">
+                                <div class="slider-container">
+                                    <input type="range" id="temperatureIA" min="0.1" max="1" step="0.1" value="0.3" oninput="updateValue('temperatureIA')">
+                                </div>
+                                <div class="value-display" id="value-temperatureIA">0.3</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BOUTONS D'ACTION -->
+                    <div class="action-buttons">
+                        <button class="action-btn btn-save" onclick="saveConfig()">
+                            💾 Enregistrer la configuration
+                        </button>
+                        <button class="action-btn btn-reset" onclick="resetConfig()">
+                            🔄 Réinitialiser aux valeurs par défaut
+                        </button>
+                        <button class="action-btn btn-export" onclick="exportConfig()">
+                            📥 Exporter en JSON
+                        </button>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 30px;">
+                        <strong>ℹ️ Comment utiliser cette configuration ?</strong><br>
+                        1. Ajustez les paramètres selon vos besoins<br>
+                        2. Cliquez sur "Enregistrer la configuration"<br>
+                        3. Les paramètres seront automatiquement utilisés par l'outil de recherche<br>
+                        4. Vous pouvez exporter la configuration en JSON pour la partager ou la sauvegarder
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+            <div style="text-align: center; padding: 30px; background: #f8f9fa; border-top: 3px solid #667eea; margin-top: 50px;">
+                <p style="color: #666; font-size: 0.9rem;">
+                    📖 Documentation technique complète<br>
+                    Version : Janvier 2026<br>
+                    <strong>Site officiel :</strong> <a href="http://www.dictionnairedespiritualite.com" target="_blank" style="color: #667eea;">dictionnairedespiritualite.com</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURATION PAR DÉFAUT
+        const DEFAULT_CONFIG = {
+            maxExtraits: 5,
+            maxExtrait: 4000,
+            maxSegment: 6000,
+            typingSpeed: 10,
+            charsPerTick: 10,
+            targetChunk: 5000,
+            pointsTheme: 10,
+            pointsKeyword: 12,
+            scoreMin: 10,
+            nbTomes: 2,
+            delaiIA: 2000,
+            temperatureIA: 0.3
+        };
+
+        // PROFILS PRÉDÉFINIS
+        const PRESETS = {
+            rapide: {
+                maxExtraits: 3,
+                maxExtrait: 3000,
+                maxSegment: 5000,
+                typingSpeed: 5,
+                charsPerTick: 15,
+                targetChunk: 3000,
+                pointsTheme: 10,
+                pointsKeyword: 12,
+                scoreMin: 10,
+                nbTomes: 1,
+                delaiIA: 1000,
+                temperatureIA: 0.3
+            },
+            equilibre: {
+                ...DEFAULT_CONFIG
+            },
+            precis: {
+                maxExtraits: 7,
+                maxExtrait: 5000,
+                maxSegment: 8000,
+                typingSpeed: 10,
+                charsPerTick: 10,
+                targetChunk: 4000,
+                pointsTheme: 15,
+                pointsKeyword: 20,
+                scoreMin: 25,
+                nbTomes: 3,
+                delaiIA: 2500,
+                temperatureIA: 0.2
+            }
+        };
+
+        // CHARGEMENT INITIAL
+        window.addEventListener('load', () => {
+            loadConfig();
+            updateCurrentValuesDisplay();
+        });
+
+        // GESTION DES ONGLETS
+        function switchTab(tabName) {
+            // Masquer tous les onglets
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Afficher l'onglet sélectionné
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // MISE À JOUR DE L'AFFICHAGE DES VALEURS
+        function updateValue(id) {
+            const input = document.getElementById(id);
+            const display = document.getElementById('value-' + id);
+            let value = input.value;
+
+            // Formatage selon le type de valeur
+            if (id === 'typingSpeed' || id === 'delaiIA') {
+                display.textContent = value + ' ms';
+            } else if (id === 'pointsTheme' || id === 'pointsKeyword') {
+                display.textContent = '×' + value;
+            } else if (id === 'temperatureIA') {
+                display.textContent = parseFloat(value).toFixed(1);
+            } else {
+                display.textContent = value;
+            }
+        }
+
+        // APPLICATION D'UN PROFIL PRÉDÉFINI
+        function applyPreset(presetName) {
+            const preset = PRESETS[presetName];
+            
+            Object.keys(preset).forEach(key => {
+                const input = document.getElementById(key);
+                if (input) {
+                    input.value = preset[key];
+                    updateValue(key);
+                }
+            });
+
+            showNotification(`Profil "${presetName}" appliqué ! N'oubliez pas d'enregistrer.`);
+        }
+
+        // SAUVEGARDE DE LA CONFIGURATION
+        function saveConfig() {
+            const config = {};
+            
+            Object.keys(DEFAULT_CONFIG).forEach(key => {
+                const input = document.getElementById(key);
+                if (input) {
+                    config[key] = input.type === 'range' ? parseFloat(input.value) : input.value;
+                }
+            });
+
+            // Sauvegarde dans localStorage
+            localStorage.setItem('dictionnaire_config', JSON.stringify(config));
+            
+            updateCurrentValuesDisplay();
+            showNotification('✅ Configuration enregistrée avec succès !');
+        }
+
+        // CHARGEMENT DE LA CONFIGURATION
+        function loadConfig() {
+            const saved = localStorage.getItem('dictionnaire_config');
+            const config = saved ? JSON.parse(saved) : DEFAULT_CONFIG;
+
+            Object.keys(config).forEach(key => {
+                const input = document.getElementById(key);
+                if (input) {
+                    input.value = config[key];
+                    updateValue(key);
+                }
+            });
+        }
+
+        // RÉINITIALISATION
+        function resetConfig() {
+            if (confirm('Voulez-vous vraiment réinitialiser tous les paramètres aux valeurs par défaut ?')) {
+                Object.keys(DEFAULT_CONFIG).forEach(key => {
+                    const input = document.getElementById(key);
+                    if (input) {
+                        input.value = DEFAULT_CONFIG[key];
+                        updateValue(key);
+                    }
+                });
+                showNotification('🔄 Paramètres réinitialisés. N\'oubliez pas d\'enregistrer.');
+            }
+        }
+
+        // EXPORT EN JSON
+        function exportConfig() {
+            const config = {};
+            
+            Object.keys(DEFAULT_CONFIG).forEach(key => {
+                const input = document.getElementById(key);
+                if (input) {
+                    config[key] = parseFloat(input.value);
+                }
+            });
+
+            const dataStr = JSON.stringify(config, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'config_dictionnaire_' + new Date().toISOString().split('T')[0] + '.json';
+            link.click();
+            URL.revokeObjectURL(url);
+
+            showNotification('📥 Configuration exportée en JSON');
+        }
+
+        // AFFICHAGE DES VALEURS ACTUELLES
+        function updateCurrentValuesDisplay() {
+            const saved = localStorage.getItem('dictionnaire_config');
+            const config = saved ? JSON.parse(saved) : DEFAULT_CONFIG;
+
+            const labels = {
+                maxExtraits: 'Nombre d\'extraits',
+                maxExtrait: 'Longueur extrait (chars)',
+                maxSegment: 'Texte IA (chars)',
+                typingSpeed: 'Vitesse animation (ms)',
+                charsPerTick: 'Caractères/bloc',
+                targetChunk: 'Taille chunks',
+                pointsTheme: 'Points thématique',
+                pointsKeyword: 'Points mots-clés',
+                scoreMin: 'Score minimal',
+                nbTomes: 'Nombre de tomes',
+                delaiIA: 'Délai IA (ms)',
+                temperatureIA: 'Température IA'
+            };
+
+            const container = document.getElementById('currentValues');
+            container.innerHTML = Object.keys(config).map(key => `
+                <div class="value-item">
+                    <strong>${labels[key]}:</strong> ${config[key]}
+                </div>
+            `).join('');
+        }
+
+        // NOTIFICATION
+        function showNotification(message) {
+            const notif = document.getElementById('notification');
+            notif.textContent = message;
+            notif.style.display = 'block';
+            
+            setTimeout(() => {
+                notif.style.display = 'none';
+            }, 3000);
+        }
+
+        // FONCTION POUR RÉCUPÉRER LA CONFIG (à utiliser dans l'outil principal)
+        function getConfig() {
+            const saved = localStorage.getItem('dictionnaire_config');
+            return saved ? JSON.parse(saved) : DEFAULT_CONFIG;
+        }
+    </script>
+</body>
+</html>
+                            
