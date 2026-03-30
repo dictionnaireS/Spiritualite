@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 
-# Sitemap link
-Sitemap: https://dictionnaires.github.io/Spiritualite/sitemap.xml
+Sitemap: https://spiritualite.netlify.app/sitemap.xml
