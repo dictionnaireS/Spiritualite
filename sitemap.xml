@@ -1,19 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <!-- Page d'accueil -->
   <url>
-    <loc>https://dictionnaires.github.io/Spiritualite/index.html</loc>
+    <loc>https://spiritualite.netlify.app/</loc>
+    <lastmod>2025-03-30</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
+  
+  <!-- Page de contact -->
   <url>
-    <loc>https://dictionnaires.github.io/Spiritualite/DS1_corrige-1 (2).html</loc>
+    <loc>https://spiritualite.netlify.app/contact</loc>
+    <lastmod>2025-03-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
+  
+  <!-- Page de recherche -->
   <url>
-    <loc>https://dictionnaires.github.io/Spiritualite/DS2-1_corrige.html</loc>
+    <loc>https://spiritualite.netlify.app/recherche</loc>
+    <lastmod>2025-03-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
   </url>
+  
+  <!-- Tome 1 -->
   <url>
-    <loc>https://dictionnaires.github.io/Spiritualite/DS2-2_corrige.html</loc>
+    <loc>https://spiritualite.netlify.app/ds1_corrige-1</loc>
+    <lastmod>2025-03-30</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
   </url>
+  
+  <!-- Tome 2.1 -->
   <url>
-    <loc>https://dictionnaires.github.io/Spiritualite/contact.html</loc>
+    <loc>https://spiritualite.netlify.app/ds2-1_corrige</loc>
+    <lastmod>2025-03-30</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
   </url>
+  
+  <!-- Tome 2.2 -->
+  <url>
+    <loc>https://spiritualite.netlify.app/ds2-2_corrige</loc>
+    <lastmod>2025-03-30</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
 </urlset>
